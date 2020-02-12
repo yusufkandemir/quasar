@@ -13,6 +13,7 @@ module.exports = function (chain, cfg) {
         ? 'index.html'
         : path.join(cfg.build.distDir, cfg.build.htmlFilename),
       template: appPaths.resolve.app(cfg.sourceFiles.indexHtmlTemplate),
+      base: cfg.build.appBase,
       minify: cfg.__html.minifyOptions,
 
       chunksSortMode: 'none',

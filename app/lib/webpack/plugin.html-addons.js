@@ -16,15 +16,6 @@ function makeScriptTag (innerHTML) {
   }
 }
 
-function fillBaseTag (html, base) {
-  return html.replace(
-    /(<head[^>]*)(>)/i,
-    (found, start, end) => `${start}${end}<base href="${base}">`
-  )
-}
-
-module.exports.fillBaseTag = fillBaseTag
-
 module.exports.plugin = class HtmlAddonsPlugin {
   constructor (cfg = {}) {
     this.cfg = cfg
@@ -33,13 +24,6 @@ module.exports.plugin = class HtmlAddonsPlugin {
   apply (compiler) {
     compiler.hooks.compilation.tap('webpack-plugin-html-addons', compilation => {
       const htmlWebpackPluginHooks = HtmlWebpackPlugin.getHooks(compilation)
-
-      if (this.cfg.build.appBase) {
-        htmlWebpackPluginHooks.beforeAssetTagGeneration.tapAsync('webpack-plugin-html-base-tag', (data, callback) => {
-          data.html = fillBaseTag(data.html, this.cfg.build.appBase)
-          callback(null, data)
-        })
-      }
 
       htmlWebpackPluginHooks.alterAssetTags.tapAsync('webpack-plugin-html-addons', (data, callback) => {
         if (this.cfg.ctx.mode.cordova) {
