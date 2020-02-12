@@ -1,3 +1,5 @@
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+
 function makeTag (tagName, attributes, closeTag = false) {
   return {
     tagName,
@@ -30,14 +32,16 @@ module.exports.plugin = class HtmlAddonsPlugin {
 
   apply (compiler) {
     compiler.hooks.compilation.tap('webpack-plugin-html-addons', compilation => {
+      const htmlWebpackPluginHooks = HtmlWebpackPlugin.getHooks(compilation)
+
       if (this.cfg.build.appBase) {
-        compilation.hooks.htmlWebpackPluginBeforeHtmlProcessing.tapAsync('webpack-plugin-html-base-tag', (data, callback) => {
+        htmlWebpackPluginHooks.beforeAssetTagGeneration.tapAsync('webpack-plugin-html-base-tag', (data, callback) => {
           data.html = fillBaseTag(data.html, this.cfg.build.appBase)
           callback(null, data)
         })
       }
 
-      compilation.hooks.htmlWebpackPluginAlterAssetTags.tapAsync('webpack-plugin-html-addons', (data, callback) => {
+      htmlWebpackPluginHooks.alterAssetTags.tapAsync('webpack-plugin-html-addons', (data, callback) => {
         if (this.cfg.ctx.mode.cordova) {
           data.body.unshift(
             makeTag('script', { src: 'cordova.js' }, true)
