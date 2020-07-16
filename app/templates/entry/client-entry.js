@@ -33,7 +33,7 @@ import 'quasar/src/css/flex-addon.<%= __css.quasarSrcExt %>'
 import '<%= asset.path %>'
 <% }) %>
 
-import Vue from 'vue'
+import { createApp as createVueApp } from 'vue'
 import createApp from './app.js'
 
 <% if (ctx.mode.pwa) { %>
@@ -63,12 +63,11 @@ import { addPreFetchHooks } from './client-prefetch.js'
 
 <% if (ctx.mode.electron && electron.nodeIntegration === true) { %>
 import electron from 'electron'
-Vue.prototype.$q.electron = electron
+// Vue.prototype.$q.electron = electron
 <% } %>
 
 <% if (ctx.dev) { %>
-Vue.config.devtools = true
-Vue.config.productionTip = false
+// Vue.config.devtools = true
 <% } %>
 
 <% if (ctx.dev) { %>
@@ -126,7 +125,7 @@ async function start () {
         app,
         router,
         <%= store ? 'store,' : '' %>
-        Vue,
+        // Vue,
         ssrContext: null,
         redirect,
         urlPath,
@@ -155,11 +154,11 @@ async function start () {
         <% if (preFetch) { %>
         addPreFetchHooks(router<%= store ? ', store' : '' %>)
         <% } %>
-        new Vue(app)
+        createVueApp(app)
       }
       else {
     <% } %>
-    const appInstance = new Vue(app)
+    const appInstance = new createVueApp(app)
 
     // wait until router has resolved all async before hooks
     // and async components...
@@ -181,13 +180,15 @@ async function start () {
 
     <% if (ctx.mode.cordova) { %>
     document.addEventListener('deviceready', () => {
-    Vue.prototype.$q.cordova = window.cordova
+    // Vue.prototype.$q.cordova = window.cordova
     <% } else if (ctx.mode.capacitor) { %>
-    Vue.prototype.$q.capacitor = window.Capacitor
+    // Vue.prototype.$q.capacitor = window.Capacitor
     <% } %>
 
     <% if (!ctx.mode.bex) { %>
-      new Vue(app)
+      createVueApp(app)
+        .use(app.router)
+        .mount(app.el)
     <% } %>
 
     <% if (ctx.mode.cordova) { %>
@@ -199,8 +200,8 @@ async function start () {
       window.QBexInit = function (shell) {
         shell.connect(bridge => {
           window.QBexBridge = bridge
-          Vue.prototype.$q.bex = window.QBexBridge
-          vApp = new Vue(app)
+          // Vue.prototype.$q.bex = window.QBexBridge
+          vApp = createVueApp(app)
         })
       }
     <% } %>

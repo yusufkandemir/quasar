@@ -9,8 +9,10 @@
  *
  * Boot files are your "main.js"
  **/
-import Vue from 'vue'
-import './import-quasar.js'
+import { h } from 'vue'
+// TODO: Adjust the signatures that uses this, it's noop for now
+const Vue = {}
+// import './import-quasar.js'
 
 <% if (ctx.mode.ssr) { %>
 import <%= framework.importStrategy === 'all' ? 'Quasar' : '{ Quasar }' %> from 'quasar'
@@ -56,7 +58,7 @@ export default async function (<%= ctx.mode.ssr ? 'ssrContext' : '' %>) {
   const app = {
     router,
     <%= store ? 'store,' : '' %>
-    render: h => h(App)<% if (__needsAppMountHook === true) { %>,
+    render: () => h(App)<% if (__needsAppMountHook === true) { %>,
     mounted () {
       <% if (ctx.mode.capacitor && capacitor.hideSplashscreen !== false) { %>
       SplashScreen.hide()

@@ -2,7 +2,7 @@ const path = require('path')
 const webpack = require('webpack')
 const merge = require('webpack-merge')
 const WebpackChain = require('webpack-chain')
-const VueLoaderPlugin = require('vue-loader/lib/plugin')
+const { VueLoaderPlugin } = require('vue-loader')
 
 const WebpackProgress = require('./plugin.progress')
 const BootDefaultExport = require('./plugin.boot-default-export')
@@ -66,8 +66,8 @@ module.exports = function (cfg, configName) {
   chain.resolve.extensions
     .merge(
       cfg.supportTS !== false
-        ? [ '.mjs', '.ts', '.js', '.vue', '.json', '.wasm' ]
-        : [ '.mjs', '.js', '.vue', '.json', '.wasm' ]
+        ? ['.mjs', '.ts', '.js', '.vue', '.json', '.wasm']
+        : ['.mjs', '.js', '.vue', '.json', '.wasm']
     )
 
   chain.resolve.modules
@@ -123,32 +123,32 @@ module.exports = function (cfg, configName) {
     chain.module.rule('transform-quasar-imports')
       .test(/\.(t|j)sx?$/)
       .use('transform-quasar-imports')
-        .loader(path.join(__dirname, 'loader.transform-quasar-imports.js'))
+      .loader(path.join(__dirname, 'loader.transform-quasar-imports.js'))
   }
 
   if (cfg.build.transpile === true) {
     const nodeModulesRegex = /[\\/]node_modules[\\/]/
     const exceptionsRegex = getDependenciesRegex(
-      [ /\.vue\.js$/, configName === 'Server' ? 'quasar/src' : 'quasar', '@babel/runtime' ]
+      [/\.vue\.js$/, configName === 'Server' ? 'quasar/src' : 'quasar', '@babel/runtime']
         .concat(cfg.build.transpileDependencies)
     )
 
     chain.module.rule('babel')
       .test(/\.js$/)
       .exclude
-        .add(filepath => (
-          // Transpile the exceptions:
-          exceptionsRegex.test(filepath) === false &&
-          // Don't transpile anything else in node_modules:
-          nodeModulesRegex.test(filepath)
-        ))
-        .end()
+      .add(filepath => (
+        // Transpile the exceptions:
+        exceptionsRegex.test(filepath) === false &&
+        // Don't transpile anything else in node_modules:
+        nodeModulesRegex.test(filepath)
+      ))
+      .end()
       .use('babel-loader')
-        .loader('babel-loader')
-          .options({
-            compact: false,
-            extends: appPaths.resolve.app('babel.config.js')
-          })
+      .loader('babel-loader')
+      .options({
+        compact: false,
+        extends: appPaths.resolve.app('babel.config.js')
+      })
   }
 
   if (cfg.supportTS !== false) {
@@ -156,14 +156,14 @@ module.exports = function (cfg, configName) {
       .rule('typescript')
       .test(/\.ts$/)
       .use('ts-loader')
-        .loader('ts-loader')
-        .options({
-          // custom config is merged if present, but vue setup and type checking disable are always applied
-          ...(cfg.supportTS.tsLoaderConfig || {}),
-          appendTsSuffixTo: [ /\.vue$/ ],
-          // Type checking is handled by fork-ts-checker-webpack-plugin
-          transpileOnly: true
-        })
+      .loader('ts-loader')
+      .options({
+        // custom config is merged if present, but vue setup and type checking disable are always applied
+        ...(cfg.supportTS.tsLoaderConfig || {}),
+        appendTsSuffixTo: [/\.vue$/],
+        // Type checking is handled by fork-ts-checker-webpack-plugin
+        transpileOnly: true
+      })
 
     const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
     chain
@@ -186,32 +186,32 @@ module.exports = function (cfg, configName) {
   chain.module.rule('images')
     .test(/\.(png|jpe?g|gif|svg|webp|avif)(\?.*)?$/)
     .use('url-loader')
-      .loader('url-loader')
-      .options({
-        esModule: false,
-        limit: 10000,
-        name: `img/[name]${fileHash}.[ext]`
-      })
+    .loader('url-loader')
+    .options({
+      esModule: false,
+      limit: 10000,
+      name: `img/[name]${fileHash}.[ext]`
+    })
 
   chain.module.rule('fonts')
     .test(/\.(woff2?|eot|ttf|otf)(\?.*)?$/)
     .use('url-loader')
-      .loader('url-loader')
-      .options({
-        esModule: false,
-        limit: 10000,
-        name: `fonts/[name]${fileHash}.[ext]`
-      })
+    .loader('url-loader')
+    .options({
+      esModule: false,
+      limit: 10000,
+      name: `fonts/[name]${fileHash}.[ext]`
+    })
 
   chain.module.rule('media')
     .test(/\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/)
     .use('url-loader')
-      .loader('url-loader')
-      .options({
-        esModule: false,
-        limit: 10000,
-        name: `media/[name]${fileHash}.[ext]`
-      })
+    .loader('url-loader')
+    .options({
+      esModule: false,
+      limit: 10000,
+      name: `media/[name]${fileHash}.[ext]`
+    })
 
   injectStyleRules(chain, {
     rtl: cfg.build.rtl,
@@ -229,8 +229,8 @@ module.exports = function (cfg, configName) {
     .rule('mjs')
     .test(/\.mjs$/)
     .include
-      .add(/[\\/]node_modules[\\/]/)
-      .end()
+    .add(/[\\/]node_modules[\\/]/)
+    .end()
     .type('javascript/auto')
 
   chain.plugin('vue-loader')
@@ -298,7 +298,7 @@ module.exports = function (cfg, configName) {
       .use(FriendlyErrorsPlugin, [{
         clearConsole: true,
         compilationSuccessInfo: ['spa', 'pwa', 'ssr'].includes(cfg.ctx.modeName)
-          ? { notes: [ devCompilationSuccess(cfg.ctx, cfg.build.APP_URL, appPaths.appDir, cfg.__transpileBanner) ] }
+          ? { notes: [devCompilationSuccess(cfg.ctx, cfg.build.APP_URL, appPaths.appDir, cfg.__transpileBanner)] }
           : undefined
       }])
   }
@@ -322,7 +322,7 @@ module.exports = function (cfg, configName) {
           dot: false,
           // avoid useless files to be copied
           ignore: ['electron', 'cordova', 'capacitor'].includes(cfg.ctx.modeName)
-            ? [ '**/icons/**', '**/favicon.ico' ]
+            ? ['**/icons/**', '**/favicon.ico']
             : []
         }
       }]
@@ -403,13 +403,13 @@ module.exports = function (cfg, configName) {
       if (cfg.build.gzip) {
         const CompressionWebpackPlugin = require('compression-webpack-plugin')
         chain.plugin('compress-webpack')
-          .use(CompressionWebpackPlugin, [ cfg.build.gzip ])
+          .use(CompressionWebpackPlugin, [cfg.build.gzip])
       }
 
       if (cfg.build.analyze) {
         const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
         chain.plugin('bundle-analyzer')
-          .use(BundleAnalyzerPlugin, [ Object.assign({}, cfg.build.analyze) ])
+          .use(BundleAnalyzerPlugin, [Object.assign({}, cfg.build.analyze)])
       }
     }
   }
