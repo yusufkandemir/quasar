@@ -9,7 +9,7 @@
  *
  * Boot files are your "main.js"
  **/
-import { h } from 'vue'
+import { h, createApp } from 'vue'
 // TODO: Adjust the signatures that uses this, it's noop for now
 const Vue = {}
 // import './import-quasar.js'
@@ -55,9 +55,7 @@ export default async function (<%= ctx.mode.ssr ? 'ssrContext' : '' %>) {
   // Create the app instantiation Object.
   // Here we inject the router, store to all child components,
   // making them available everywhere as `this.$router` and `this.$store`.
-  const app = {
-    router,
-    <%= store ? 'store,' : '' %>
+  const app = createApp({
     render: () => h(App)<% if (__needsAppMountHook === true) { %>,
     mounted () {
       <% if (ctx.mode.capacitor && capacitor.hideSplashscreen !== false) { %>
@@ -68,8 +66,12 @@ export default async function (<%= ctx.mode.ssr ? 'ssrContext' : '' %>) {
       vueDevtools.connect('<%= __vueDevtools.host %>', <%= __vueDevtools.port %>)
       <% } %>
     }<% } %>
-  }
+  })
 
+  app.use(router)
+  <% if (store) { %>
+  app.use(store)
+  <% } %>
 
   <% if (ctx.mode.ssr) { %>
     <% if (ctx.mode.pwa) { %>

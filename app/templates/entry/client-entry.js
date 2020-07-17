@@ -33,7 +33,6 @@ import 'quasar/src/css/flex-addon.<%= __css.quasarSrcExt %>'
 import '<%= asset.path %>'
 <% }) %>
 
-import { createApp as createVueApp } from 'vue'
 import createApp from './app.js'
 
 <% if (ctx.mode.pwa) { %>
@@ -93,6 +92,7 @@ const addPublicPath = url => (publicPath + url).replace(doubleSlashRE, '/')
 async function start () {
   const { app, <%= store ? 'store, ' : '' %>router } = await createApp()
 
+  // TODO: Vue 3 SSR
   <% if (ctx.mode.ssr && store && ssr.manualHydration !== true) { %>
   // prime the store with server-initialized state.
   // the state is determined during SSR and inlined in the page markup.
@@ -122,6 +122,7 @@ async function start () {
 
     try {
       await bootFiles[i]({
+        // TODO: Discuss about this. Should we pass the app directly or just `app.config`?
         app,
         router,
         <%= store ? 'store,' : '' %>
@@ -148,25 +149,24 @@ async function start () {
   }
   <% } %>
 
+  // TODO: Vue 3 SSR
   <% if (ctx.mode.ssr) { %>
     <% if (ctx.mode.pwa) { %>
       if (isRunningOnPWA === true) {
         <% if (preFetch) { %>
         addPreFetchHooks(router<%= store ? ', store' : '' %>)
         <% } %>
-        createVueApp(app)
+        app.mount(app.el)
       }
       else {
     <% } %>
-    const appInstance = new createVueApp(app)
-
     // wait until router has resolved all async before hooks
     // and async components...
     await router.isReady()
     <% if (preFetch) { %>
     addPreFetchHooks(router<%= store ? ', store' : '' %>, publicPath)
     <% } %>
-    appInstance.$mount('#q-app')
+    app.mount('#q-app')
     <% if (ctx.mode.pwa) { %>
     }
     <% } %>
@@ -185,9 +185,11 @@ async function start () {
     <% } %>
 
     <% if (!ctx.mode.bex) { %>
-      createVueApp(app)
-        .use(app.router)
-        .mount(app.el)
+      // TODO: Discuss about this. Should this run always or when a specific config option is set?
+      // This is required for transitions
+      await router.isReady()
+
+      app.mount(app.el)
     <% } %>
 
     <% if (ctx.mode.cordova) { %>
@@ -200,7 +202,7 @@ async function start () {
         shell.connect(bridge => {
           window.QBexBridge = bridge
           // Vue.prototype.$q.bex = window.QBexBridge
-          vApp = createVueApp(app)
+          vApp = app.mount(app.el)
         })
       }
     <% } %>
