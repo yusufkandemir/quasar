@@ -12,8 +12,8 @@ function component (path) {
 }
 
 const metaChildren = [
-  { path: '', redirect: 'first' },
-  { path: 'first', component: load('meta/pages/first') },
+  { path: '', redirect: { name: 'meta.first' } },
+  { path: 'first', name: 'meta.first', component: load('meta/pages/first') },
   { path: 'second', component: load('meta/pages/second') },
   { path: 'third', component: load('meta/pages/third') }
 ]
@@ -84,8 +84,8 @@ const routes = [
     path: '/layout-quick',
     component: load('layout/layout'),
     children: [
-      { path: '', redirect: 'default' },
-      { path: 'default', component: load('layout/pages/default') },
+      { path: '', redirect: { name: 'layout-quick.default' } },
+      { path: 'default', name: 'layout-quick.default', component: load('layout/pages/default') },
       { path: 'a', component: load('layout/pages/a') },
       { path: 'b', component: load('layout/pages/b') },
       { path: 'c', component: load('layout/pages/c') }
@@ -101,7 +101,7 @@ pages.forEach(page => {
 
 // Always leave this as last one
 routes.push({
-  path: '*',
+  path: '/:catchAll(.*)',
   component: () => import('pages/Error404.vue')
 })
 

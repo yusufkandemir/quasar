@@ -106,7 +106,7 @@ async function start () {
   const redirect = url => {
     hasRedirected = true
     const normalized = Object(url) === url
-      ? <%= build.publicPath.length <= 1 ? 'router.resolve(url).route.fullPath' : 'addPublicPath(router.resolve(url).route.fullPath)' %>
+      ? <%= build.publicPath.length <= 1 ? 'router.resolve(url).fullPath' : 'addPublicPath(router.resolve(url).fullPath)' %>
       : url
 
     window.location.href = normalized
@@ -162,12 +162,11 @@ async function start () {
 
     // wait until router has resolved all async before hooks
     // and async components...
-    router.onReady(() => {
-      <% if (preFetch) { %>
-      addPreFetchHooks(router<%= store ? ', store' : '' %>, publicPath)
-      <% } %>
-      appInstance.$mount('#q-app')
-    })
+    await router.isReady()
+    <% if (preFetch) { %>
+    addPreFetchHooks(router<%= store ? ', store' : '' %>, publicPath)
+    <% } %>
+    appInstance.$mount('#q-app')
     <% if (ctx.mode.pwa) { %>
     }
     <% } %>
