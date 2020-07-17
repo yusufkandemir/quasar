@@ -11,8 +11,8 @@ export * from './utils.js'
 
 export default {
   ...VuePlugin,
-  install (Vue, opts) {
-    VuePlugin.install(Vue, {
+  install (app, opts) {
+    VuePlugin.install(app, {
       components,
       directives,
       plugins,

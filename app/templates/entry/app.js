@@ -12,7 +12,7 @@
 import { h, createApp } from 'vue'
 // TODO: Adjust the signatures that uses this, it's noop for now
 const Vue = {}
-// import './import-quasar.js'
+import { QuasarPlugin, QuasarPluginSettings } from './import-quasar.js'
 
 <% if (ctx.mode.ssr) { %>
 import <%= framework.importStrategy === 'all' ? 'Quasar' : '{ Quasar }' %> from 'quasar'
@@ -67,6 +67,8 @@ export default async function (<%= ctx.mode.ssr ? 'ssrContext' : '' %>) {
       <% } %>
     }<% } %>
   })
+
+  app.use(QuasarPlugin, QuasarPluginSettings)
 
   app.use(router)
   <% if (store) { %>

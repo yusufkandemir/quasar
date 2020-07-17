@@ -1,5 +1,3 @@
-import Vue from 'vue'
-
 import { isSSR } from './plugins/Platform.js'
 import materialIcons from '../icon-set/material-icons.js'
 
@@ -36,8 +34,12 @@ export default {
       })
     }
     else {
-      Vue.util.defineReactive($q, 'iconMapFn', void 0)
-      Vue.util.defineReactive($q, 'iconSet', {})
+      // TODO: Vue 3, will probably need to use `ref`
+      // This is not working: $q.iconSet = reactive({})
+      // Vue.util.defineReactive($q, 'iconMapFn', void 0)
+      // Vue.util.defineReactive($q, 'iconSet', {})
+      $q.iconMapFn = undefined
+      $q.iconSet = {}
 
       this.set(initialSet)
     }

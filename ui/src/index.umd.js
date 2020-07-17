@@ -10,6 +10,8 @@ import * as utils from './utils.js'
 import lang from './lang.js'
 import iconSet from './icon-set.js'
 
+// TODO: Vue 3 Global API Change, we will probably need to expose the plugin and plugin options and let the user call `app.use`
+// Something like: app.use(Quasar.Plugin, Quasar.PluginOptions)
 Vue.use({ install }, {
   components,
   directives,

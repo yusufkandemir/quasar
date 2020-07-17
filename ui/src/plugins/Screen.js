@@ -1,5 +1,3 @@
-import Vue from 'vue'
-
 import { isSSR, fromSSR } from './Platform.js'
 import { listenOpts, noop } from '../utils/event.js'
 import debounce from '../utils/debounce.js'
@@ -162,6 +160,8 @@ export default {
       start()
     }
 
-    Vue.util.defineReactive($q, 'screen', this)
+    // TODO: Vue 3
+    // Vue.util.defineReactive($q, 'screen', this)
+    $q.screen = this
   }
 }
