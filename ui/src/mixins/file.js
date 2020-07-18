@@ -1,3 +1,5 @@
+import { h } from 'vue'
+
 import { stopAndPrevent } from '../utils/event.js'
 import cache from '../utils/cache.js'
 
@@ -167,15 +169,15 @@ export default {
       this.dnd = false
     },
 
-    __getDnd (h, type) {
+    __getDnd (type) {
       if (this.dnd === true) {
         return h('div', {
-          staticClass: `q-${type}__dnd absolute-full`,
-          on: cache(this, 'dnd', {
-            dragenter: stopAndPrevent,
-            dragover: stopAndPrevent,
-            dragleave: this.__onDragLeave,
-            drop: this.__onDrop
+          class: `q-${type}__dnd absolute-full`,
+          ...cache(this, 'dnd', {
+            onDragenter: stopAndPrevent,
+            onDragover: stopAndPrevent,
+            onDragleave: this.__onDragLeave,
+            onDrop: this.__onDrop
           })
         })
       }

@@ -1,3 +1,5 @@
+import { h } from 'vue'
+
 import debounce from '../utils/debounce.js'
 import frameDebounce from '../utils/frame-debounce.js'
 
@@ -421,51 +423,51 @@ export default {
       }
     },
 
-    __padVirtualScroll (h, tag, content) {
+    __padVirtualScroll (tag, content) {
       const paddingSize = this.virtualScrollHorizontal === true ? 'width' : 'height'
 
       return [
         tag === 'tbody'
           ? h(tag, {
-            staticClass: 'q-virtual-scroll__padding',
+            class: 'q-virtual-scroll__padding',
             key: 'before',
             ref: 'before'
           }, [
             h('tr', [
               h('td', {
                 style: { [paddingSize]: `${this.virtualScrollPaddingBefore}px` },
-                attrs: { colspan: '100%' }
+                colspan: '100%'
               })
             ])
           ])
           : h(tag, {
-            staticClass: 'q-virtual-scroll__padding',
+            class: 'q-virtual-scroll__padding',
             key: 'before',
             ref: 'before',
             style: { [paddingSize]: `${this.virtualScrollPaddingBefore}px` }
           }),
 
         h(tag, {
-          staticClass: 'q-virtual-scroll__content',
+          class: 'q-virtual-scroll__content',
           key: 'content',
           ref: 'content'
         }, content),
 
         tag === 'tbody'
           ? h(tag, {
-            staticClass: 'q-virtual-scroll__padding',
+            class: 'q-virtual-scroll__padding',
             key: 'after',
             ref: 'after'
           }, [
             h('tr', [
               h('td', {
                 style: { [paddingSize]: `${this.virtualScrollPaddingAfter}px` },
-                attrs: { colspan: '100%' }
+                colspan: '100%'
               })
             ])
           ])
           : h(tag, {
-            staticClass: 'q-virtual-scroll__padding',
+            class: 'q-virtual-scroll__padding',
             key: 'after',
             ref: 'after',
             style: { [paddingSize]: `${this.virtualScrollPaddingAfter}px` }

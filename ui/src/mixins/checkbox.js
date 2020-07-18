@@ -1,3 +1,5 @@
+import { h } from 'vue'
+
 import DarkMixin from './dark.js'
 import { stopAndPrevent } from '../utils/event.js'
 
@@ -39,6 +41,8 @@ export default {
     disable: Boolean,
     tabindex: [String, Number]
   },
+
+  emits: ['input'],
 
   computed: {
     isTrue () {
@@ -184,8 +188,8 @@ export default {
     }
   },
 
-  render (h) {
-    const inner = this.__getInner(h)
+  render () {
+    const inner = this.__getInner()
 
     this.disable !== true && this.__injectFormInput(
       inner,
@@ -195,8 +199,7 @@ export default {
 
     const child = [
       h('div', {
-        staticClass: `q-${this.type}__inner relative-position no-pointer-events`,
-        class: this.innerClass,
+        class: [`q-${this.type}__inner relative-position no-pointer-events`, this.innerClass],
         style: this.sizeStyle
       }, inner)
     ]
@@ -211,17 +214,17 @@ export default {
 
     label !== void 0 && child.push(
       h('div', {
-        staticClass: `q-${this.type}__label q-anchor--skip`
+        class: `q-${this.type}__label q-anchor--skip`
       }, label)
     )
 
     return h('div', {
       class: this.classes,
-      attrs: this.attrs,
-      on: cache(this, 'inpExt', {
-        click: this.toggle,
-        keydown: this.__onKeydown,
-        keyup: this.__onKeyup
+      ...this.attrs,
+      ...cache(this, 'inpExt', {
+        onClick: this.toggle,
+        onKeydown: this.__onKeydown,
+        onKeyup: this.__onKeyup
       })
     }, child)
   }

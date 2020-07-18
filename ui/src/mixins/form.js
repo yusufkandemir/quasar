@@ -1,3 +1,5 @@
+import { h, mergeProps } from 'vue'
+
 export default {
   props: {
     name: String
@@ -16,11 +18,12 @@ export default {
   methods: {
     __injectFormInput (child, action, className) {
       child[action](
-        this.$createElement('input', {
-          staticClass: 'hidden',
-          class: className,
-          attrs: this.formAttrs,
-          domProps: this.formDomProps
+        h('input', {
+          ...mergeProps(
+            { class: ['hidden', className] },
+            this.formAttrs,
+            this.formDomProps
+          )
         })
       )
     }

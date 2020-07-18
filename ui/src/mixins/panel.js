@@ -1,23 +1,24 @@
-import Vue from 'vue'
+import { defineComponent, h, KeepAlive, Transition } from 'vue'
 
 import TouchSwipe from '../directives/TouchSwipe.js'
 
+// TODO: Vue 3, review, uses ListenersMixin
 import ListenersMixin from './listeners.js'
 
 import { stop } from '../utils/event.js'
 import { slot } from '../utils/slot.js'
 import cache from '../utils/cache.js'
 
-const PanelWrapper = Vue.extend({
+const PanelWrapper = defineComponent({
   name: 'QTabPanelWrapper',
 
-  render (h) {
+  render () {
     return h('div', {
-      staticClass: 'q-panel scroll',
-      attrs: { role: 'tabpanel' },
+      class: 'q-panel scroll',
+      role: 'tabpanel',
       // stop propagation of content emitted @input
       // which would tamper with Panel's model
-      on: cache(this, 'stop', { input: stop })
+      ...cache(this, 'stop', { onInput: stop })
     }, slot(this, 'default'))
   }
 })
@@ -202,7 +203,7 @@ export const PanelParentMixin = {
       return true
     },
 
-    __getPanelContent (h) {
+    __getPanelContent () {
       if (this.panels.length === 0) {
         return
       }
@@ -213,38 +214,36 @@ export const PanelParentMixin = {
 
       const content = this.keepAlive === true
         ? [
-          h('keep-alive', [
+          h(KeepAlive, () => [
             h(PanelWrapper, {
               key: this.contentKey
-            }, [ panel ])
+            }, () => [ panel ])
           ])
         ]
         : [
           h('div', {
-            staticClass: 'q-panel scroll',
+            class: 'q-panel scroll',
             key: this.contentKey,
-            attrs: { role: 'tabpanel' },
+            role: 'tabpanel',
             // stop propagation of content emitted @input
             // which would tamper with Panel's model
-            on: cache(this, 'stop', { input: stop })
+            ...cache(this, 'stop', { onInput: stop })
           }, [ panel ])
         ]
 
       return this.animated === true
         ? [
-          h('transition', {
-            props: {
-              name: this.panelTransition
-            }
-          }, content)
+          h(Transition, {
+            name: this.panelTransition
+          }, () => content)
         ]
         : content
     }
   },
 
-  render (h) {
+  render () {
     this.panels = slot(this, 'default', [])
-    return this.__renderPanels(h)
+    return this.__renderPanels()
   }
 }
 

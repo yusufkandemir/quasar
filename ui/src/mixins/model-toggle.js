@@ -3,6 +3,7 @@ import { isSSR } from '../plugins/Platform.js'
 import TimeoutMixin from './timeout.js'
 import ListenersMixin from './listeners.js'
 
+// TODO: Vue 3, review, uses ListenersMixin
 export default {
   mixins: [ TimeoutMixin, ListenersMixin ],
 
@@ -12,6 +13,8 @@ export default {
       default: void 0
     }
   },
+
+  emits: ['input', 'before-show', 'show', 'before-hide', 'hide'],
 
   data () {
     return {

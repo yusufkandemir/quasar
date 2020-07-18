@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { createApp } from 'vue'
 
 import { isSSR } from '../plugins/Platform.js'
 import { getBodyFullscreenElement } from '../utils/dom.js'
@@ -60,6 +60,7 @@ function isOnGlobalDialog (vm) {
   return false
 }
 
+// TODO: Vue 3 has portals (named as <teleport>), we can consider replacing
 const Portal = {
   inheritAttrs: false,
 
@@ -118,6 +119,7 @@ const Portal = {
       }
     },
 
+    // TODO: Vue 3
     __preparePortal () {
       if (this.__portal === void 0) {
         this.__portal = this.__onGlobalDialog === true
@@ -125,24 +127,24 @@ const Portal = {
             $el: this.$el,
             $refs: this.$refs
           }
-          : new Vue({
+          : createApp({
             name: 'QPortal',
             parent: this,
 
             inheritAttrs: false,
 
-            render: h => this.__renderPortal(h),
+            render: () => this.__renderPortal(),
 
             components: this.$options.components,
             directives: this.$options.directives
-          }).$mount()
+          }).mount(/* FIXME: This needs a container to mount */)
       }
     }
   },
 
-  render (h) {
+  render () {
     if (this.__onGlobalDialog === true) {
-      return this.__renderPortal(h)
+      return this.__renderPortal()
     }
 
     if (this.__portal !== void 0) {
