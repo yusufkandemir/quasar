@@ -1,4 +1,4 @@
-import Vue from 'vue'
+// TODO: Vue 3, review
 
 import { isSSR, fromSSR } from './Platform.js'
 import extend from '../utils/extend.js'
@@ -270,13 +270,13 @@ function triggerMeta () {
 }
 
 export default {
-  install ({ queues }) {
+  install ({ app, queues }) {
     if (isSSR === true) {
-      Vue.prototype.$getMetaHTML = app => {
+      app.config.globalProperties.$getMetaHTML = app => {
         return (html, ctx) => getServerMeta(app, html, ctx)
       }
 
-      Vue.mixin({ beforeCreate })
+      app.mixin({ beforeCreate })
 
       queues.server.push((_, ctx) => {
         ctx.ssr.Q_HTML_ATTRS += ' %%Q_HTML_ATTRS%%'
@@ -290,7 +290,7 @@ export default {
     else {
       ssrTakeover = fromSSR
 
-      Vue.mixin({
+      app.mixin({
         beforeCreate,
         created () {
           if (hasMeta(this) === true) {

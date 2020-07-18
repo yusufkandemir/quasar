@@ -17,9 +17,12 @@ function openWindow (url, reject) {
       })
     }
   }
+  // TODO: Vue 3
+  /*
   else if (Vue.prototype.$q.electron !== void 0) {
     return Vue.prototype.$q.electron.shell.openExternal(url)
   }
+  */
 
   const win = open(url, '_blank')
 

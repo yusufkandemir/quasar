@@ -61,12 +61,8 @@ import { addPreFetchHooks } from './client-prefetch.js'
 <% } %>
 
 <% if (ctx.mode.electron && electron.nodeIntegration === true) { %>
+// Used below, in start function
 import electron from 'electron'
-// Vue.prototype.$q.electron = electron
-<% } %>
-
-<% if (ctx.dev) { %>
-// Vue.config.devtools = true
 <% } %>
 
 <% if (ctx.dev) { %>
@@ -91,6 +87,14 @@ const addPublicPath = url => (publicPath + url).replace(doubleSlashRE, '/')
 
 async function start () {
   const { app, <%= store ? 'store, ' : '' %>router } = await createApp()
+
+  <% if (ctx.dev) { %>
+  app.config.devtools = true
+  <% } %>
+
+  <% if (ctx.mode.electron && electron.nodeIntegration === true) { %>
+  app.config.globalProperties.$q.electron = electron
+  <% } %>
 
   // TODO: Vue 3 SSR
   <% if (ctx.mode.ssr && store && ssr.manualHydration !== true) { %>
@@ -179,9 +183,9 @@ async function start () {
 
     <% if (ctx.mode.cordova) { %>
     document.addEventListener('deviceready', () => {
-    // Vue.prototype.$q.cordova = window.cordova
+      app.config.globalProperties.$q.cordova = window.cordova
     <% } else if (ctx.mode.capacitor) { %>
-    // Vue.prototype.$q.capacitor = window.Capacitor
+      app.config.globalProperties.$q.capacitor = window.Capacitor
     <% } %>
 
     <% if (!ctx.mode.bex) { %>
@@ -201,7 +205,7 @@ async function start () {
       window.QBexInit = function (shell) {
         shell.connect(bridge => {
           window.QBexBridge = bridge
-          // Vue.prototype.$q.bex = window.QBexBridge
+          app.config.globalProperties.$q.bex = window.QBexBridge
           vApp = app.mount(app.el)
         })
       }

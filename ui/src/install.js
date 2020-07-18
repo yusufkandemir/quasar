@@ -62,7 +62,7 @@ export default function (app, opts = {}) {
   })
 
   if (opts.plugins) {
-    const param = { $q, queues, cfg }
+    const param = { app, $q, queues, cfg }
     Object.keys(opts.plugins).forEach(key => {
       const p = opts.plugins[key]
       if (typeof p.install === 'function' && autoInstalled.includes(p) === false) {
