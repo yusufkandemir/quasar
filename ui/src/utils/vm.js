@@ -1,3 +1,5 @@
+// TODO: Vue 3, review
+
 export function getVmOfNode (el) {
   for (let node = el; node !== null; node = node.parentNode) {
     // node.__vue__ can be null if the instance was destroyed

@@ -9,6 +9,8 @@ export default function cache (vm, key, obj) {
     : vm[k]
 }
 
+// TODO: Vue 3 reactivity system allows dynamic properties, but IE11 build will not.
+// Discuss if we still need IE11 support, if not we can refactor this
 export function getPropCacheMixin (propName, proxyPropName) {
   return {
     data () {
