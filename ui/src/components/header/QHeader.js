@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { defineComponent, h } from 'vue'
 
 import QResizeObserver from '../resize-observer/QResizeObserver.js'
 
@@ -8,13 +8,14 @@ import { uniqueSlot } from '../../utils/slot.js'
 import { stop } from '../../utils/event.js'
 import cache from '../../utils/cache.js'
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QHeader',
 
   mixins: [ ListenersMixin ],
 
   inject: {
     layout: {
+      from: 'layout',
       default () {
         console.error('QHeader needs to be child of QLayout')
       }
@@ -39,6 +40,8 @@ export default Vue.extend({
       default: 50
     }
   },
+
+  emits: ['reveal', 'focusin'],
 
   data () {
     return {
@@ -126,34 +129,34 @@ export default Vue.extend({
 
     onEvents () {
       return {
-        ...this.qListeners,
-        focusin: this.__onFocusin,
-        input: stop
+        // TODO: Vue 3, ListenersMixin
+        // ...this.qListeners,
+        onFocusin: this.__onFocusin,
+        onInput: stop
       }
     }
   },
 
-  render (h) {
+  render () {
     const child = uniqueSlot(this, 'default', [])
 
     this.elevated === true && child.push(
       h('div', {
-        staticClass: 'q-layout__shadow absolute-full overflow-hidden no-pointer-events'
+        class: 'q-layout__shadow absolute-full overflow-hidden no-pointer-events'
       })
     )
 
     child.push(
       h(QResizeObserver, {
-        props: { debounce: 0 },
-        on: cache(this, 'resize', { resize: this.__onResize })
+        debounce: 0,
+        onResize: cache(this, 'resize', this.__onResize)
       })
     )
 
     return h('header', {
-      staticClass: 'q-header q-layout__section--marginal',
-      class: this.classes,
+      class: ['q-header q-layout__section--marginal', this.classes],
       style: this.style,
-      on: this.onEvents
+      ...this.onEvents
     }, child)
   },
 

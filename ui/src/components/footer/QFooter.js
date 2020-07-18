@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { defineComponent, h } from 'vue'
 
 import { onSSR } from '../../plugins/Platform.js'
 
@@ -10,13 +10,14 @@ import { mergeSlot } from '../../utils/slot.js'
 import { stop } from '../../utils/event.js'
 import cache from '../../utils/cache.js'
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QFooter',
 
   mixins: [ ListenersMixin ],
 
   inject: {
     layout: {
+      from: 'layout',
       default () {
         console.error('QFooter needs to be child of QLayout')
       }
@@ -37,6 +38,8 @@ export default Vue.extend({
       default: 50
     }
   },
+
+  emits: ['reveal', 'focusin'],
 
   data () {
     return {
@@ -140,32 +143,32 @@ export default Vue.extend({
 
     onEvents () {
       return {
-        ...this.qListeners,
-        focusin: this.__onFocusin,
-        input: stop
+        // TODO: Vue 3, uses ListenersMixin
+        // ...this.qListeners,
+        onFocusin: this.__onFocusin,
+        onInput: stop
       }
     }
   },
 
-  render (h) {
+  render () {
     const child = mergeSlot([
       h(QResizeObserver, {
-        props: { debounce: 0 },
-        on: cache(this, 'resize', { resize: this.__onResize })
+        debounce: 0,
+        ...cache(this, 'resize', { onResize: this.__onResize })
       })
     ], this, 'default')
 
     this.elevated === true && child.push(
       h('div', {
-        staticClass: 'q-layout__shadow absolute-full overflow-hidden no-pointer-events'
+        class: 'q-layout__shadow absolute-full overflow-hidden no-pointer-events'
       })
     )
 
     return h('footer', {
-      staticClass: 'q-footer q-layout__section--marginal',
-      class: this.classes,
+      class: ['q-footer q-layout__section--marginal', this.classes],
       style: this.style,
-      on: this.onEvents
+      ...this.onEvents
     }, child)
   },
 

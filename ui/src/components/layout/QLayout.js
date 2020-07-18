@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { defineComponent, h } from 'vue'
 
 import { onSSR } from '../../plugins/Platform.js'
 
@@ -11,7 +11,7 @@ import { getScrollbarWidth } from '../../utils/scroll.js'
 import { mergeSlot } from '../../utils/slot.js'
 import cache from '../../utils/cache.js'
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QLayout',
 
   mixins: [ ListenersMixin ],
@@ -30,6 +30,8 @@ export default Vue.extend({
       validator: v => /^(h|l)h(h|r) lpr (f|l)f(f|r)$/.test(v.toLowerCase())
     }
   },
+
+  emits: ['resize', 'scroll', 'scroll-height'],
 
   data () {
     return {
@@ -116,34 +118,35 @@ export default Vue.extend({
     this.instances = {}
   },
 
-  render (h) {
+  render () {
     const layout = h('div', {
       class: this.classes,
-      style: this.style,
-      on: { ...this.qListeners }
+      style: this.style
+      // TODO: Vue 3, see ListenersMixin
+      // on: { ...this.qListeners }
     }, mergeSlot([
       h(QScrollObserver, {
-        on: cache(this, 'scroll', { scroll: this.__onPageScroll })
+        onScroll: cache(this, 'scroll', this.__onPageScroll)
       }),
 
       h(QResizeObserver, {
-        on: cache(this, 'resizeOut', { resize: this.__onPageResize })
+        onResize: cache(this, 'resizeOut', this.__onPageResize)
       })
     ], this, 'default'))
 
     return this.container === true
       ? h('div', {
-        staticClass: 'q-layout-container overflow-hidden'
+        class: 'q-layout-container overflow-hidden'
       }, [
         h(QResizeObserver, {
-          on: cache(this, 'resizeIn', { resize: this.__onContainerResize })
+          onResize: cache(this, 'resizeIn', this.__onContainerResize)
         }),
         h('div', {
-          staticClass: 'absolute-full',
+          class: 'absolute-full',
           style: this.targetStyle
         }, [
           h('div', {
-            staticClass: 'scroll',
+            class: 'scroll',
             style: this.targetChildStyle
           }, [ layout ])
         ])

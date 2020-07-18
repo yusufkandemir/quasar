@@ -1,21 +1,24 @@
-import Vue from 'vue'
+import { defineComponent, h } from 'vue'
 
 import ListenersMixin from '../../mixins/listeners.js'
 
 import { slot } from '../../utils/slot.js'
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QPage',
 
   mixins: [ ListenersMixin ],
 
   inject: {
     pageContainer: {
+      from: 'pageContainer',
       default () {
         console.error('QPage needs to be child of QPageContainer')
       }
     },
-    layout: {}
+    layout: {
+      from: 'layout'
+    }
   },
 
   props: {
@@ -55,12 +58,12 @@ export default Vue.extend({
     }
   },
 
-  render (h) {
+  render () {
     return h('main', {
-      staticClass: 'q-page',
       style: this.style,
-      class: this.classes,
-      on: { ...this.qListeners }
+      class: ['q-page', this.classes]
+      // TODO: Vue 3
+      // on: { ...this.qListeners }
     }, slot(this, 'default'))
   }
 })
