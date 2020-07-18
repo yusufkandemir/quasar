@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { createApp, h, Transition } from 'vue'
 
 import QSpinner from '../components/spinner/QSpinner.js'
 import { isSSR } from './Platform.js'
@@ -50,21 +50,19 @@ const Loading = {
       const node = document.createElement('div')
       document.body.appendChild(node)
 
-      vm = new Vue({
+      // TODO: Investigate this if it needs createApp or defineComponent
+      vm = createApp({
         name: 'QLoading',
-
-        el: node,
 
         mounted () {
           preventScroll(true)
         },
 
-        render: (h) => {
-          return h('transition', {
-            props: {
-              name: 'q-transition--fade',
-              appear: true
-            },
+        render: () => {
+          return h(Transition, {
+            name: 'q-transition--fade',
+            appear: true,
+            // TODO: Vue 3
             on: cache(this, 'tr', {
               'after-leave': () => {
                 // might be called to finalize
@@ -77,28 +75,23 @@ const Loading = {
                 }
               }
             })
-          }, [
+          }, () => [
             this.isActive === true ? h('div', {
-              staticClass: 'q-loading fullscreen column flex-center z-max',
               key: props.uid,
-              class: props.customClass.trim()
+              class: ['q-loading fullscreen column flex-center z-max', props.customClass.trim()]
             }, [
               h(props.spinner, {
-                props: {
-                  color: props.spinnerColor,
-                  size: props.spinnerSize
-                }
+                color: props.spinnerColor,
+                size: props.spinnerSize
               }),
               (props.message && h('div', {
                 class: `text-${props.messageColor}`,
-                domProps: {
-                  [props.sanitize === true ? 'textContent' : 'innerHTML']: props.message
-                }
+                [props.sanitize === true ? 'textContent' : 'innerHTML']: props.message
               })) || void 0
             ]) : null
           ])
         }
-      })
+      }).mount(node)
     }, props.delay)
   },
 
@@ -124,7 +117,8 @@ const Loading = {
 }
 
 if (isSSR === false) {
-  Vue.util.defineReactive(Loading, 'isActive', Loading.isActive)
+  // TODO: Find a way to make this still reactive in Vue 3
+  // Vue.util.defineReactive(Loading, 'isActive', Loading.isActive)
 }
 
 export default Loading

@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { createApp, h } from 'vue'
 
 import { isSSR } from './Platform.js'
 import { noop } from '../utils/event.js'
@@ -21,13 +21,18 @@ export default {
       ? { ...cfg.loadingBar }
       : {}
 
-    const bar = $q.loadingBar = new Vue({
+    const container = document.createElement('div')
+    const barApp = createApp({
       name: 'LoadingBar',
-      render: h => h(QAjaxBar, {
+      render: () => h(QAjaxBar, {
         ref: 'bar',
         props
       })
-    }).$mount().$refs.bar
+    })
+    barApp.config.globalProperties.$q = $q
+
+    const barInstance = barApp.mount(container)
+    const bar = $q.loadingBar = barInstance.$refs.bar
 
     Object.assign(this, {
       start: speed => {
@@ -45,8 +50,9 @@ export default {
       }
     })
 
-    Vue.util.defineReactive(this, 'isActive', this.isActive)
-    Vue.util.defineReactive(bar, 'isActive', this.isActive)
+    // TODO: Find a way to make these reactive in Vue 3
+    // Vue.util.defineReactive(this, 'isActive', this.isActive)
+    // Vue.util.defineReactive(bar, 'isActive', this.isActive)
     bar.setDefaults = this.setDefaults
 
     document.body.appendChild(bar.$parent.$el)

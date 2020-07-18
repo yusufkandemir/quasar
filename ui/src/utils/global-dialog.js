@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { createApp, h, reactive } from 'vue'
 
 import { isSSR } from '../plugins/Platform.js'
 
@@ -8,6 +8,7 @@ const ssrAPI = {
   hide: () => ssrAPI
 }
 
+// TODO: Vue 3, review
 export default function (DefaultComponent) {
   return ({ className, class: klass, style, component, root, parent, ...props }) => {
     if (isSSR === true) { return ssrAPI }
@@ -60,7 +61,7 @@ export default function (DefaultComponent) {
       }
     }
 
-    Vue.observable(props)
+    props = reactive(props)
 
     const DialogComponent = component !== void 0
       ? component
@@ -70,13 +71,13 @@ export default function (DefaultComponent) {
       ? props
       : void 0
 
-    let vm = new Vue({
+    let vm = createApp({
       name: 'QGlobalDialog',
 
-      el: node,
+      // TODO: Find Vue 3 equivalent
       parent: parent === void 0 ? root : parent,
 
-      render (h) {
+      render () {
         return h(DialogComponent, {
           ref: 'dialog',
           props,
@@ -88,7 +89,7 @@ export default function (DefaultComponent) {
       mounted () {
         this.$refs.dialog.show()
       }
-    })
+    }).mount(node)
 
     return API
   }

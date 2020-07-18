@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { createApp, h, TransitionGroup } from 'vue'
 
 import QAvatar from '../components/avatar/QAvatar.js'
 import QIcon from '../components/icon/QIcon.js'
@@ -148,17 +148,16 @@ const Notifications = {
       })
 
       notif.actions = actions.map(({ handler, noDismiss, ...item }) => ({
-        props: { flat: true, ...item },
-        on: {
-          click: typeof handler === 'function'
-            ? () => {
-              handler()
-              noDismiss !== true && notif.meta.close()
-            }
-            : () => {
-              notif.meta.close()
-            }
-        }
+        flat: true,
+        ...item,
+        onClick: typeof handler === 'function'
+          ? () => {
+            handler()
+            noDismiss !== true && notif.meta.close()
+          }
+          : () => {
+            notif.meta.close()
+          }
       }))
 
       if (notif.multiLine === void 0) {
@@ -190,7 +189,7 @@ const Notifications = {
             notif.caption,
             notif.multiline
           ].concat(
-            notif.actions.map(a => `${a.props.label}*${a.props.icon}`)
+            notif.actions.map(a => `${a.label}*${a.icon}`)
           ).join('|')
         }
 
@@ -303,35 +302,31 @@ const Notifications = {
     }
   },
 
-  render (h) {
-    return h('div', { staticClass: 'q-notifications' }, positionList.map(pos => {
-      return h('transition-group', {
+  render () {
+    return h('div', { class: 'q-notifications' }, positionList.map(pos => {
+      return h(TransitionGroup, {
         key: pos,
-        staticClass: positionClass[pos],
+        class: positionClass[pos],
         tag: 'div',
-        props: {
-          name: `q-notification--${pos}`,
-          mode: 'out-in'
-        }
-      }, this.notifs[pos].map(notif => {
+        name: `q-notification--${pos}`,
+        mode: 'out-in'
+      }, () => this.notifs[pos].map(notif => {
         let msgChild
 
         const meta = notif.meta
-        const msgData = { staticClass: 'q-notification__message col' }
+        const msgData = { class: 'q-notification__message col' }
 
         if (notif.html === true) {
-          msgData.domProps = {
-            innerHTML: notif.caption
-              ? `<div>${notif.message}</div><div class="q-notification__caption">${notif.caption}</div>`
-              : notif.message
-          }
+          msgData.innerHTML = notif.caption
+            ? `<div>${notif.message}</div><div class="q-notification__caption">${notif.caption}</div>`
+            : notif.message
         }
         else {
-          const msgNode = [ notif.message ]
+          const msgNode = [notif.message]
           msgChild = notif.caption
             ? [
               h('div', msgNode),
-              h('div', { staticClass: 'q-notification__caption' }, [ notif.caption ])
+              h('div', { class: 'q-notification__caption' }, [notif.caption])
             ]
             : msgNode
         }
@@ -342,16 +337,16 @@ const Notifications = {
           if (notif.icon) {
             mainChild.push(
               h(QIcon, {
-                staticClass: 'q-notification__icon',
-                attrs: { role: 'img' },
-                props: { name: notif.icon }
+                class: 'q-notification__icon',
+                role: 'img',
+                name: notif.icon
               })
             )
           }
           else if (notif.avatar) {
             mainChild.push(
-              h(QAvatar, { staticClass: 'q-notification__avatar col-auto' }, [
-                h('img', { attrs: { src: notif.avatar, 'aria-hidden': 'true' } })
+              h(QAvatar, { class: 'q-notification__avatar col-auto' }, () => [
+                h('img', { src: notif.avatar, 'aria-hidden': 'true' })
               ])
             )
           }
@@ -362,40 +357,38 @@ const Notifications = {
         )
 
         const child = [
-          h('div', { staticClass: meta.contentClass }, mainChild)
+          h('div', { class: meta.contentClass }, mainChild)
         ]
 
         notif.progress === true && child.push(
           h('div', {
             key: `${meta.uid}|p|${meta.badge}`,
-            staticClass: 'q-notification__progress',
             style: meta.progressStyle,
-            class: notif.progressClass
+            class: ['q-notification__progress', notif.progressClass]
           })
         )
 
         notif.actions !== void 0 && child.push(
           h('div', {
-            staticClass: meta.actionsClass
-          }, notif.actions.map(a => h(QBtn, { props: a.props, on: a.on })))
+            class: meta.actionsClass
+          }, notif.actions.map(action => h(QBtn, { ...action })))
         )
 
         meta.badge > 1 && child.push(
           h('div', {
             key: `${meta.uid}|${meta.badge}`,
-            staticClass: meta.badgeStaticClass,
-            style: notif.badgeStyle,
-            class: notif.badgeClass
-          }, [ meta.badge ])
+            class: [meta.badgeStaticClass, notif.badgeClass],
+            style: notif.badgeStyle
+          }, [meta.badge])
         )
 
         return h('div', {
           ref: `notif_${meta.uid}`,
           key: meta.uid,
-          staticClass: meta.staticClass,
-          attrs
+          class: meta.staticClass,
+          ...attrs
         }, [
-          h('div', { staticClass: meta.wrapperClass }, child)
+          h('div', { class: meta.wrapperClass }, child)
         ])
       }))
     }))
@@ -457,7 +450,11 @@ export default {
     const node = document.createElement('div')
     document.body.appendChild(node)
 
-    this.__vm = new Vue(Notifications)
-    this.__vm.$mount(node)
+    // TODO: Vue 3
+    const app = createApp(Notifications)
+    app.config.globalProperties.$q = $q
+    const vm = app.mount(node)
+
+    this.__vm = vm
   }
 }
