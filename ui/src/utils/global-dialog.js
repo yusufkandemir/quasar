@@ -71,7 +71,7 @@ export default function (DefaultComponent) {
       ? props
       : void 0
 
-    let vm = createApp({
+    const dialogApp = createApp({
       name: 'QGlobalDialog',
 
       // TODO: Find Vue 3 equivalent
@@ -89,7 +89,10 @@ export default function (DefaultComponent) {
       mounted () {
         this.$refs.dialog.show()
       }
-    }).mount(node)
+    })
+    dialogApp.config.globalProperties.$q = $q
+
+    let vm = dialogApp.mount(node)
 
     return API
   }
