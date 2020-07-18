@@ -150,9 +150,13 @@ function parseMeta (component, meta) {
     }
   }
 
+  // TODO: Vue 3, find an alternative way
+  console.log(component.$children)
+  /*
   component.$children.forEach(child => {
     parseMeta(child, meta)
   })
+  */
 }
 
 function updateClient () {
