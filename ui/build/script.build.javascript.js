@@ -175,6 +175,7 @@ function addExtension (filename, ext = 'min') {
   return `${filename.slice(0, insertionPoint)}.${ext}${filename.slice(insertionPoint)}`
 }
 
+// TODO: Vue 3, review. Vue 3 doesn't have a default export, we might need to change this logic.
 function injectVueRequirement (code) {
   const index = code.indexOf(`Vue = Vue && Vue.hasOwnProperty('default') ? Vue['default'] : Vue`)
 
