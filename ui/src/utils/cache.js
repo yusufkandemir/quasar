@@ -4,7 +4,7 @@ export default function cache (vm, key, obj) {
   if (isSSR === true) return obj
 
   const k = `__qcache_${key}`
-  return vm[k] === void 0
+  return !(k in vm) || vm[k] === void 0
     ? (vm[k] = obj)
     : vm[k]
 }
