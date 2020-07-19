@@ -1,14 +1,14 @@
-import Vue from 'vue'
+import { defineComponent, h } from 'vue'
 
 import ListenersMixin from '../../mixins/listeners.js'
 
 import { stopAndPrevent } from '../../utils/event.js'
 import { slot } from '../../utils/slot.js'
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QForm',
 
-  mixins: [ ListenersMixin ],
+  mixins: [ListenersMixin],
 
   props: {
     autofocus: Boolean,
@@ -160,7 +160,7 @@ export default Vue.extend({
     }
   },
 
-  render (h) {
+  render () {
     return h('form', {
       staticClass: 'q-form',
       on: this.onEvents
