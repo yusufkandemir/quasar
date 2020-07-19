@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { defineComponent, h } from 'vue'
 
 import QField from '../field/QField.js'
 
@@ -10,7 +10,7 @@ import ListenersMixin from '../../mixins/listeners.js'
 
 import { stop } from '../../utils/event.js'
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QInput',
 
   mixins: [
@@ -23,7 +23,7 @@ export default Vue.extend({
   ],
 
   props: {
-    value: { required: false },
+    modelValue: { required: false },
 
     shadowText: String,
 
@@ -40,8 +40,10 @@ export default Vue.extend({
     inputStyle: [Array, String, Object]
   },
 
+  emits: ['update:modelValue', 'change', 'paste'],
+
   watch: {
-    value (v) {
+    modelValue (v) {
       if (this.hasMask === true) {
         if (this.stopValueWatcher === true) {
           this.stopValueWatcher = false
@@ -108,30 +110,31 @@ export default Vue.extend({
     },
 
     onEvents () {
-      const on = {
-        ...this.qListeners,
-        input: this.__onInput,
-        paste: this.__onPaste,
+      const listeners = {
+        // TODO: Vue 3, uses ListenersMixin
+        // ...this.qListeners,
+        onInput: this.__onInput,
+        onPaste: this.__onPaste,
         // Safari < 10.2 & UIWebView doesn't fire compositionend when
         // switching focus before confirming composition choice
         // this also fixes the issue where some browsers e.g. iOS Chrome
         // fires "change" instead of "input" on autocomplete.
-        change: this.__onChange,
-        blur: this.__onFinishEditing,
-        focus: stop
+        onChange: this.__onChange,
+        onBlur: this.__onFinishEditing,
+        onFocus: stop
       }
 
-      on.compositionstart = on.compositionupdate = on.compositionend = this.__onComposition
+      listeners.onCompositionstart = listeners.onCompositionupdate = listeners.onCompositionend = this.__onComposition
 
       if (this.hasMask === true) {
-        on.keydown = this.__onMaskedKeydown
+        listeners.onKeydown = this.__onMaskedKeydown
       }
 
       if (this.autogrow === true) {
-        on.animationend = this.__adjustHeight
+        listeners.onAnimationend = this.__adjustHeight
       }
 
-      return on
+      return listeners
     },
 
     inputAttrs () {
@@ -189,7 +192,7 @@ export default Vue.extend({
       }
 
       if (this.type === 'file') {
-        this.$emit('input', e.target.files)
+        this.$emit('update:modelValue', e.target.files)
         return
       }
 
@@ -216,9 +219,9 @@ export default Vue.extend({
           delete this.tempValue
         }
 
-        if (this.value !== val) {
+        if (this.modelValue !== val) {
           stopWatcher === true && (this.stopValueWatcher = true)
-          this.$emit('input', val)
+          this.$emit('update:modelValue', val)
         }
 
         this.emitValueFn = void 0
@@ -287,29 +290,33 @@ export default Vue.extend({
         : (this.innerValue !== void 0 ? this.innerValue : '')
     },
 
-    __getShadowControl (h) {
+    __getShadowControl () {
       return h('div', {
-        staticClass: 'q-field__native q-field__shadow absolute-full no-pointer-events'
+        class: 'q-field__native q-field__shadow absolute-full no-pointer-events'
       }, [
-        h('span', { staticClass: 'invisible' }, this.__getCurValue()),
+        h('span', { class: 'invisible' }, this.__getCurValue()),
         h('span', this.shadowText)
       ])
     },
 
-    __getControl (h) {
+    __getControl () {
       return h(this.isTextarea === true ? 'textarea' : 'input', {
         ref: 'input',
-        staticClass: 'q-field__native q-placeholder',
+        class: ['q-field__native q-placeholder', this.inputClass],
         style: this.inputStyle,
-        class: this.inputClass,
-        attrs: this.inputAttrs,
-        on: this.onEvents,
-        domProps: this.type !== 'file'
-          ? { value: this.__getCurValue() }
-          : this.formDomProps
+        ...this.inputAttrs,
+        ...this.onEvents,
+        ...(
+          this.type !== 'file'
+            ? { modelValue: this.__getCurValue() }
+            : this.formDomProps
+        )
       })
     }
   },
+
+  // TODO: Vue 3, render function from the mixin somehow can't make it into here
+  // see: https://github.com/vuejs/vue-next/issues/1630
 
   mounted () {
     // textarea only

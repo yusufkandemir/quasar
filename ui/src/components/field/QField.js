@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { defineComponent, h, Transition } from 'vue'
 
 import { fromSSR } from '../../plugins/Platform.js'
 
@@ -17,7 +17,7 @@ function getTargetUid (val) {
   return val === void 0 ? `f_${uid()}` : val
 }
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QField',
 
   mixins: [ DarkMixin, ValidateMixin, AttrsMixin ],
@@ -70,6 +70,8 @@ export default Vue.extend({
     maxValues: [Number, String] // private, do not add to JSON; internally needed by QSelect
   },
 
+  emits: ['update:modelValue', 'clear', 'focus', 'blur', 'popup-show', 'popup-hide'],
+
   data () {
     return {
       focused: false,
@@ -95,7 +97,7 @@ export default Vue.extend({
     },
 
     hasValue () {
-      const value = this.__getControl === void 0 ? this.value : this.innerValue
+      const value = ('__getControl' in this && this.__getControl !== void 0) ? this.modelValue : this.innerValue
 
       return value !== void 0 &&
         value !== null &&
@@ -104,9 +106,9 @@ export default Vue.extend({
 
     computedCounter () {
       if (this.counter !== false) {
-        const len = typeof this.value === 'string' || typeof this.value === 'number'
-          ? ('' + this.value).length
-          : (Array.isArray(this.value) === true ? this.value.length : 0)
+        const len = typeof this.modelValue === 'string' || typeof this.modelValue === 'number'
+          ? ('' + this.modelValue).length
+          : (Array.isArray(this.modelValue) === true ? this.modelValue.length : 0)
 
         const max = this.maxlength !== void 0
           ? this.maxlength
@@ -155,7 +157,7 @@ export default Vue.extend({
         'q-field--item-aligned q-item-type': this.itemAligned,
         'q-field--dark': this.isDark,
 
-        'q-field--auto-height': this.__getControl === void 0,
+        'q-field--auto-height': (!('__getControl' in this) || this.__getControl === void 0),
 
         'q-field--with-bottom': this.hideBottomSpace !== true && this.shouldRenderBottom === true,
         'q-field--error': this.hasError,
@@ -213,7 +215,7 @@ export default Vue.extend({
         editable: this.editable,
         focused: this.focused,
         floatingLabel: this.floatingLabel,
-        value: this.value,
+        value: this.modelValue,
         emitValue: this.__emitValue
       }
     },
@@ -262,128 +264,126 @@ export default Vue.extend({
       }
     },
 
-    __getContent (h) {
+    __getContent () {
       const node = []
 
-      this.$scopedSlots.prepend !== void 0 && node.push(
+      this.$slots.prepend !== void 0 && node.push(
         h('div', {
-          staticClass: 'q-field__prepend q-field__marginal row no-wrap items-center',
+          class: 'q-field__prepend q-field__marginal row no-wrap items-center',
           key: 'prepend',
-          on: this.slotsEvents
-        }, this.$scopedSlots.prepend())
+          ...this.slotsEvents
+        }, this.$slots.prepend())
       )
 
       node.push(
         h('div', {
-          staticClass: 'q-field__control-container col relative-position row no-wrap q-anchor--skip'
-        }, this.__getControlContainer(h))
+          class: 'q-field__control-container col relative-position row no-wrap q-anchor--skip'
+        }, this.__getControlContainer())
       )
 
-      this.$scopedSlots.append !== void 0 && node.push(
+      this.$slots.append !== void 0 && node.push(
         h('div', {
-          staticClass: 'q-field__append q-field__marginal row no-wrap items-center',
+          class: 'q-field__append q-field__marginal row no-wrap items-center',
           key: 'append',
-          on: this.slotsEvents
-        }, this.$scopedSlots.append())
+          ...this.slotsEvents
+        }, this.$slots.append())
       )
 
       this.hasError === true && this.noErrorIcon === false && node.push(
-        this.__getInnerAppendNode(h, 'error', [
-          h(QIcon, { props: { name: this.$q.iconSet.field.error, color: 'negative' } })
+        this.__getInnerAppendNode('error', [
+          h(QIcon, { name: this.$q.iconSet.field.error, color: 'negative' })
         ])
       )
 
       if (this.loading === true || this.innerLoading === true) {
         node.push(
           this.__getInnerAppendNode(
-            h,
             'inner-loading-append',
-            this.$scopedSlots.loading !== void 0
-              ? this.$scopedSlots.loading()
-              : [ h(QSpinner, { props: { color: this.color } }) ]
+            this.$slots.loading !== void 0
+              ? this.$slots.loading()
+              : [ h(QSpinner, { color: this.color }) ]
           )
         )
       }
       else if (this.clearable === true && this.hasValue === true && this.editable === true) {
         node.push(
-          this.__getInnerAppendNode(h, 'inner-clearable-append', [
+          this.__getInnerAppendNode('inner-clearable-append', [
             h(QIcon, {
-              staticClass: 'q-field__focusable-action',
-              props: { tag: 'button', name: this.clearIcon || this.$q.iconSet.field.clear },
-              attrs: { tabindex: 0, type: 'button' },
-              on: this.clearableEvents
+              class: 'q-field__focusable-action',
+              tag: 'button',
+              name: this.clearIcon || this.$q.iconSet.field.clear,
+              tabindex: 0,
+              type: 'button',
+              ...this.clearableEvents
             })
           ])
         )
       }
 
-      this.__getInnerAppend !== void 0 && node.push(
-        this.__getInnerAppendNode(h, 'inner-append', this.__getInnerAppend(h))
+      ('__getInnerAppend' in this && this.__getInnerAppend !== void 0) && node.push(
+        this.__getInnerAppendNode('inner-append', this.__getInnerAppend())
       )
 
-      this.__getControlChild !== void 0 && node.push(
-        this.__getControlChild(h)
+      ('__getControlChild' in this && this.__getControlChild !== void 0) && node.push(
+        this.__getControlChild()
       )
 
       return node
     },
 
-    __getControlContainer (h) {
+    __getControlContainer () {
       const node = []
 
       this.prefix !== void 0 && this.prefix !== null && node.push(
         h('div', {
-          staticClass: 'q-field__prefix no-pointer-events row items-center'
+          class: 'q-field__prefix no-pointer-events row items-center'
         }, [ this.prefix ])
       )
 
       if (this.hasShadow === true && this.__getShadowControl !== void 0) {
         node.push(
-          this.__getShadowControl(h)
+          this.__getShadowControl()
         )
       }
 
-      if (this.__getControl !== void 0) {
-        node.push(this.__getControl(h))
+      if ('__getControl' in this && this.__getControl !== void 0) {
+        node.push(this.__getControl())
       }
       // internal usage only:
-      else if (this.$scopedSlots.rawControl !== void 0) {
-        node.push(this.$scopedSlots.rawControl())
+      else if (this.$slots.rawControl !== void 0) {
+        node.push(this.$slots.rawControl())
       }
-      else if (this.$scopedSlots.control !== void 0) {
+      else if (this.$slots.control !== void 0) {
         node.push(
           h('div', {
             ref: 'target',
-            staticClass: 'q-field__native row',
-            attrs: {
-              ...this.qAttrs,
-              'data-autofocus': this.autofocus
-            }
-          }, this.$scopedSlots.control(this.controlSlotScope))
+            class: 'q-field__native row',
+            ...this.qAttrs,
+            'data-autofocus': this.autofocus
+          }, this.$slots.control(this.controlSlotScope))
         )
       }
 
       this.hasLabel && node.push(
         h('div', {
-          staticClass: 'q-field__label no-pointer-events absolute ellipsis',
-          class: this.labelClass
+          class: ['q-field__label no-pointer-events absolute ellipsis', this.labelClass]
         }, [ slot(this, 'label', this.label) ])
       )
 
       this.suffix !== void 0 && this.suffix !== null && node.push(
         h('div', {
-          staticClass: 'q-field__suffix no-pointer-events row items-center'
+          class: 'q-field__suffix no-pointer-events row items-center'
         }, [ this.suffix ])
       )
 
       return node.concat(
         this.__getDefaultSlot !== void 0
-          ? this.__getDefaultSlot(h)
+          ? this.__getDefaultSlot()
           : slot(this, 'default')
       )
     },
 
-    __getBottom (h) {
+    __getBottom () {
       let msg, key
 
       if (this.hasError === true) {
@@ -407,7 +407,7 @@ export default Vue.extend({
         }
       }
 
-      const hasCounter = this.counter === true || this.$scopedSlots.counter !== void 0
+      const hasCounter = this.counter === true || this.$slots.counter !== void 0
 
       if (this.hideBottomSpace === true && hasCounter === false && msg === void 0) {
         return
@@ -415,30 +415,30 @@ export default Vue.extend({
 
       const main = h('div', {
         key,
-        staticClass: 'q-field__messages col'
+        class: 'q-field__messages col'
       }, msg)
 
       return h('div', {
-        staticClass: 'q-field__bottom row items-start q-field__bottom--' +
+        class: 'q-field__bottom row items-start q-field__bottom--' +
           (this.hideBottomSpace !== true ? 'animated' : 'stale')
       }, [
         this.hideBottomSpace === true
           ? main
-          : h('transition', { props: { name: 'q-transition--field-message' } }, [
+          : h(Transition, { name: 'q-transition--field-message' }, [
             main
           ]),
 
         hasCounter === true
           ? h('div', {
-            staticClass: 'q-field__counter'
-          }, this.$scopedSlots.counter !== void 0 ? this.$scopedSlots.counter() : [ this.computedCounter ])
+            class: 'q-field__counter'
+          }, this.$slots.counter !== void 0 ? this.$slots.counter() : [ this.computedCounter ])
           : null
       ])
     },
 
-    __getInnerAppendNode (h, key, content) {
+    __getInnerAppendNode (key, content) {
       return content === null ? null : h('div', {
-        staticClass: 'q-field__append q-field__marginal row no-wrap items-center q-anchor--skip',
+        class: 'q-field__append q-field__marginal row no-wrap items-center q-anchor--skip',
         key
       }, content)
     },
@@ -500,66 +500,64 @@ export default Vue.extend({
         this.$refs.input.value = null
       }
 
-      this.$emit('input', null)
-      this.$emit('clear', this.value)
+      this.$emit('update:modelValue', null)
+      this.$emit('clear', this.modelValue)
     },
 
     __emitValue (value) {
-      this.$emit('input', value)
+      this.$emit('update:modelValue', value)
     }
   },
 
-  render (h) {
+  render () {
     this.__onPreRender !== void 0 && this.__onPreRender()
     this.__onPostRender !== void 0 && this.$nextTick(this.__onPostRender)
 
     return h('label', {
-      staticClass: 'q-field q-validation-component row no-wrap items-start',
-      class: this.classes,
-      attrs: this.attrs
+      class: ['q-field q-validation-component row no-wrap items-start', this.classes],
+      ...this.attrs
     }, [
-      this.$scopedSlots.before !== void 0 ? h('div', {
-        staticClass: 'q-field__before q-field__marginal row no-wrap items-center',
-        on: this.slotsEvents
-      }, this.$scopedSlots.before()) : null,
+      this.$slots.before !== void 0 ? h('div', {
+        class: 'q-field__before q-field__marginal row no-wrap items-center',
+        ...this.slotsEvents
+      }, this.$slots.before()) : null,
 
       h('div', {
-        staticClass: 'q-field__inner relative-position col self-stretch column justify-center'
+        class: 'q-field__inner relative-position col self-stretch column justify-center'
       }, [
         h('div', {
           ref: 'control',
-          staticClass: 'q-field__control relative-position row no-wrap',
-          class: this.contentClass,
-          attrs: { tabindex: -1 },
-          on: this.controlEvents
-        }, this.__getContent(h)),
+          class: ['q-field__control relative-position row no-wrap', this.contentClass],
+          tabindex: -1,
+          ...this.controlEvents
+        }, this.__getContent()),
 
         this.shouldRenderBottom === true
-          ? this.__getBottom(h)
+          ? this.__getBottom()
           : null
       ]),
 
-      this.$scopedSlots.after !== void 0 ? h('div', {
-        staticClass: 'q-field__after q-field__marginal row no-wrap items-center',
-        on: this.slotsEvents
-      }, this.$scopedSlots.after()) : null
+      this.$slots.after !== void 0 ? h('div', {
+        class: 'q-field__after q-field__marginal row no-wrap items-center',
+        ...this.slotsEvents
+      }, this.$slots.after()) : null
     ])
   },
 
   created () {
     this.__onPreRender !== void 0 && this.__onPreRender()
 
-    this.slotsEvents = { click: prevent }
+    this.slotsEvents = { onClick: prevent }
 
-    this.clearableEvents = { click: this.__clearValue }
+    this.clearableEvents = { onClick: this.__clearValue }
 
-    this.controlEvents = this.__getControlEvents !== void 0
+    this.controlEvents = ('__getControlEvents' in this && this.__getControlEvents !== void 0)
       ? this.__getControlEvents()
       : {
-        focusin: this.__onControlFocusin,
-        focusout: this.__onControlFocusout,
-        'popup-show': this.__onControlPopupShow,
-        'popup-hide': this.__onControlPopupHide
+        onFocusin: this.__onControlFocusin,
+        onFocusout: this.__onControlFocusout,
+        'onPopup-show': this.__onControlPopupShow,
+        'onPopup-hide': this.__onControlPopupHide
       }
   },
 
