@@ -8,6 +8,9 @@
   "scripts": {
     "test": "echo \"No test specified\" && exit 0"
   },
+  "devDependencies": {
+    "module-alias": "^2.2.2"
+  },
   "browserslist": [
     "last 2 Chrome versions",
     "last 2 Firefox versions",

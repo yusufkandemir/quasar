@@ -1,0 +1,4 @@
+{
+  "private": true,
+  "workspaces": ["app", "babel-preset-app", "fastclick", "extras", "ui", "ui/dev"]
+}
