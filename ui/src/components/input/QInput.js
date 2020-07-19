@@ -323,7 +323,7 @@ export default defineComponent({
     this.autogrow === true && this.__adjustHeight()
   },
 
-  beforeDestroy () {
+  beforeUnmount () {
     this.__onFinishEditing()
   }
 })

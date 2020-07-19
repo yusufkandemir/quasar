@@ -167,7 +167,7 @@ export default defineComponent({
     this.__update('offset', this.offset)
   },
 
-  beforeDestroy () {
+  beforeUnmount () {
     if (this.layout.instances.header === this) {
       this.layout.instances.header = void 0
       this.__update('size', 0)

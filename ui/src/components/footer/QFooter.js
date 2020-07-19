@@ -179,7 +179,7 @@ export default defineComponent({
     this.__update('offset', this.offset)
   },
 
-  beforeDestroy () {
+  beforeUnmount () {
     if (this.layout.instances.footer === this) {
       this.layout.instances.footer = void 0
       this.__update('size', 0)

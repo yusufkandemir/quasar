@@ -320,11 +320,11 @@ export default defineComponent({
         )
       }
 
-      ('__getInnerAppend' in this && this.__getInnerAppend !== void 0) && node.push(
+      ;('__getInnerAppend' in this && this.__getInnerAppend !== void 0) && node.push(
         this.__getInnerAppendNode('inner-append', this.__getInnerAppend())
       )
 
-      ('__getControlChild' in this && this.__getControlChild !== void 0) && node.push(
+      ;('__getControlChild' in this && this.__getControlChild !== void 0) && node.push(
         this.__getControlChild()
       )
 
@@ -569,7 +569,7 @@ export default defineComponent({
     this.autofocus === true && this.focus()
   },
 
-  beforeDestroy () {
+  beforeUnmount () {
     clearTimeout(this.focusoutTimer)
   }
 })
