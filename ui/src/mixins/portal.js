@@ -47,7 +47,7 @@ export function closePortals (vm, evt, depth) {
 }
 
 function isOnGlobalDialog (vm) {
-  while (vm !== void 0) {
+  while (vm !== void 0 && vm !== null) {
     if (vm.$options.name === 'QGlobalDialog') {
       return true
     }
@@ -57,6 +57,7 @@ function isOnGlobalDialog (vm) {
 
     vm = vm.$parent
   }
+
   return false
 }
 

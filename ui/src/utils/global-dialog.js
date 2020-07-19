@@ -1,6 +1,7 @@
 import { createApp, h, reactive } from 'vue'
 
 import { isSSR } from '../plugins/Platform.js'
+import { $q } from '../install.js'
 
 const ssrAPI = {
   onOk: () => ssrAPI,
@@ -44,13 +45,13 @@ export default function (DefaultComponent) {
 
     let emittedOK = false
 
-    const on = {
-      ok: data => {
+    const eventListeners = {
+      onOk: data => {
         emittedOK = true
         okFns.forEach(fn => { fn(data) })
       },
 
-      hide: () => {
+      onHide: () => {
         vm.$destroy()
         vm.$el.remove()
         vm = null
@@ -74,15 +75,15 @@ export default function (DefaultComponent) {
     const dialogApp = createApp({
       name: 'QGlobalDialog',
 
-      // TODO: Find Vue 3 equivalent
+      // TODO: Find Vue 3 equivalent, this is not doing anything currently
       parent: parent === void 0 ? root : parent,
 
       render () {
         return h(DialogComponent, {
           ref: 'dialog',
-          props,
-          attrs,
-          on
+          ...props,
+          ...attrs,
+          ...eventListeners
         })
       },
 

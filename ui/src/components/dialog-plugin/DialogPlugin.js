@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { defineComponent, h } from 'vue'
 
 import QDialog from '../dialog/QDialog.js'
 import QBtn from '../btn/QBtn.js'
@@ -19,7 +19,7 @@ import AttrsMixin from '../../mixins/attrs.js'
 
 import cache from '../../utils/cache.js'
 
-export default Vue.extend({
+export default defineComponent({
   name: 'DialogPlugin',
 
   mixins: [ DarkMixin, AttrsMixin ],
@@ -27,6 +27,8 @@ export default Vue.extend({
   inheritAttrs: false,
 
   props: {
+    modelValue: Boolean,
+
     title: String,
     message: String,
     prompt: Object,
@@ -121,36 +123,37 @@ export default Vue.extend({
       this.$refs.dialog.hide()
     },
 
-    getPrompt (h) {
+    getPrompt () {
       return [
         h(QInput, {
-          props: {
-            value: this.prompt.model,
-            type: this.prompt.type,
+          // Begin props
+          value: this.prompt.model,
+          type: this.prompt.type,
 
-            label: this.prompt.label,
-            stackLabel: this.prompt.stackLabel,
+          label: this.prompt.label,
+          stackLabel: this.prompt.stackLabel,
 
-            outlined: this.prompt.outlined,
-            filled: this.prompt.filled,
-            standout: this.prompt.standout,
-            rounded: this.prompt.rounded,
-            square: this.prompt.square,
+          outlined: this.prompt.outlined,
+          filled: this.prompt.filled,
+          standout: this.prompt.standout,
+          rounded: this.prompt.rounded,
+          square: this.prompt.square,
 
-            counter: this.prompt.counter,
-            maxlength: this.prompt.maxlength,
-            prefix: this.prompt.prefix,
-            suffix: this.prompt.suffix,
+          counter: this.prompt.counter,
+          maxlength: this.prompt.maxlength,
+          prefix: this.prompt.prefix,
+          suffix: this.prompt.suffix,
 
-            color: this.vmColor,
-            dense: true,
-            autofocus: true,
-            dark: this.isDark
-          },
-          attrs: this.prompt.attrs,
-          on: cache(this, 'prompt', {
-            input: v => { this.prompt.model = v },
-            keyup: evt => {
+          color: this.vmColor,
+          dense: true,
+          autofocus: true,
+          dark: this.isDark,
+          // End props
+
+          ...this.prompt.attrs,
+          ...cache(this, 'prompt', {
+            onInput: v => { this.prompt.model = v },
+            onKeyup: evt => {
               // if ENTER key
               if (
                 this.okDisabled !== true &&
@@ -165,46 +168,44 @@ export default Vue.extend({
       ]
     },
 
-    getOptions (h) {
+    getOptions () {
       return [
         h(QOptionGroup, {
-          props: {
-            value: this.options.model,
-            type: this.options.type,
-            color: this.vmColor,
-            inline: this.options.inline,
-            options: this.options.items,
-            dark: this.isDark
-          },
-          on: cache(this, 'opts', {
-            input: v => { this.options.model = v }
+          // Props
+          value: this.options.model,
+          type: this.options.type,
+          color: this.vmColor,
+          inline: this.options.inline,
+          options: this.options.items,
+          dark: this.isDark,
+
+          ...cache(this, 'opts', {
+            onInput: v => { this.options.model = v }
           })
         })
       ]
     },
 
-    getButtons (h) {
+    getButtons () {
       const child = []
 
       this.cancel && child.push(h(QBtn, {
-        props: this.cancelProps,
-        attrs: { 'data-autofocus': this.focus === 'cancel' && this.hasForm !== true },
-        on: cache(this, 'cancel', { click: this.onCancel })
+        ...this.cancelProps,
+        'data-autofocus': this.focus === 'cancel' && this.hasForm !== true,
+        ...cache(this, 'cancel', { onClick: this.onCancel })
       }))
 
       this.ok && child.push(h(QBtn, {
-        props: this.okProps,
-        attrs: { 'data-autofocus': this.focus === 'ok' && this.hasForm !== true },
-        on: cache(this, 'ok', { click: this.onOk })
+        ...this.okProps,
+        'data-autofocus': this.focus === 'ok' && this.hasForm !== true,
+        ...cache(this, 'ok', { onClick: this.onOk })
       }))
 
       if (child.length > 0) {
         return h(QCardActions, {
-          staticClass: this.stackButtons === true ? 'items-end' : null,
-          props: {
-            vertical: this.stackButtons,
-            align: 'right'
-          }
+          class: this.stackButtons === true ? 'items-end' : null,
+          vertical: this.stackButtons,
+          align: 'right'
         }, child)
       }
     },
@@ -224,72 +225,70 @@ export default Vue.extend({
         : (this.options !== void 0 ? this.options.model : void 0)
     },
 
-    getSection (h, staticClass, text) {
+    getSection (classes, text) {
       return this.html === true
         ? h(QCardSection, {
-          staticClass,
-          domProps: { innerHTML: text }
+          class: classes,
+          innerHTML: text
         })
-        : h(QCardSection, { staticClass }, [ text ])
+        : h(QCardSection, { class: classes }, [ text ])
     }
   },
 
-  render (h) {
+  render () {
     const child = []
 
     this.title && child.push(
-      this.getSection(h, 'q-dialog__title', this.title)
+      this.getSection('q-dialog__title', this.title)
     )
 
     this.message && child.push(
-      this.getSection(h, 'q-dialog__message', this.message)
+      this.getSection('q-dialog__message', this.message)
     )
 
     if (this.prompt !== void 0) {
       child.push(
         h(
           QCardSection,
-          { staticClass: 'scroll q-dialog-plugin__form' },
-          this.getPrompt(h)
+          { class: 'scroll q-dialog-plugin__form' },
+          this.getPrompt()
         )
       )
     }
     else if (this.options !== void 0) {
       child.push(
-        h(QSeparator, { props: { dark: this.isDark } }),
+        h(QSeparator, { dark: this.isDark }),
         h(
           QCardSection,
-          { staticClass: 'scroll q-dialog-plugin__form' },
-          this.getOptions(h)
+          { class: 'scroll q-dialog-plugin__form' },
+          this.getOptions()
         ),
-        h(QSeparator, { props: { dark: this.isDark } })
+        h(QSeparator, { dark: this.isDark })
       )
     }
 
     if (this.ok || this.cancel) {
-      child.push(this.getButtons(h))
+      child.push(this.getButtons())
     }
 
     return h(QDialog, {
       ref: 'dialog',
 
-      props: {
-        ...this.qAttrs,
-        value: this.value
-      },
+      ...this.qAttrs,
+      modelValue: this.modelValue,
 
-      on: cache(this, 'hide', {
-        hide: () => {
+      ...cache(this, 'hide', {
+        onHide: () => {
           this.$emit('hide')
         }
       })
     }, [
       h(QCard, {
-        staticClass: 'q-dialog-plugin' +
+        class: 'q-dialog-plugin' +
           (this.isDark === true ? ' q-dialog-plugin--dark q-dark' : ''),
         style: this.cardStyle,
         class: this.cardClass,
-        props: { dark: this.isDark }
+        dark: this.isDark
       }, child)
     ])
   }

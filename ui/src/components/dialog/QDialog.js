@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { defineComponent, h, Transition } from 'vue'
 
 import HistoryMixin from '../../mixins/history.js'
 import ModelToggleMixin from '../../mixins/model-toggle.js'
@@ -30,7 +30,7 @@ const transitions = {
   left: ['slide-right', 'slide-left']
 }
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QDialog',
 
   mixins: [
@@ -69,6 +69,8 @@ export default Vue.extend({
     transitionShow: String,
     transitionHide: String
   },
+
+  emits: ['show', 'hide', 'shake', 'click', 'escape-key'],
 
   data () {
     return {
@@ -129,19 +131,20 @@ export default Vue.extend({
     },
 
     onEvents () {
-      const on = {
-        ...this.qListeners,
+      const listeners = {
+        // TODO: Vue 3, uses ListenersMixin
+        // ...this.qListeners,
         // stop propagating these events from children
-        input: stop,
-        'popup-show': stop,
-        'popup-hide': stop
+        onInput: stop,
+        'onPopup-show': stop,
+        'onPopup-hide': stop
       }
 
       if (this.autoClose === true) {
-        on.click = this.__onAutoClose
+        listeners.onClick = this.__onAutoClose
       }
 
-      return on
+      return listeners
     }
   },
 
@@ -332,34 +335,32 @@ export default Vue.extend({
       }
     },
 
-    __renderPortal (h) {
+    __renderPortal () {
       return h('div', {
-        staticClass: 'q-dialog fullscreen no-pointer-events',
-        class: this.contentClass,
+        class: ['q-dialog fullscreen no-pointer-events', this.contentClass],
         style: this.contentStyle,
-        attrs: this.qAttrs
+        ...this.qAttrs
       }, [
-        h('transition', {
-          props: { name: 'q-transition--fade' }
+        h(Transition, {
+          name: 'q-transition--fade'
         }, this.useBackdrop === true ? [
           h('div', {
-            staticClass: 'q-dialog__backdrop fixed-full',
-            attrs: ariaHidden,
-            on: cache(this, 'bkdrop', {
-              click: this.__onBackdropClick
+            class: 'q-dialog__backdrop fixed-full',
+            ...ariaHidden,
+            ...cache(this, 'bkdrop', {
+              onClick: this.__onBackdropClick
             })
           })
         ] : null),
 
-        h('transition', {
-          props: { name: this.transition }
+        h(Transition, {
+          name: this.transition
         }, [
           this.showing === true ? h('div', {
             ref: 'inner',
-            staticClass: 'q-dialog__inner flex no-pointer-events',
-            class: this.classes,
-            attrs: { tabindex: -1 },
-            on: this.onEvents
+            class: ['q-dialog__inner flex no-pointer-events', this.classes],
+            tabindex: -1,
+            ...this.onEvents
           }, slot(this, 'default')) : null
         ])
       ])
