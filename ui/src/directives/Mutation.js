@@ -55,16 +55,16 @@ function destroy (el) {
 export default {
   name: 'mutation',
 
-  inserted (el, binding) {
+  mounted (el, binding) {
     const ctx = {}
     update(el, ctx, binding)
     el.__qmutation = ctx
   },
 
-  update (el, binding) {
+  updated (el, binding) {
     const ctx = el.__qmutation
     ctx !== void 0 && update(el, ctx, binding)
   },
 
-  unbind: destroy
+  unmounted: destroy
 }

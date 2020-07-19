@@ -16,7 +16,7 @@ function updateBinding (ctx, { value, oldValue }) {
 export default {
   name: 'scroll',
 
-  bind (el) {
+  beforeMount (el) {
     const ctx = {
       scroll () {
         ctx.handler(
@@ -33,19 +33,19 @@ export default {
     el.__qscroll = ctx
   },
 
-  inserted (el, binding) {
+  mounted (el, binding) {
     const ctx = el.__qscroll
     ctx.scrollTarget = getScrollTarget(el)
     updateBinding(ctx, binding)
   },
 
-  update (el, binding) {
+  updated (el, binding) {
     if (el.__qscroll !== void 0 && binding.oldValue !== binding.value) {
       updateBinding(el.__qscroll, binding)
     }
   },
 
-  unbind (el) {
+  unmounted (el) {
     const ctx = el.__qscroll_old || el.__qscroll
     if (ctx !== void 0) {
       ctx.scrollTarget.removeEventListener('scroll', ctx.scroll, listenOpts.passive)

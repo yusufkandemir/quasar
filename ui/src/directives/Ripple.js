@@ -79,7 +79,7 @@ function updateCtx (ctx, { value, modifiers, arg }) {
 export default {
   name: 'ripple',
 
-  inserted (el, binding) {
+  mounted (el, binding) {
     const ctx = {
       modifiers: {},
       abort: [],
@@ -129,11 +129,11 @@ export default {
     ])
   },
 
-  update (el, binding) {
+  updated (el, binding) {
     el.__qripple !== void 0 && updateCtx(el.__qripple, binding)
   },
 
-  unbind (el) {
+  unmounted (el) {
     const ctx = el.__qripple_old || el.__qripple
     if (ctx !== void 0) {
       ctx.abort.forEach(fn => { fn() })

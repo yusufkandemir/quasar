@@ -70,16 +70,16 @@ function destroy (el) {
 export default {
   name: 'intersection',
 
-  inserted (el, binding) {
+  mounted (el, binding) {
     const ctx = {}
     update(el, ctx, binding)
     el.__qvisible = ctx
   },
 
-  update (el, binding) {
+  updated (el, binding) {
     const ctx = el.__qvisible
     ctx !== void 0 && update(el, ctx, binding)
   },
 
-  unbind: destroy
+  unmounted: destroy
 }

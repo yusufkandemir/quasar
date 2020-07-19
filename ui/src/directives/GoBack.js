@@ -4,7 +4,7 @@ import { isKeyCode } from '../utils/key-composition.js'
 export default {
   name: 'go-back',
 
-  bind (el, { value, modifiers }, vnode) {
+  beforeMount (el, { value, modifiers }, vnode) {
     const ctx = {
       value,
 
@@ -40,7 +40,7 @@ export default {
     el.addEventListener('keyup', ctx.goBackKey)
   },
 
-  update (el, { value, oldValue, modifiers }) {
+  updated (el, { value, oldValue, modifiers }) {
     const ctx = el.__qgoback
 
     if (ctx !== void 0) {
@@ -54,7 +54,7 @@ export default {
     }
   },
 
-  unbind (el) {
+  unmounted (el) {
     const ctx = el.__qgoback_old || el.__qgoback
     if (ctx !== void 0) {
       el.removeEventListener('click', ctx.goBack)

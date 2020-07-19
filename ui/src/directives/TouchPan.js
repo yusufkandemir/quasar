@@ -119,7 +119,7 @@ let uid = 0
 export default {
   name: 'touch-pan',
 
-  bind (el, { value, modifiers }) {
+  beforeMount (el, { value, modifiers }) {
     // early return, we don't need to do anything
     if (modifiers.mouse !== true && client.has.touch !== true) {
       return
@@ -373,11 +373,11 @@ export default {
     ])
   },
 
-  update (el, binding) {
+  updated (el, binding) {
     el.__qtouchpan !== void 0 && updateModifiers(el.__qtouchpan, binding)
   },
 
-  unbind (el) {
+  unmounted (el) {
     const ctx = el.__qtouchpan_old || el.__qtouchpan
 
     if (ctx !== void 0) {

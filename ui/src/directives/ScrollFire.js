@@ -19,7 +19,7 @@ function updateBinding (ctx, { value, oldValue }) {
 export default {
   name: 'scroll-fire',
 
-  bind (el) {
+  beforeMount (el) {
     const ctx = {
       scroll: debounce(() => {
         let containerBottom, elBottom
@@ -47,19 +47,19 @@ export default {
     el.__qscrollfire = ctx
   },
 
-  inserted (el, binding) {
+  mounted (el, binding) {
     const ctx = el.__qscrollfire
     ctx.scrollTarget = getScrollTarget(el)
     updateBinding(ctx, binding)
   },
 
-  update (el, binding) {
+  updated (el, binding) {
     if (el.__qscrollfire !== void 0 && binding.value !== binding.oldValue) {
       updateBinding(el.__qscrollfire, binding)
     }
   },
 
-  unbind (el) {
+  unmounted (el) {
     const ctx = el.__qscrollfire_old || el.__qscrollfire
     if (ctx !== void 0) {
       ctx.scrollTarget.removeEventListener('scroll', ctx.scroll, listenOpts.passive)

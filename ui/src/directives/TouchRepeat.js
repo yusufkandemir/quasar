@@ -28,7 +28,7 @@ function shouldEnd (evt, origin) {
 export default {
   name: 'touch-repeat',
 
-  bind (el, { modifiers, value, arg }) {
+  beforeMount (el, { modifiers, value, arg }) {
     const keyboard = Object.keys(modifiers).reduce((acc, key) => {
       if (keyRegex.test(key) === true) {
         const keyCode = isNaN(parseInt(key, 10)) ? keyCodes[key.toLowerCase()] : parseInt(key, 10)
@@ -217,7 +217,7 @@ export default {
     ])
   },
 
-  update (el, binding) {
+  updated (el, binding) {
     const ctx = el.__qtouchrepeat
 
     if (ctx !== void 0 && binding.oldValue !== binding.value) {
@@ -226,7 +226,7 @@ export default {
     }
   },
 
-  unbind (el) {
+  unmounted (el) {
     const ctx = el.__qtouchrepeat_old || el.__qtouchrepeat
 
     if (ctx !== void 0) {

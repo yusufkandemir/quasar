@@ -23,7 +23,7 @@ function getDepth (value) {
 export default {
   name: 'close-popup',
 
-  bind (el, { value }, vnode) {
+  beforeMount (el, { value }, vnode) {
     const ctx = {
       depth: getDepth(value),
 
@@ -49,13 +49,13 @@ export default {
     el.addEventListener('keyup', ctx.handlerKey)
   },
 
-  update (el, { value, oldValue }) {
+  updated (el, { value, oldValue }) {
     if (el.__qclosepopup !== void 0 && value !== oldValue) {
       el.__qclosepopup.depth = getDepth(value)
     }
   },
 
-  unbind (el) {
+  unmounted (el) {
     const ctx = el.__qclosepopup_old || el.__qclosepopup
     if (ctx !== void 0) {
       el.removeEventListener('click', ctx.handler)

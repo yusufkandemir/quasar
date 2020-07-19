@@ -29,7 +29,7 @@ function update (el, binding) {
 export default {
   name: 'touch-hold',
 
-  bind (el, binding) {
+  beforeMount (el, binding) {
     const { modifiers } = binding
 
     // early return, we don't need to do anything
@@ -148,9 +148,9 @@ export default {
     ])
   },
 
-  update,
+  updated: update,
 
-  unbind (el) {
+  unmounted (el) {
     const ctx = el.__qtouchhold_old || el.__qtouchhold
     if (ctx !== void 0) {
       cleanEvt(ctx, 'main')

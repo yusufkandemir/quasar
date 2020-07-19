@@ -22,7 +22,7 @@ function parseArg (arg) {
 export default {
   name: 'touch-swipe',
 
-  bind (el, { value, arg, modifiers }) {
+  beforeMount (el, { value, arg, modifiers }) {
     // early return, we don't need to do anything
     if (modifiers.mouse !== true && client.has.touch !== true) {
       return
@@ -239,11 +239,11 @@ export default {
     ])
   },
 
-  update (el, binding) {
+  updated (el, binding) {
     el.__qtouchswipe !== void 0 && updateModifiers(el.__qtouchswipe, binding)
   },
 
-  unbind (el) {
+  unmounted (el) {
     const ctx = el.__qtouchswipe_old || el.__qtouchswipe
 
     if (ctx !== void 0) {
