@@ -49,14 +49,14 @@ export default function (app, opts = {}) {
 
   opts.components && Object.keys(opts.components).forEach(key => {
     const c = opts.components[key]
-    if (typeof c === 'function') {
-      app.component(c.options.name, c)
+    if (typeof c === 'object') {
+      app.component(c.name, c)
     }
   })
 
   opts.directives && Object.keys(opts.directives).forEach(key => {
     const d = opts.directives[key]
-    if (d.name !== undefined && d.unbind !== void 0) {
+    if (d.name !== undefined && d.unmounted !== void 0) {
       app.directive(d.name, d)
     }
   })
