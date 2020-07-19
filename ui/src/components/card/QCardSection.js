@@ -1,11 +1,11 @@
-import Vue from 'vue'
+import { defineComponent, h } from 'vue'
 
 import TagMixin from '../../mixins/tag.js'
 import ListenersMixin from '../../mixins/listeners.js'
 
 import { slot } from '../../utils/slot.js'
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QCardSection',
 
   mixins: [ ListenersMixin, TagMixin ],
@@ -21,10 +21,11 @@ export default Vue.extend({
     }
   },
 
-  render (h) {
+  render () {
     return h(this.tag, {
       class: this.classes,
-      on: { ...this.qListeners }
+      // TODO: Vue 3, uses ListenersMixin
+      // on: { ...this.qListeners }
     }, slot(this, 'default'))
   }
 })
