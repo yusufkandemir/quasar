@@ -1,9 +1,11 @@
-import Vue from 'vue'
+import { h, defineComponent, withDirectives, Transition } from 'vue'
 
 import QIcon from '../icon/QIcon.js'
 import QSpinner from '../spinner/QSpinner.js'
 
 import BtnMixin from '../../mixins/btn.js'
+
+import Ripple from '../../directives/Ripple.js'
 
 import { mergeSlot } from '../../utils/slot.js'
 import { stop, prevent, stopAndPrevent, listenOpts, noop } from '../../utils/event.js'
@@ -19,7 +21,7 @@ let
 
 const iconAttrs = { role: 'img', 'aria-hidden': 'true' }
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QBtn',
 
   mixins: [ BtnMixin ],
@@ -28,6 +30,8 @@ export default Vue.extend({
     percentage: Number,
     darkPercentage: Boolean
   },
+
+  emits: ['click', 'keydown', 'touchstart', 'mousedown', 'keyup'],
 
   computed: {
     hasLabel () {
@@ -38,7 +42,7 @@ export default Vue.extend({
       return this.ripple === false
         ? false
         : {
-          keyCodes: this.isLink === true ? [ 13, 32 ] : [ 13 ],
+          keyCodes: this.isLink === true ? [13, 32] : [13],
           ...(this.ripple === true ? {} : this.ripple)
         }
     },
@@ -53,39 +57,40 @@ export default Vue.extend({
     onEvents () {
       if (this.loading === true) {
         return {
-          mousedown: this.__onLoadingEvt,
-          touchstart: this.__onLoadingEvt,
-          click: this.__onLoadingEvt,
-          keydown: this.__onLoadingEvt,
-          keyup: this.__onLoadingEvt
+          onMousedown: this.__onLoadingEvt,
+          onTouchstart: this.__onLoadingEvt,
+          onClick: this.__onLoadingEvt,
+          onKeydown: this.__onLoadingEvt,
+          onKeyup: this.__onLoadingEvt
         }
       }
       else if (this.isActionable === true) {
-        const on = {
-          ...this.qListeners,
-          click: this.click,
-          keydown: this.__onKeydown,
-          mousedown: this.__onMousedown
+        const listeners = {
+          // TODO: Vue 3, uses ListenersMixin
+          // ...this.qListeners,
+          onClick: this.click,
+          onKeydown: this.__onKeydown,
+          onMousedown: this.__onMousedown
         }
 
         if (this.$q.platform.has.touch === true) {
-          on.touchstart = this.__onTouchstart
+          listeners.onTouchstart = this.__onTouchstart
         }
 
-        return on
+        return listeners
       }
 
       return {}
     },
 
     directives () {
+      const directives = []
+
       if (this.disable !== true && this.ripple !== false) {
-        return [{
-          name: 'ripple',
-          value: this.computedRipple,
-          modifiers: { center: this.round }
-        }]
+        directives.push([Ripple, this.computedRipple, '', { center: this.round }])
       }
+
+      return directives
     }
   },
 
@@ -156,7 +161,7 @@ export default Vue.extend({
     },
 
     __onKeydown (e) {
-      if (isKeyCode(e, [ 13, 32 ]) === true) {
+      if (isKeyCode(e, [13, 32]) === true) {
         stopAndPrevent(e)
 
         if (keyboardTarget !== this.$el) {
@@ -214,7 +219,7 @@ export default Vue.extend({
       }
 
       if (e !== void 0 && e.type === 'keyup') {
-        if (keyboardTarget === this.$el && isKeyCode(e, [ 13, 32 ]) === true) {
+        if (keyboardTarget === this.$el && isKeyCode(e, [13, 32]) === true) {
           // for click trigger
           const evt = new MouseEvent('click', e)
           evt.qKeyEvent = true
@@ -274,22 +279,23 @@ export default Vue.extend({
     }
   },
 
-  beforeDestroy () {
+  beforeUnmount () {
     this.__cleanup(true)
   },
 
-  render (h) {
+  render () {
     let inner = []
 
     this.icon !== void 0 && inner.push(
       h(QIcon, {
-        attrs: iconAttrs,
-        props: { name: this.icon, left: this.stack === false && this.hasLabel === true }
+        ...iconAttrs,
+        name: this.icon,
+        left: this.stack === false && this.hasLabel === true
       })
     )
 
     this.hasLabel === true && inner.push(
-      h('span', { staticClass: 'block' }, [ this.label ])
+      h('span', { class: 'block' }, [ this.label ])
     )
 
     inner = mergeSlot(inner, this, 'default')
@@ -297,15 +303,16 @@ export default Vue.extend({
     if (this.iconRight !== void 0 && this.round === false) {
       inner.push(
         h(QIcon, {
-          attrs: iconAttrs,
-          props: { name: this.iconRight, right: this.stack === false && this.hasLabel === true }
+          ...iconAttrs,
+          name: this.iconRight,
+          right: this.stack === false && this.hasLabel === true
         })
       )
     }
 
     const child = [
       h('span', {
-        staticClass: 'q-focus-helper',
+        class: 'q-focus-helper',
         ref: 'blurTarget'
       })
     ]
@@ -313,11 +320,10 @@ export default Vue.extend({
     if (this.loading === true && this.percentage !== void 0) {
       child.push(
         h('span', {
-          staticClass: 'q-btn__progress absolute-full overflow-hidden'
+          class: 'q-btn__progress absolute-full overflow-hidden'
         }, [
           h('span', {
-            staticClass: 'q-btn__progress-indicator fit block',
-            class: this.darkPercentage === true ? 'q-btn__progress--dark' : '',
+            class: ['q-btn__progress-indicator fit block', this.darkPercentage === true ? 'q-btn__progress--dark' : ''],
             style: this.percentageStyle
           })
         ])
@@ -326,34 +332,34 @@ export default Vue.extend({
 
     child.push(
       h('span', {
-        staticClass: 'q-btn__wrapper col row q-anchor--skip',
+        class: 'q-btn__wrapper col row q-anchor--skip',
         style: this.wrapperStyle
       }, [
         h('span', {
-          staticClass: 'q-btn__content text-center col items-center q-anchor--skip',
-          class: this.innerClasses
+          class: ['q-btn__content text-center col items-center q-anchor--skip', this.innerClasses]
         }, inner)
       ])
     )
 
     this.loading !== null && child.push(
-      h('transition', {
-        props: { name: 'q-transition--fade' }
+      h(Transition, {
+        name: 'q-transition--fade'
       }, this.loading === true ? [
         h('span', {
           key: 'loading',
-          staticClass: 'absolute-full flex flex-center'
-        }, this.$scopedSlots.loading !== void 0 ? this.$scopedSlots.loading() : [ h(QSpinner) ])
+          class: 'absolute-full flex flex-center'
+        }, this.$slots.loading !== void 0 ? this.$slots.loading() : [ h(QSpinner) ])
       ] : void 0)
     )
 
-    return h(this.isLink === true ? 'a' : 'button', {
-      staticClass: 'q-btn q-btn-item non-selectable no-outline',
-      class: this.classes,
-      style: this.style,
-      attrs: this.attrs,
-      on: this.onEvents,
-      directives: this.directives
-    }, child)
+    return withDirectives(
+      h(this.isLink === true ? 'a' : 'button', {
+        class: ['q-btn q-btn-item non-selectable no-outline', this.classes],
+        style: this.style,
+        ...this.attrs,
+        ...this.onEvents
+      }, child),
+      this.directives
+    )
   }
 })

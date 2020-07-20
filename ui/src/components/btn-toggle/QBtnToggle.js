@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { defineComponent, h } from 'vue'
 
 import QBtn from '../btn/QBtn.js'
 import QBtnGroup from '../btn-group/QBtnGroup.js'
@@ -9,13 +9,13 @@ import RippleMixin from '../../mixins/ripple.js'
 
 import { slot } from '../../utils/slot.js'
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QBtnToggle',
 
   mixins: [ ListenersMixin, RippleMixin, FormMixin ],
 
   props: {
-    value: {
+    modelValue: {
       required: true
     },
 
@@ -59,16 +59,18 @@ export default Vue.extend({
     clearable: Boolean
   },
 
+  emits: ['update:modelValue', 'click', 'clear'],
+
   computed: {
     hasActiveValue () {
-      return this.options.find(opt => opt.value === this.value) !== void 0
+      return this.options.find(opt => opt.value === this.modelValue) !== void 0
     },
 
     formAttrs () {
       return {
         type: 'hidden',
         name: this.name,
-        value: this.value
+        value: this.modelValue
       }
     }
   },
@@ -76,14 +78,14 @@ export default Vue.extend({
   methods: {
     __set (value, opt, e) {
       if (this.readonly !== true) {
-        if (this.value === value) {
+        if (this.modelValue === value) {
           if (this.clearable === true) {
-            this.$emit('input', null, null)
+            this.$emit('update:modelValue', null, null)
             this.$emit('clear')
           }
         }
         else {
-          this.$emit('input', value, opt)
+          this.$emit('update:modelValue', value, opt)
         }
 
         this.$emit('click', e)
@@ -91,38 +93,36 @@ export default Vue.extend({
     }
   },
 
-  render (h) {
+  render () {
     const child = this.options.map((opt, i) => {
       return h(QBtn, {
         key: i,
         class: opt.class,
         style: opt.style,
-        on: {
-          ...this.qListeners,
-          click: e => this.__set(opt.value, opt, e)
-        },
-        props: {
-          disable: this.disable || opt.disable,
-          label: opt.label,
-          // Colors come from the button specific options first, then from general props
-          color: opt.value === this.value ? opt.toggleColor || this.toggleColor : opt.color || this.color,
-          textColor: opt.value === this.value ? opt.toggleTextColor || this.toggleTextColor : opt.textColor || this.textColor,
-          icon: opt.icon,
-          iconRight: opt.iconRight,
-          noCaps: opt.noCaps === void 0 ? this.noCaps : opt.noCaps === true,
-          noWrap: opt.noWrap === void 0 ? this.noWrap : opt.noWrap === true,
-          outline: this.outline,
-          flat: this.flat,
-          rounded: this.rounded,
-          push: this.push,
-          unelevated: this.unelevated,
-          size: this.size,
-          dense: this.dense,
-          ripple: opt.ripple === void 0 ? this.ripple : opt.ripple,
-          stack: opt.stack === void 0 ? this.stack : opt.stack === true,
-          tabindex: opt.tabindex,
-          stretch: opt.stretch === void 0 ? this.stretch : opt.stretch === true
-        }
+        // TODO: Vue 3, uses ListenersMixin
+        // ...this.qListeners,
+        onClick: e => this.__set(opt.value, opt, e),
+
+        disable: this.disable || opt.disable,
+        label: opt.label,
+        // Colors come from the button specific options first, then from general props
+        color: opt.value === this.modelValue ? opt.toggleColor || this.toggleColor : opt.color || this.color,
+        textColor: opt.value === this.modelValue ? opt.toggleTextColor || this.toggleTextColor : opt.textColor || this.textColor,
+        icon: opt.icon,
+        iconRight: opt.iconRight,
+        noCaps: opt.noCaps === void 0 ? this.noCaps : opt.noCaps === true,
+        noWrap: opt.noWrap === void 0 ? this.noWrap : opt.noWrap === true,
+        outline: this.outline,
+        flat: this.flat,
+        rounded: this.rounded,
+        push: this.push,
+        unelevated: this.unelevated,
+        size: this.size,
+        dense: this.dense,
+        ripple: opt.ripple === void 0 ? this.ripple : opt.ripple,
+        stack: opt.stack === void 0 ? this.stack : opt.stack === true,
+        tabindex: opt.tabindex,
+        stretch: opt.stretch === void 0 ? this.stretch : opt.stretch === true
       }, opt.slot !== void 0 ? slot(this, opt.slot) : void 0)
     })
 
@@ -131,17 +131,16 @@ export default Vue.extend({
     }
 
     return h(QBtnGroup, {
-      staticClass: 'q-btn-toggle',
-      props: {
-        outline: this.outline,
-        flat: this.flat,
-        rounded: this.rounded,
-        push: this.push,
-        stretch: this.stretch,
-        unelevated: this.unelevated,
-        glossy: this.glossy,
-        spread: this.spread
-      }
+      class: 'q-btn-toggle',
+
+      outline: this.outline,
+      flat: this.flat,
+      rounded: this.rounded,
+      push: this.push,
+      stretch: this.stretch,
+      unelevated: this.unelevated,
+      glossy: this.glossy,
+      spread: this.spread
     }, child)
   }
 })

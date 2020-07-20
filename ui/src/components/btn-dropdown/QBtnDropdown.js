@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { defineComponent, h } from 'vue'
 
 import BtnMixin from '../../mixins/btn.js'
 
@@ -10,13 +10,13 @@ import QMenu from '../menu/QMenu.js'
 import { slot } from '../../utils/slot.js'
 import cache from '../../utils/cache.js'
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QBtnDropdown',
 
   mixins: [ BtnMixin ],
 
   props: {
-    value: Boolean,
+    modelValue: Boolean,
     split: Boolean,
     dropdownIcon: String,
 
@@ -43,9 +43,11 @@ export default Vue.extend({
     noIconAnimation: Boolean
   },
 
+  emits: ['update:modelValue', 'click', 'show', 'hide', 'before-show', 'before-hide'],
+
   data () {
     return {
-      showing: this.value
+      showing: this.modelValue
     }
   },
 
@@ -55,7 +57,7 @@ export default Vue.extend({
     }
   },
 
-  render (h) {
+  render () {
     const label = slot(this, 'label', [])
     const attrs = {
       'aria-expanded': this.showing === true ? 'true' : 'false',
@@ -74,7 +76,7 @@ export default Vue.extend({
 
     const Arrow = [
       h(QIcon, {
-        props: { name: this.dropdownIcon || this.$q.iconSet.arrow.dropdown },
+        name: this.dropdownIcon || this.$q.iconSet.arrow.dropdown,
         class: 'q-btn-dropdown__arrow' +
           (this.showing === true && this.noIconAnimation === false ? ' rotate-180' : '') +
           (this.split === false ? ' q-btn-dropdown__arrow-container' : '')
@@ -84,34 +86,32 @@ export default Vue.extend({
     this.disableDropdown !== true && Arrow.push(
       h(QMenu, {
         ref: 'menu',
-        props: {
-          cover: this.cover,
-          fit: true,
-          persistent: this.persistent,
-          autoClose: this.autoClose,
-          anchor: this.menuAnchor,
-          self: this.menuSelf,
-          offset: this.menuOffset,
-          contentClass: this.contentClass,
-          contentStyle: this.contentStyle,
-          separateClosePopup: true
-        },
-        on: cache(this, 'menu', {
-          'before-show': e => {
+        cover: this.cover,
+        fit: true,
+        persistent: this.persistent,
+        autoClose: this.autoClose,
+        anchor: this.menuAnchor,
+        self: this.menuSelf,
+        offset: this.menuOffset,
+        contentClass: this.contentClass,
+        contentStyle: this.contentStyle,
+        separateClosePopup: true,
+        ...cache(this, 'menu', {
+          'onBefore-show': e => {
             this.showing = true
             this.$emit('before-show', e)
           },
-          show: e => {
+          onShow: e => {
             this.$emit('show', e)
-            this.$emit('input', true)
+            this.$emit('update:modelValue', true)
           },
-          'before-hide': e => {
+          'onBefore-hide': e => {
             this.showing = false
             this.$emit('before-hide', e)
           },
-          hide: e => {
+          onHide: e => {
             this.$emit('hide', e)
-            this.$emit('input', false)
+            this.$emit('update:modelValue', false)
           }
         })
       }, slot(this, 'default'))
@@ -120,15 +120,13 @@ export default Vue.extend({
     if (this.split === false) {
       return h(QBtn, {
         class: 'q-btn-dropdown q-btn-dropdown--simple',
-        props: {
-          ...this.$props,
-          disable: this.disable === true || this.disableMainBtn === true,
-          noWrap: true,
-          round: false
-        },
-        attrs,
-        on: cache(this, 'nonSpl', {
-          click: e => {
+        ...this.$props,
+        disable: this.disable === true || this.disableMainBtn === true,
+        noWrap: true,
+        round: false,
+        ...attrs,
+        ...cache(this, 'nonSpl', {
+          onClick: e => {
             this.$emit('click', e)
           }
         })
@@ -137,15 +135,13 @@ export default Vue.extend({
 
     const Btn = h(QBtn, {
       class: 'q-btn-dropdown--current',
-      props: {
-        ...this.$props,
-        disable: this.disable === true || this.disableMainBtn === true,
-        noWrap: true,
-        iconRight: this.iconRight,
-        round: false
-      },
-      on: cache(this, 'spl', {
-        click: e => {
+      ...this.$props,
+      disable: this.disable === true || this.disableMainBtn === true,
+      noWrap: true,
+      iconRight: this.iconRight,
+      round: false,
+      ...cache(this, 'spl', {
+        onClick: e => {
           this.hide()
           this.$emit('click', e)
         }
@@ -153,34 +149,30 @@ export default Vue.extend({
     }, label)
 
     return h(QBtnGroup, {
-      props: {
-        outline: this.outline,
-        flat: this.flat,
-        rounded: this.rounded,
-        push: this.push,
-        unelevated: this.unelevated,
-        glossy: this.glossy,
-        stretch: this.stretch
-      },
-      staticClass: 'q-btn-dropdown q-btn-dropdown--split no-wrap q-btn-item'
+      outline: this.outline,
+      flat: this.flat,
+      rounded: this.rounded,
+      push: this.push,
+      unelevated: this.unelevated,
+      glossy: this.glossy,
+      stretch: this.stretch,
+      class: 'q-btn-dropdown q-btn-dropdown--split no-wrap q-btn-item'
     }, [
       Btn,
 
       h(QBtn, {
-        staticClass: 'q-btn-dropdown__arrow-container',
-        attrs,
-        props: {
-          disable: this.disable === true || this.disableDropdown === true,
-          outline: this.outline,
-          flat: this.flat,
-          rounded: this.rounded,
-          push: this.push,
-          size: this.size,
-          color: this.color,
-          textColor: this.textColor,
-          dense: this.dense,
-          ripple: this.ripple
-        }
+        disable: this.disable === true || this.disableDropdown === true,
+        outline: this.outline,
+        flat: this.flat,
+        rounded: this.rounded,
+        push: this.push,
+        size: this.size,
+        color: this.color,
+        textColor: this.textColor,
+        dense: this.dense,
+        ripple: this.ripple,
+        ...attrs,
+        class: 'q-btn-dropdown__arrow-container'
       }, Arrow)
     ])
   },
@@ -200,6 +192,6 @@ export default Vue.extend({
   },
 
   mounted () {
-    this.value === true && this.show()
+    this.modelValue === true && this.show()
   }
 })
