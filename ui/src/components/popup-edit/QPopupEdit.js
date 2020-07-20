@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { defineComponent, h } from 'vue'
 
 import QMenu from '../menu/QMenu.js'
 import QBtn from '../btn/QBtn.js'
@@ -11,13 +11,13 @@ import { slot } from '../../utils/slot.js'
 import { isKeyCode } from '../../utils/key-composition.js'
 import cache from '../../utils/cache.js'
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QPopupEdit',
 
   mixins: [ AttrsMixin ],
 
   props: {
-    value: {
+    modelValue: {
       required: true
     },
     title: String,
@@ -47,6 +47,8 @@ export default Vue.extend({
     disable: Boolean
   },
 
+  emits: ['update:modelValue', 'save', 'cancel', 'show', 'hide', 'before-show', 'before-hide'],
+
   data () {
     return {
       initialValue: ''
@@ -62,7 +64,7 @@ export default Vue.extend({
     defaultSlotScope () {
       return {
         initialValue: this.initialValue,
-        value: this.value,
+        modelValue: this.modelValue,
         emitValue: this.__emitValue,
         validate: this.validate,
         set: this.set,
@@ -82,18 +84,18 @@ export default Vue.extend({
   methods: {
     set () {
       if (this.__hasChanged() === true) {
-        if (this.validate(this.value) === false) {
+        if (this.validate(this.modelValue) === false) {
           return
         }
-        this.$emit('save', this.value, this.initialValue)
+        this.$emit('save', this.modelValue, this.initialValue)
       }
       this.__close()
     },
 
     cancel () {
       if (this.__hasChanged() === true) {
-        this.$emit('input', this.initialValue)
-        this.$emit('cancel', this.value, this.initialValue)
+        this.$emit('update:modelValue', this.initialValue)
+        this.$emit('cancel', this.modelValue, this.initialValue)
       }
       this.__close()
     },
@@ -107,12 +109,12 @@ export default Vue.extend({
     },
 
     __hasChanged () {
-      return isDeepEqual(this.value, this.initialValue) === false
+      return isDeepEqual(this.modelValue, this.initialValue) === false
     },
 
     __emitValue (val) {
       if (this.disable !== true) {
-        this.$emit('input', val)
+        this.$emit('update:modelValue', val)
       }
     },
 
@@ -127,34 +129,30 @@ export default Vue.extend({
       })
     },
 
-    __getContent (h) {
+    __getContent () {
       const
         title = slot(this, 'title', this.title),
-        child = this.$scopedSlots.default === void 0
+        child = this.$slots.default === void 0
           ? []
-          : this.$scopedSlots.default(this.defaultSlotScope).slice()
+          : this.$slots.default(this.defaultSlotScope).slice()
 
       title && child.unshift(
-        h('div', { staticClass: 'q-dialog__title q-mt-sm q-mb-sm' }, [ title ])
+        h('div', { class: 'q-dialog__title q-mt-sm q-mb-sm' }, [ title ])
       )
 
       this.buttons === true && child.push(
-        h('div', { staticClass: 'q-popup-edit__buttons row justify-center no-wrap' }, [
+        h('div', { class: 'q-popup-edit__buttons row justify-center no-wrap' }, [
           h(QBtn, {
-            props: {
-              flat: true,
-              color: this.color,
-              label: this.labelCancel || this.$q.lang.label.cancel
-            },
-            on: cache(this, 'cancel', { click: this.cancel })
+            flat: true,
+            color: this.color,
+            label: this.labelCancel || this.$q.lang.label.cancel,
+            ...cache(this, 'cancel', { onClick: this.cancel })
           }),
           h(QBtn, {
-            props: {
-              flat: true,
-              color: this.color,
-              label: this.labelSet || this.$q.lang.label.set
-            },
-            on: cache(this, 'ok', { click: this.set })
+            flat: true,
+            color: this.color,
+            label: this.labelSet || this.$q.lang.label.set,
+            ...cache(this, 'ok', { onClick: this.set })
           })
         ])
       )
@@ -163,45 +161,45 @@ export default Vue.extend({
     }
   },
 
-  render (h) {
+  render () {
     if (this.disable === true) { return }
 
     return h(QMenu, {
       ref: 'menu',
-      props: this.menuProps,
-      on: cache(this, 'menu', {
-        'before-show': () => {
+      ...this.menuProps,
+      ...cache(this, 'menu', {
+        'onBefore-show': () => {
           this.validated = false
-          this.initialValue = clone(this.value)
+          this.initialValue = clone(this.modelValue)
           this.watcher = this.$watch('value', this.__reposition)
           this.$emit('before-show')
         },
-        show: () => {
+        onShow: () => {
           this.$emit('show')
         },
-        'escape-key': this.cancel,
-        'before-hide': () => {
+        'onEscape-key': this.cancel,
+        'onBefore-hide': () => {
           this.watcher()
 
           if (this.validated === false && this.__hasChanged() === true) {
-            if (this.autoSave === true && this.validate(this.value) === true) {
-              this.$emit('save', this.value, this.initialValue)
+            if (this.autoSave === true && this.validate(this.modelValue) === true) {
+              this.$emit('save', this.modelValue, this.initialValue)
             }
             else {
-              this.$emit('cancel', this.value, this.initialValue)
-              this.$emit('input', this.initialValue)
+              this.$emit('cancel', this.modelValue, this.initialValue)
+              this.$emit('update:modelValue', this.initialValue)
             }
           }
 
           this.$emit('before-hide')
         },
-        hide: () => {
+        onHide: () => {
           this.$emit('hide')
         },
-        keyup: e => {
+        onKeyup: e => {
           isKeyCode(e, 13) === true && this.set()
         }
       })
-    }, this.__getContent(h))
+    }, this.__getContent())
   }
 })
