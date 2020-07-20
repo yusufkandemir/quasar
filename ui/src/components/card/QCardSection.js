@@ -23,7 +23,7 @@ export default defineComponent({
 
   render () {
     return h(this.tag, {
-      class: this.classes,
+      class: this.classes
       // TODO: Vue 3, uses ListenersMixin
       // on: { ...this.qListeners }
     }, slot(this, 'default'))

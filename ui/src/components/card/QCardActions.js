@@ -22,7 +22,7 @@ export default defineComponent({
 
   render () {
     return h('div', {
-      class: ['q-card__actions', this.classes],
+      class: ['q-card__actions', this.classes]
       // TODO: Vue 3, uses ListenersMixin
       // on: { ...this.qListeners }
     }, slot(this, 'default'))
