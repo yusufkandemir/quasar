@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { defineComponent, h, resolveComponent } from 'vue'
 
 import DarkMixin from '../../mixins/dark.js'
 import TagMixin from '../../mixins/tag.js'
@@ -9,7 +9,7 @@ import { uniqueSlot } from '../../utils/slot.js'
 import { stopAndPrevent } from '../../utils/event.js'
 import { isKeyCode } from '../../utils/key-composition.js'
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QItem',
 
   mixins: [ DarkMixin, RouterLinkMixin, TagMixin, ListenersMixin ],
@@ -26,6 +26,8 @@ export default Vue.extend({
     focused: Boolean,
     manualFocus: Boolean
   },
+
+  emits: ['click', 'keyup'],
 
   computed: {
     isActionable () {
@@ -67,18 +69,19 @@ export default Vue.extend({
 
     onEvents () {
       return {
-        ...this.qListeners,
-        click: this.__onClick,
-        keyup: this.__onKeyup
+        // TODO: Vue 3, uses ListenersMixin
+        // ...this.qListeners,
+        onClick: this.__onClick,
+        onKeyup: this.__onKeyup
       }
     }
   },
 
   methods: {
-    __getContent (h) {
+    __getContent () {
       const child = uniqueSlot(this, 'default', [])
       this.isClickable === true && child.unshift(
-        h('div', { staticClass: 'q-focus-helper', attrs: { tabindex: -1 }, ref: 'blurTarget' })
+        h('div', { class: 'q-focus-helper', tabindex: -1, ref: 'blurTarget' })
       )
       return child
     },
@@ -115,36 +118,32 @@ export default Vue.extend({
     }
   },
 
-  render (h) {
+  render () {
     const data = {
-      staticClass: 'q-item q-item-type row no-wrap',
-      class: this.classes,
+      class: ['q-item q-item-type row no-wrap', this.classes],
       style: this.style,
-      [ this.hasRouterLink === true ? 'nativeOn' : 'on' ]: this.onEvents
+      ...this.onEvents
     }
 
     if (this.isClickable === true) {
-      data.attrs = {
-        tabindex: this.tabindex || '0'
-      }
+      data.tabindex = this.tabindex || '0'
     }
     else if (this.isActionable === true) {
-      data.attrs = {
-        'aria-disabled': ''
-      }
+      data['aria-disabled'] = ''
     }
 
     if (this.hasRouterLink === true) {
-      data.tag = 'a'
-      data.props = this.routerLinkProps
-
-      return h('router-link', data, this.__getContent(h))
+      return h(resolveComponent('router-link'), {
+        tag: 'a',
+        ...data,
+        ...this.routerLinkProps
+      }, () => this.__getContent())
     }
 
     return h(
       this.tag,
       data,
-      this.__getContent(h)
+      this.__getContent()
     )
   }
 })
