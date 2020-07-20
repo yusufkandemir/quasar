@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { defineComponent, h } from 'vue'
 
 import QBtn from '../btn/QBtn.js'
 import TouchPan from '../../directives/TouchPan.js'
@@ -10,7 +10,7 @@ import { pad } from '../../utils/format.js'
 import cache from '../../utils/cache.js'
 import DateTimeMixin from '../../mixins/datetime.js'
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QTime',
 
   mixins: [ DateTimeMixin ],
@@ -439,7 +439,7 @@ export default Vue.extend({
       }
     },
 
-    __getHeader (h) {
+    __getHeader () {
       const label = [
         h('div', {
           staticClass: 'q-time__link',
@@ -487,7 +487,7 @@ export default Vue.extend({
                 })
               }
               : { staticClass: 'q-time__link' },
-            [ this.stringModel.second ]
+            [this.stringModel.second]
           )
         )
       }
@@ -512,7 +512,7 @@ export default Vue.extend({
               click: this.__setAm,
               keyup: e => { e.keyCode === 13 && this.__setAm() }
             })
-          }, [ 'AM' ]),
+          }, ['AM']),
 
           h('div', {
             staticClass: 'q-time__link',
@@ -522,12 +522,12 @@ export default Vue.extend({
               click: this.__setPm,
               keyup: e => { e.keyCode === 13 && this.__setPm() }
             })
-          }, [ 'PM' ])
+          }, ['PM'])
         ]) : null
       ])
     },
 
-    __getClock (h) {
+    __getClock () {
       const
         view = this.view.toLowerCase(),
         current = this.innerModel[view]
@@ -574,7 +574,7 @@ export default Vue.extend({
                     class: pos.val === current
                       ? this.headerClass.concat(' q-time__clock-position--active')
                       : (pos.disable === true ? 'q-time__clock-position--disable' : null)
-                  }, [ h('span', [ pos.label ]) ]))
+                  }, [h('span', [pos.label])]))
                 ])
               ])
             ])
@@ -681,8 +681,8 @@ export default Vue.extend({
 
       const val = this.calendar === 'persian'
         ? pad(date.hour) + ':' +
-          pad(date.minute) +
-          (this.withSeconds === true ? ':' + pad(date.second) : '')
+        pad(date.minute) +
+        (this.withSeconds === true ? ':' + pad(date.second) : '')
         : formatDate(
           new Date(
             date.year,
@@ -704,9 +704,9 @@ export default Vue.extend({
     }
   },
 
-  render (h) {
+  render () {
     const child = [
-      this.__getClock(h)
+      this.__getClock()
     ]
 
     const def = slot(this, 'default')
@@ -723,7 +723,7 @@ export default Vue.extend({
       on: { ...this.qListeners },
       attrs: { tabindex: -1 }
     }, [
-      this.__getHeader(h),
+      this.__getHeader(),
       h('div', { staticClass: 'q-time__main col overflow-auto' }, child)
     ])
   }

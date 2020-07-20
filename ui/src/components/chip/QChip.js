@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { defineComponent, h } from 'vue'
 
 import QIcon from '../icon/QIcon.js'
 
@@ -10,7 +10,7 @@ import { stopAndPrevent } from '../../utils/event.js'
 import { mergeSlotSafely } from '../../utils/slot.js'
 import cache from '../../utils/cache.js'
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QChip',
 
   mixins: [
@@ -111,7 +111,7 @@ export default Vue.extend({
       }
     },
 
-    __getContent (h) {
+    __getContent () {
       const child = []
 
       this.isClickable === true && child.push(
@@ -158,8 +158,8 @@ export default Vue.extend({
     }
   },
 
-  render (h) {
-    if (this.value === false) { return }
+  render () {
+    if (this.modelValue === false) { return }
 
     const data = {
       staticClass: 'q-chip row inline no-wrap items-center',
@@ -168,7 +168,7 @@ export default Vue.extend({
     }
 
     this.isClickable === true && Object.assign(data, {
-      attrs: this.attrs,
+      ...this.attrs,
       on: cache(this, 'click', {
         click: this.__onClick,
         keyup: this.__onKeyup
@@ -178,6 +178,6 @@ export default Vue.extend({
       ])
     })
 
-    return h('div', data, this.__getContent(h))
+    return h('div', data, this.__getContent())
   }
 })

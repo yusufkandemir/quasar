@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { defineComponent, h } from 'vue'
 
 import QIcon from '../icon/QIcon.js'
 import Ripple from '../../directives/Ripple.js'
@@ -7,10 +7,10 @@ import AttrsMixin from '../../mixins/attrs.js'
 
 import cache from '../../utils/cache.js'
 
-export default Vue.extend({
+export default defineComponent({
   name: 'StepHeader',
 
-  mixins: [ AttrsMixin ],
+  mixins: [AttrsMixin],
 
   directives: {
     Ripple
@@ -117,7 +117,7 @@ export default Vue.extend({
     }
   },
 
-  render (h) {
+  render () {
     const data = { class: this.classes }
 
     if (this.stepper.headerNav === true) {
@@ -151,12 +151,12 @@ export default Vue.extend({
 
     if (this.step.title !== void 0 && this.step.title !== null) {
       const content = [
-        h('div', { staticClass: 'q-stepper__title' }, [ this.step.title ])
+        h('div', { staticClass: 'q-stepper__title' }, [this.step.title])
       ]
 
       if (this.step.caption !== void 0 && this.step.caption !== null) {
         content.push(
-          h('div', { staticClass: 'q-stepper__caption' }, [ this.step.caption ])
+          h('div', { staticClass: 'q-stepper__caption' }, [this.step.caption])
         )
       }
 

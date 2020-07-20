@@ -1,10 +1,10 @@
-import Vue from 'vue'
+import { defineComponent, resolveComponent } from 'vue'
 
 import QTab from './QTab.js'
 import { RouterLinkMixin } from '../../mixins/router-link.js'
 import { isSameRoute, isIncludedRoute } from '../../utils/router.js'
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QRouteTab',
 
   mixins: [ QTab, RouterLinkMixin ],
@@ -14,8 +14,12 @@ export default Vue.extend({
   },
 
   inject: {
-    __activateRoute: {},
-    __recalculateScroll: {}
+    __activateRoute: {
+      from: '__activateRoute'
+    },
+    __recalculateScroll: {
+      from: '__recalculateScroll'
+    }
   },
 
   watch: {
@@ -39,18 +43,18 @@ export default Vue.extend({
     },
 
     __checkActivation (selected = false) {
-      const
-        current = this.$route,
-        { href, location, route } = this.$router.resolve(this.to, current, this.append),
-        redirected = route.redirectedFrom !== void 0,
-        checkFunction = this.exact === true ? isSameRoute : isIncludedRoute,
-        params = {
-          name: this.name,
-          selected,
-          exact: this.exact,
-          priorityMatched: route.matched.length,
-          priorityHref: href.length
-        }
+      // TODO: Reflect Vue Router 4 changes, `resolve(to, current)` takes 2 parameters now, and the return type is different
+      const current = this.$route
+      const { href, location, route, redirectedFrom } = this.$router.resolve(this.to, current, this.append)
+      const redirected = redirectedFrom !== void 0
+      const checkFunction = this.exact === true ? isSameRoute : isIncludedRoute
+      const params = {
+        name: this.name,
+        selected,
+        exact: this.exact,
+        priorityMatched: route.matched.length,
+        priorityHref: href.length
+      }
 
       checkFunction(current, route) && this.__activateRoute({ ...params, redirected })
       redirected === true && checkFunction(current, {
@@ -66,12 +70,12 @@ export default Vue.extend({
     this.$router !== void 0 && this.__checkActivation()
   },
 
-  beforeDestroy () {
+  beforeUnmount () {
     this.__recalculateScroll()
     this.__activateRoute({ remove: true, name: this.name })
   },
 
-  render (h) {
-    return this.__renderTab(h, 'router-link', this.routerLinkProps)
+  render () {
+    return this.__renderTab(resolveComponent('router-link'), this.routerLinkProps)
   }
 })

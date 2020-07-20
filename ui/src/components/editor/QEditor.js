@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { defineComponent, h } from 'vue'
 
 import { getToolbar, getFonts, getLinkEditor } from './editor-utils.js'
 import { Caret } from './editor-caret.js'
@@ -12,7 +12,7 @@ import { stopAndPrevent } from '../../utils/event.js'
 import extend from '../../utils/extend.js'
 import { shouldIgnoreKey } from '../../utils/key-composition.js'
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QEditor',
 
   mixins: [ ListenersMixin, FullscreenMixin, DarkMixin ],
@@ -294,7 +294,7 @@ export default Vue.extend({
 
         if (val !== this.value) {
           this.editWatcher = false
-          this.$emit('input', val)
+          this.$emit('update:modelValue', val)
         }
       }
     },
@@ -415,7 +415,7 @@ export default Vue.extend({
     this.refreshToolbar()
   },
 
-  render (h) {
+  render () {
     let toolbars
 
     if (this.hasToolbar) {
@@ -426,7 +426,7 @@ export default Vue.extend({
           key: 'qedt_top',
           staticClass: 'q-editor__toolbar row no-wrap scroll-x',
           class: this.toolbarBackgroundClass
-        }, getToolbar(h, this))
+        }, getToolbar(this))
       )
 
       this.editLinkUrl !== null && bars.push(
@@ -434,27 +434,27 @@ export default Vue.extend({
           key: 'qedt_btm',
           staticClass: 'q-editor__toolbar row no-wrap items-center scroll-x',
           class: this.toolbarBackgroundClass
-        }, getLinkEditor(h, this, this.$q.platform.is.ie))
+        }, getLinkEditor(this, this.$q.platform.is.ie))
       )
 
       toolbars = h('div', {
         key: 'toolbar_ctainer',
-        staticClass: 'q-editor__toolbars-container'
+        class: 'q-editor__toolbars-container'
       }, bars)
     }
 
-    const on = {
+    const listeners = {
       ...this.qListeners,
-      input: this.__onInput,
-      keydown: this.__onKeydown,
-      click: this.__onClick,
-      blur: this.__onBlur,
-      focus: this.__onFocus,
+      'onUpdate:modelValue': this.__onInput,
+      onKeydown: this.__onKeydown,
+      onClick: this.__onClick,
+      onBlur: this.__onBlur,
+      onFocus: this.__onFocus,
 
       // save caret
-      mouseup: this.__onMouseup,
-      keyup: this.__onKeyup,
-      touchend: this.__onTouchend
+      onMouseup: this.__onMouseup,
+      onKeyup: this.__onKeyup,
+      onTouchend: this.__onTouchend
     }
 
     return h('div', {
@@ -462,7 +462,7 @@ export default Vue.extend({
         height: this.inFullscreen === true ? '100vh' : null
       },
       class: this.classes,
-      attrs: this.attrs
+      ...this.attrs
     }, [
       toolbars,
 
@@ -480,7 +480,7 @@ export default Vue.extend({
           domProps: isSSR
             ? { innerHTML: this.value }
             : undefined,
-          on
+          ...listeners
         }
       )
     ])

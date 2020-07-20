@@ -122,7 +122,7 @@ export default defineComponent({
     }
   },
 
-  beforeDestroy () {
+  beforeUnmount () {
     clearTimeout(this.timer)
 
     if (this.hasObserver === true) {

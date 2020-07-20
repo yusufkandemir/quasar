@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { defineComponent, h } from 'vue'
 
 import QBtn from '../btn/QBtn.js'
 import DateTimeMixin from '../../mixins/datetime.js'
@@ -12,7 +12,7 @@ import cache from '../../utils/cache.js'
 const yearsInterval = 20
 const viewIsValid = v => ['Calendar', 'Years', 'Months'].includes(v)
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QDate',
 
   mixins: [ DateTimeMixin ],
@@ -130,8 +130,8 @@ export default Vue.extend({
         return this.computedLocale.headerTitle(date, model)
       }
 
-      return this.computedLocale.daysShort[ date.getDay() ] + ', ' +
-        this.computedLocale.monthsShort[ model.month - 1 ] + ' ' +
+      return this.computedLocale.daysShort[date.getDay()] + ', ' +
+        this.computedLocale.monthsShort[model.month - 1] + ' ' +
         model.day
     },
 
@@ -146,7 +146,7 @@ export default Vue.extend({
     },
 
     dateArrow () {
-      const val = [ this.$q.iconSet.datetime.arrowLeft, this.$q.iconSet.datetime.arrowRight ]
+      const val = [this.$q.iconSet.datetime.arrowLeft, this.$q.iconSet.datetime.arrowRight]
       return this.$q.lang.rtl === true ? val.reverse() : val
     },
 
@@ -343,7 +343,7 @@ export default Vue.extend({
       }
     },
 
-    __getHeader (h) {
+    __getHeader () {
       if (this.minimal === true) { return }
 
       return h('div', {
@@ -367,7 +367,7 @@ export default Vue.extend({
                 click: () => { this.view = 'Years' },
                 keyup: e => { e.keyCode === 13 && (this.view = 'Years') }
               })
-            }, [ this.headerSubtitle ])
+            }, [this.headerSubtitle])
           ])
         ]),
 
@@ -391,7 +391,7 @@ export default Vue.extend({
                   click: () => { this.view = 'Calendar' },
                   keyup: e => { e.keyCode === 13 && (this.view = 'Calendar') }
                 })
-              }, [ this.headerTitle ])
+              }, [this.headerTitle])
             ])
           ]),
 
@@ -410,7 +410,7 @@ export default Vue.extend({
       ])
     },
 
-    __getNavigation (h, { label, view, key, dir, goTo, cls }) {
+    __getNavigation ({ label, view, key, dir, goTo, cls }) {
       return [
         h('div', {
           staticClass: 'row items-center q-date__arrow'
@@ -469,7 +469,7 @@ export default Vue.extend({
       ]
     },
 
-    __getCalendarView (h) {
+    __getCalendarView () {
       return [
         h('div', {
           key: 'calendar-view',
@@ -477,14 +477,14 @@ export default Vue.extend({
         }, [
           h('div', {
             staticClass: 'q-date__navigation row items-center no-wrap'
-          }, this.__getNavigation(h, {
+          }, this.__getNavigation({
             label: this.computedLocale.months[ this.innerModel.month - 1 ],
             view: 'Months',
             key: this.innerModel.month,
             dir: this.monthDirection,
             goTo: this.__goToMonth,
             cls: ' col'
-          }).concat(this.__getNavigation(h, {
+          }).concat(this.__getNavigation({
             label: this.innerModel.year,
             view: 'Years',
             key: this.innerModel.year,
@@ -495,7 +495,7 @@ export default Vue.extend({
 
           h('div', {
             staticClass: 'q-date__calendar-weekdays row items-center no-wrap'
-          }, this.daysOfWeek.map(day => h('div', { staticClass: 'q-date__calendar-item' }, [ h('div', [ day ]) ]))),
+          }, this.daysOfWeek.map(day => h('div', { staticClass: 'q-date__calendar-item' }, [h('div', [day])]))),
 
           h('div', {
             staticClass: 'q-date__calendar-days-container relative-position overflow-hidden'
@@ -527,7 +527,7 @@ export default Vue.extend({
                   }, day.event !== false ? [
                     h('div', { staticClass: 'q-date__event bg-' + day.event })
                   ] : null)
-                  : h('div', [ day.i ])
+                  : h('div', [day.i])
               ])))
             ])
           ])
@@ -535,7 +535,7 @@ export default Vue.extend({
       ]
     },
 
-    __getMonthsView (h) {
+    __getMonthsView () {
       const currentYear = this.innerModel.year === this.today.year
 
       const content = this.computedLocale.monthsShort.map((month, i) => {
@@ -561,7 +561,7 @@ export default Vue.extend({
 
       this.yearsInMonthView === true && content.unshift(
         h('div', { staticClass: 'row no-wrap full-width' }, [
-          this.__getNavigation(h, {
+          this.__getNavigation({
             label: this.innerModel.year,
             view: 'Years',
             key: this.innerModel.year,
@@ -578,7 +578,7 @@ export default Vue.extend({
       }, content)
     },
 
-    __getYearsView (h) {
+    __getYearsView () {
       const
         start = this.startYear,
         stop = start + yearsInterval,
@@ -762,7 +762,7 @@ export default Vue.extend({
     }
   },
 
-  render (h) {
+  render () {
     const content = [
       h('div', {
         staticClass: 'q-date__content col relative-position'
@@ -770,7 +770,7 @@ export default Vue.extend({
         h('transition', {
           props: { name: 'q-transition--fade' }
         }, [
-          this[`__get${this.view}View`](h)
+          this[`__get${this.view}View`]()
         ])
       ])
     ]
@@ -789,7 +789,7 @@ export default Vue.extend({
       attrs: this.attrs,
       on: { ...this.qListeners }
     }, [
-      this.__getHeader(h),
+      this.__getHeader(),
 
       h('div', {
         staticClass: 'q-date__main col column',

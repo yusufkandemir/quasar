@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { h, defineComponent, withDirectives } from 'vue'
 
 import TouchPan from '../../directives/TouchPan.js'
 
@@ -14,7 +14,7 @@ const slotsDef = [
   ['bottom', 'end', 'center', 'height']
 ]
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QSlideItem',
 
   mixins: [ DarkMixin, ListenersMixin ],
@@ -29,6 +29,8 @@ export default Vue.extend({
   directives: {
     TouchPan
   },
+
+  emits: ['action'],
 
   computed: {
     langDir () {
@@ -54,7 +56,7 @@ export default Vue.extend({
         node.classList.add('no-transition')
 
         slotsDef.forEach(slot => {
-          if (this.$scopedSlots[slot[0]] !== void 0) {
+          if (this.$slots[slot[0]] !== void 0) {
             const node = this.$refs[slot[0] + 'Content']
             node.style.transform = `scale(1)`
             this.__size[slot[0]] = node.getBoundingClientRect()[slot[3]]
@@ -89,10 +91,10 @@ export default Vue.extend({
       }
 
       if (
-        (this.$scopedSlots.left === void 0 && evt.direction === this.langDir.right) ||
-        (this.$scopedSlots.right === void 0 && evt.direction === this.langDir.left) ||
-        (this.$scopedSlots.top === void 0 && evt.direction === 'down') ||
-        (this.$scopedSlots.bottom === void 0 && evt.direction === 'up')
+        (this.$slots.left === void 0 && evt.direction === this.langDir.right) ||
+        (this.$slots.right === void 0 && evt.direction === this.langDir.left) ||
+        (this.$slots.top === void 0 && evt.direction === 'down') ||
+        (this.$slots.bottom === void 0 && evt.direction === 'up')
       ) {
         node.style.transform = `translate(0,0)`
         return
@@ -134,59 +136,64 @@ export default Vue.extend({
     }
   },
 
-  render (h) {
+  render () {
     const
       content = [],
-      left = this.$scopedSlots[this.langDir.right] !== void 0,
-      right = this.$scopedSlots[this.langDir.left] !== void 0,
-      up = this.$scopedSlots.bottom !== void 0,
-      down = this.$scopedSlots.top !== void 0
+      left = this.$slots[this.langDir.right] !== void 0,
+      right = this.$slots[this.langDir.left] !== void 0,
+      up = this.$slots.bottom !== void 0,
+      down = this.$slots.top !== void 0
 
     slotsDef.forEach(slot => {
       const dir = slot[0]
 
-      if (this.$scopedSlots[dir] !== void 0) {
+      if (this.$slots[dir] !== void 0) {
         content.push(
           h('div', {
             ref: dir,
             class: `q-slide-item__${dir} absolute-full row no-wrap items-${slot[1]} justify-${slot[2]}` +
               (this[dir + 'Color'] !== void 0 ? ` bg-${this[dir + 'Color']}` : '')
           }, [
-            h('div', { ref: dir + 'Content' }, this.$scopedSlots[dir]())
+            h('div', { ref: dir + 'Content' }, this.$slots[dir]())
           ])
         )
       }
     })
 
     content.push(
-      h('div', {
-        ref: 'content',
-        key: 'content',
-        staticClass: 'q-slide-item__content',
-        directives: left === true || right === true || up === true || down === true ? [{
-          name: 'touch-pan',
-          value: this.__pan,
-          modifiers: {
-            left,
-            right,
-            up,
-            down,
-            prevent: true,
-            stop: true,
-            mouse: true
-          }
-        }] : null
-      }, slot(this, 'default'))
+      withDirectives(
+        h('div', {
+          ref: 'content',
+          key: 'content',
+          class: 'q-slide-item__content'
+        }, slot(this, 'default')),
+        left === true || right === true || up === true || down === true ? [
+          [
+            TouchPan,
+            this.__pan,
+            '',
+            {
+              left,
+              right,
+              up,
+              down,
+              prevent: true,
+              stop: true,
+              mouse: true
+            }
+          ]
+        ] : []
+      )
     )
 
     return h('div', {
-      staticClass: 'q-slide-item q-item-type overflow-hidden',
-      class: this.isDark === true ? `q-slide-item--dark q-dark` : '',
-      on: { ...this.qListeners }
+      class: ['q-slide-item q-item-type overflow-hidden', this.isDark === true ? `q-slide-item--dark q-dark` : '']
+      // TODO: Vue 3, uses ListenersMixin
+      // on: { ...this.qListeners }
     }, content)
   },
 
-  beforeDestroy () {
+  beforeUnmount () {
     clearTimeout(this.timer)
   }
 })

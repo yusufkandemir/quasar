@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { defineComponent, h } from 'vue'
 
 import QField from '../field/QField.js'
 import QChip from '../chip/QChip.js'
@@ -10,7 +10,7 @@ import { isSSR } from '../../plugins/Platform'
 import { humanStorageSize } from '../../utils/format.js'
 import cache from '../../utils/cache.js'
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QFile',
 
   mixins: [ QField, FileMixin, FormFieldMixin, FileValueMixin ],
@@ -134,7 +134,7 @@ export default Vue.extend({
       )
     },
 
-    __getControl (h) {
+    __getControl () {
       const data = {
         ref: 'target',
         staticClass: 'q-field__native row items-center cursor-pointer',
@@ -150,14 +150,14 @@ export default Vue.extend({
         })
       }
 
-      return h('div', data, [ this.__getInput(h) ].concat(this.__getSelection(h)))
+      return h('div', data, [ this.__getInput() ].concat(this.__getSelection()))
     },
 
-    __getControlChild (h) {
-      return this.__getDnd(h, 'file')
+    __getControlChild () {
+      return this.__getDnd('file')
     },
 
-    __getSelection (h) {
+    __getSelection () {
       if (this.$scopedSlots.file !== void 0) {
         return this.innerValue.map((file, index) => this.$scopedSlots.file({ index, file, ref: this }))
       }
@@ -201,7 +201,7 @@ export default Vue.extend({
       ]
     },
 
-    __getInput (h) {
+    __getInput () {
       const data = {
         ref: 'input',
         staticClass: 'q-field__input fit absolute-full cursor-pointer',

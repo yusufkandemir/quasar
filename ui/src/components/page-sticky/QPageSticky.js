@@ -1,16 +1,17 @@
-import Vue from 'vue'
+import { defineComponent, h } from 'vue'
 
 import ListenersMixin from '../../mixins/listeners.js'
 
 import { slot } from '../../utils/slot.js'
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QPageSticky',
 
   mixins: [ ListenersMixin ],
 
   inject: {
     layout: {
+      from: 'layout',
       default () {
         console.error('QPageSticky needs to be child of QLayout')
       }
@@ -118,7 +119,7 @@ export default Vue.extend({
     }
   },
 
-  render (h) {
+  render () {
     const content = slot(this, 'default')
 
     return h('div', {

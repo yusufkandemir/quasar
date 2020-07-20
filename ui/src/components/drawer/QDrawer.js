@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { defineComponent, h, withDirectives } from 'vue'
 
 import HistoryMixin from '../../mixins/history.js'
 import ModelToggleMixin from '../../mixins/model-toggle.js'
@@ -15,14 +15,15 @@ import { ariaHidden } from '../../mixins/attrs'
 const duration = 150
 
 const mouseEvents = [
-  'mouseover', 'mouseout', 'mouseenter', 'mouseleave'
+  'onMouseover', 'onMouseout', 'onMouseenter', 'onMouseleave'
 ]
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QDrawer',
 
   inject: {
     layout: {
+      from: 'layout',
       default () {
         console.error('QDrawer needs to be child of QLayout')
       }
@@ -77,6 +78,8 @@ export default Vue.extend({
     noSwipeClose: Boolean,
     noSwipeBackdrop: Boolean
   },
+
+  emits: ['click', 'on-layout', 'mini-state'],
 
   data () {
     const belowBreakpoint = (
@@ -300,15 +303,16 @@ export default Vue.extend({
       return this.mini === true && this.belowBreakpoint !== true
     },
 
-    onNativeEvents () {
+    eventListeners () {
       if (this.belowBreakpoint !== true) {
         const evt = {
-          '!click': e => { this.$emit('click', e) }
+          'onClick': e => { this.$emit('click', e) }
         }
 
         mouseEvents.forEach(name => {
           evt[name] = e => {
-            this.qListeners[name] !== void 0 && this.$emit(name, e)
+            // TODO: Vue 3, uses ListenersMixin
+            // this.qListeners[name] !== void 0 && this.$emit(name, e)
           }
         })
 
@@ -324,45 +328,52 @@ export default Vue.extend({
     openDirective () {
       const dir = this.$q.lang.rtl === true ? this.side : this.otherSide
 
-      return [{
-        name: 'touch-pan',
-        value: this.__openByTouch,
-        modifiers: {
-          [ dir ]: true,
+      return [
+        TouchPan,
+        this.__openByTouch,
+        '',
+        {
+          [dir]: true,
           mouse: true
         }
-      }]
+      ]
     },
 
     contentCloseDirective () {
-      if (this.noSwipeClose !== true) {
-        const dir = this.$q.lang.rtl === true ? this.otherSide : this.side
-
-        return [{
-          name: 'touch-pan',
-          value: this.__closeByTouch,
-          modifiers: {
-            [ dir ]: true,
-            mouse: true
-          }
-        }]
+      if (this.noSwipeClose === true) {
+        return null
       }
+
+      const dir = this.$q.lang.rtl === true ? this.otherSide : this.side
+
+      return [
+        TouchPan,
+        this.__closeByTouch,
+        '',
+        {
+          [dir]: true,
+          mouse: true
+        }
+      ]
     },
 
     backdropCloseDirective () {
-      if (this.noSwipeBackdrop !== true) {
-        const dir = this.$q.lang.rtl === true ? this.otherSide : this.side
-
-        return [{
-          name: 'touch-pan',
-          value: this.__closeByTouch,
-          modifiers: {
-            [ dir ]: true,
-            mouse: true,
-            mouseAllDir: true
-          }
-        }]
+      if (this.noSwipeBackdrop === true) {
+        return []
       }
+
+      const dir = this.$q.lang.rtl === true ? this.otherSide : this.side
+
+      return [
+        TouchPan,
+        this.__closeByTouch,
+        '',
+        {
+          [dir]: true,
+          mouse: true,
+          mouseAllDir: true
+        }
+      ]
     }
   },
 
@@ -633,7 +644,7 @@ export default Vue.extend({
     })
   },
 
-  beforeDestroy () {
+  beforeUnmount () {
     this.watcher !== void 0 && this.watcher()
     clearTimeout(this.timerMini)
 
@@ -647,40 +658,42 @@ export default Vue.extend({
     }
   },
 
-  render (h) {
+  render () {
     const child = []
 
     if (this.belowBreakpoint === true) {
       this.noSwipeOpen !== true && child.push(
         h('div', {
-          staticClass: `q-drawer__opener fixed-${this.side}`,
-          attrs: ariaHidden,
+          class: `q-drawer__opener fixed-${this.side}`,
+          ...ariaHidden,
           directives: this.openDirective
         })
       )
 
       child.push(
-        h('div', {
-          ref: 'backdrop',
-          staticClass: 'fullscreen q-drawer__backdrop',
-          class: this.backdropClass,
-          attrs: ariaHidden,
-          style: this.lastBackdropBg !== void 0
-            ? { backgroundColor: this.lastBackdropBg }
-            : null,
-          on: cache(this, 'bkdrop', { click: this.hide }),
-          directives: this.showing === false ? void 0 : this.backdropCloseDirective
-        })
+        withDirectives(
+          h('div', {
+            ref: 'backdrop',
+            class: ['fullscreen q-drawer__backdrop', this.backdropClass],
+            ...ariaHidden,
+            style: this.lastBackdropBg !== void 0
+              ? { backgroundColor: this.lastBackdropBg }
+              : null,
+            ...cache(this, 'bkdrop', { onClick: this.hide })
+          }),
+          [
+            this.showing === false ? void 0 : this.backdropCloseDirective
+          ]
+        )
       )
     }
 
     const content = [
       h('div', {
-        staticClass: 'q-drawer__content fit ' + (this.layout.container === true ? 'overflow-auto' : 'scroll'),
-        class: this.contentClass,
+        class: ['q-drawer__content fit', (this.layout.container === true ? 'overflow-auto' : 'scroll'), this.contentClass],
         style: this.contentStyle
-      }, this.isMini === true && this.$scopedSlots.mini !== void 0
-        ? this.$scopedSlots.mini()
+      }, this.isMini === true && this.$slots.mini !== void 0
+        ? this.$slots.mini()
         : slot(this, 'default')
       )
     ]
@@ -688,24 +701,25 @@ export default Vue.extend({
     if (this.elevated === true && this.showing === true) {
       content.push(
         h('div', {
-          staticClass: 'q-layout__shadow absolute-full overflow-hidden no-pointer-events'
+          class: 'q-layout__shadow absolute-full overflow-hidden no-pointer-events'
         })
       )
     }
 
     child.push(
-      h('aside', {
-        ref: 'content',
-        staticClass: `q-drawer`,
-        class: this.classes,
-        style: this.style,
-        on: this.onNativeEvents,
-        directives: this.belowBreakpoint === true
-          ? this.contentCloseDirective
-          : void 0
-      }, content)
+      withDirectives(
+        h('aside', {
+          ref: 'content',
+          class: [`q-drawer`, this.classes],
+          style: this.style,
+          ...this.eventListeners
+        }, content),
+        [
+          this.belowBreakpoint === true && this.contentCloseDirective !== null && this.contentCloseDirective
+        ]
+      )
     )
 
-    return h('div', { staticClass: 'q-drawer-container' }, child)
+    return h('div', { class: 'q-drawer-container' }, child)
   }
 })

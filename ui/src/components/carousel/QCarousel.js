@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { defineComponent, h } from 'vue'
 
 import QBtn from '../btn/QBtn.js'
 
@@ -10,7 +10,7 @@ import { isNumber } from '../../utils/is.js'
 import { mergeSlot } from '../../utils/slot.js'
 import cache from '../../utils/cache.js'
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QCarousel',
 
   mixins: [ DarkMixin, PanelParentMixin, FullscreenMixin ],
@@ -128,7 +128,7 @@ export default Vue.extend({
       )
     },
 
-    __getNavigationContainer (h, type, mapping) {
+    __getNavigationContainer (type, mapping) {
       return h('div', {
         class: 'q-carousel__control q-carousel__navigation no-wrap absolute flex' +
           ` q-carousel__navigation--${type} q-carousel__navigation--${this.navigationPositionComputed}` +
@@ -140,11 +140,11 @@ export default Vue.extend({
       ])
     },
 
-    __getContent (h) {
+    __getContent () {
       const node = []
 
       if (this.navigation === true) {
-        node.push(this.__getNavigationContainer(h, 'buttons', panel => {
+        node.push(this.__getNavigationContainer('buttons', panel => {
           const name = panel.componentOptions.propsData.name
 
           return h(QBtn, {
@@ -164,7 +164,7 @@ export default Vue.extend({
           ? ` text-${this.controlColor}`
           : ''
 
-        node.push(this.__getNavigationContainer(h, 'thumbnails', panel => {
+        node.push(this.__getNavigationContainer('thumbnails', panel => {
           const slide = panel.componentOptions.propsData
 
           return h('img', {
@@ -202,17 +202,19 @@ export default Vue.extend({
       return mergeSlot(node, this, 'control')
     },
 
-    __renderPanels (h) {
+    __renderPanels () {
       return h('div', {
         style: this.style,
-        class: this.classes,
-        on: { ...this.qListeners }
+        class: this.classes
+        // TODO: Vue 3, usese ListenersMixin
+        // on: { ...this.qListeners }
       }, [
         h('div', {
-          staticClass: 'q-carousel__slides-container',
-          directives: this.panelDirectives
-        }, this.__getPanelContent(h))
-      ].concat(this.__getContent(h)))
+          class: 'q-carousel__slides-container'
+          // TODO: Vue 3 directive API change
+          // directives: this.panelDirectives
+        }, this.__getPanelContent())
+      ].concat(this.__getContent()))
     }
   },
 
@@ -220,7 +222,7 @@ export default Vue.extend({
     this.autoplay && this.__startTimer()
   },
 
-  beforeDestroy () {
+  beforeUnmount () {
     clearInterval(this.timer)
   }
 })

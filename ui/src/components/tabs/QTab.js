@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { defineComponent, h, withDirectives } from 'vue'
 
 import QIcon from '../icon/QIcon.js'
 
@@ -8,22 +8,28 @@ import ListenersMixin from '../../mixins/listeners.js'
 import { stop } from '../../utils/event.js'
 import { mergeSlot } from '../../utils/slot.js'
 import { isKeyCode } from '../../utils/key-composition.js'
+import Ripple from '../../directives/Ripple.js'
 
 let uid = 0
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QTab',
 
   mixins: [ RippleMixin, ListenersMixin ],
 
   inject: {
     tabs: {
+      from: 'tabs',
       default () {
         console.error('QTab/QRouteTab components need to be child of QTabs')
       }
     },
-    __activateTab: {},
-    __recalculateScroll: {}
+    __activateTab: {
+      from: '__activateTab'
+    },
+    __recalculateScroll: {
+      from: '__recalculateScroll'
+    }
   },
 
   props: {
@@ -45,6 +51,8 @@ export default Vue.extend({
 
     contentClass: String
   },
+
+  emits: ['click'],
 
   computed: {
     isActive () {
@@ -74,10 +82,11 @@ export default Vue.extend({
 
     onEvents () {
       return {
-        input: stop,
-        ...this.qListeners,
-        click: this.__activate,
-        keyup: this.__onKeyup
+        'onUpdate:modelValue': stop,
+        // TODO: Vue 3, uses ListenersMixin
+        // ...this.qListeners,
+        onClick: this.__activate,
+        onKeyup: this.__onKeyup
       }
     },
 
@@ -101,6 +110,7 @@ export default Vue.extend({
       keyboard !== true && this.$refs.blurTarget !== void 0 && this.$refs.blurTarget.focus()
 
       if (this.disable !== true) {
+        // TODO: Vue 3, uses ListenersMixin
         this.qListeners.click !== void 0 && this.$emit('click', e)
         this.__activateTab(this.name)
       }
@@ -110,55 +120,48 @@ export default Vue.extend({
       isKeyCode(e, 13) === true && this.__activate(e, true)
     },
 
-    __getContent (h) {
+    __getContent () {
       const
         narrow = this.tabs.narrowIndicator,
         content = [],
         indicator = h('div', {
-          staticClass: 'q-tab__indicator',
-          class: this.tabs.indicatorClass
+          class: ['q-tab__indicator', this.tabs.indicatorClass]
         })
 
       this.icon !== void 0 && content.push(
         h(QIcon, {
-          staticClass: 'q-tab__icon',
-          props: { name: this.icon }
+          class: 'q-tab__icon',
+          name: this.icon
         })
       )
 
       this.label !== void 0 && content.push(
         h('div', {
-          staticClass: 'q-tab__label'
+          class: 'q-tab__label'
         }, [ this.label ])
       )
 
       this.alert !== false && content.push(
         this.alertIcon !== void 0
           ? h(QIcon, {
-            staticClass: 'q-tab__alert-icon',
-            props: {
-              color: this.alert !== true
-                ? this.alert
-                : void 0,
-              name: this.alertIcon
-            }
+            class: 'q-tab__alert-icon',
+            color: this.alert !== true
+              ? this.alert
+              : void 0,
+            name: this.alertIcon
           })
           : h('div', {
-            staticClass: 'q-tab__alert',
-            class: this.alert !== true
-              ? `text-${this.alert}`
-              : null
+            class: ['q-tab__alert', this.alert !== true ? `text-${this.alert}` : null]
           })
       )
 
       narrow === true && content.push(indicator)
 
       const node = [
-        h('div', { staticClass: 'q-focus-helper', attrs: { tabindex: -1 }, ref: 'blurTarget' }),
+        h('div', { class: 'q-focus-helper', tabindex: -1, ref: 'blurTarget' }),
 
         h('div', {
-          staticClass: 'q-tab__content self-stretch flex-center relative-position q-anchor--skip non-selectable',
-          class: this.innerClass
+          class: ['q-tab__content self-stretch flex-center relative-position q-anchor--skip non-selectable', this.innerClass]
         }, mergeSlot(content, this, 'default'))
       ]
 
@@ -167,22 +170,27 @@ export default Vue.extend({
       return node
     },
 
-    __renderTab (h, tag, props) {
+    __renderTab (tag, props) {
       const data = {
-        staticClass: 'q-tab relative-position self-stretch flex flex-center text-center',
-        class: this.classes,
-        attrs: this.attrs,
-        directives: this.ripple !== false && this.disable === true ? null : [
-          { name: 'ripple', value: this.ripple }
-        ],
-        [ tag === 'div' ? 'on' : 'nativeOn' ]: this.onEvents
+        class: ['q-tab relative-position self-stretch flex flex-center text-center', this.classes],
+        ...this.attrs,
+        ...this.onEvents
       }
 
       if (props !== void 0) {
-        data.props = props
+        Object.assign(data, props)
       }
 
-      return h(tag, data, this.__getContent(h))
+      const directives = []
+
+      if (this.ripple !== false && this.disable === true) {
+        directives.push([Ripple, this.ripple])
+      }
+
+      return withDirectives(
+        h(tag, data, this.__getContent()),
+        directives
+      )
     }
   },
 
@@ -190,11 +198,11 @@ export default Vue.extend({
     this.__recalculateScroll()
   },
 
-  beforeDestroy () {
+  beforeUnmount () {
     this.__recalculateScroll()
   },
 
-  render (h) {
-    return this.__renderTab(h, 'div')
+  render () {
+    return this.__renderTab('div')
   }
 })

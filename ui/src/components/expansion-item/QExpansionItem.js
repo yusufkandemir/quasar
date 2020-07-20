@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { defineComponent, h } from 'vue'
 
 import QItem from '../item/QItem.js'
 import QItemSection from '../item/QItemSection.js'
@@ -17,7 +17,7 @@ import cache from '../../utils/cache.js'
 
 const eventName = 'q:expansion-item:close'
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QExpansionItem',
 
   mixins: [ DarkMixin, RouterLinkMixin, ModelToggleMixin ],
@@ -68,6 +68,7 @@ export default Vue.extend({
 
     group (newVal, oldVal) {
       if (newVal !== void 0 && oldVal === void 0) {
+        // TODO: Vue 3, events API change
         this.$root.$on(eventName, this.__eventHandler)
       }
       else if (newVal === void 0 && oldVal !== void 0) {
@@ -126,7 +127,7 @@ export default Vue.extend({
       this !== comp && this.group === comp.group && this.hide()
     },
 
-    __getToggleIcon (h) {
+    __getToggleIcon () {
       const data = {
         staticClass: `q-focusable relative-position cursor-pointer${this.denseToggle === true && this.switchToggleSide === true ? ' items-end' : ''}`,
         class: this.expandIconClass,
@@ -167,23 +168,23 @@ export default Vue.extend({
       return h(QItemSection, data, child)
     },
 
-    __getHeader (h) {
+    __getHeader () {
       let child
 
-      if (this.$scopedSlots.header !== void 0) {
-        child = this.$scopedSlots.header().slice()
+      if (this.$slots.header !== void 0) {
+        child = this.$slots.header().slice()
       }
       else {
         child = [
           h(QItemSection, [
             h(QItemLabel, {
               props: { lines: this.labelLines }
-            }, [ this.label || '' ]),
+            }, [this.label || '']),
 
             this.caption
               ? h(QItemLabel, {
                 props: { lines: this.captionLines, caption: true }
-              }, [ this.caption ])
+              }, [this.caption])
               : null
           ])
         ]
@@ -203,7 +204,7 @@ export default Vue.extend({
       }
 
       this.disable !== true && child[this.switchToggleSide === true ? 'unshift' : 'push'](
-        this.__getToggleIcon(h)
+        this.__getToggleIcon()
       )
 
       const data = {
@@ -236,9 +237,9 @@ export default Vue.extend({
       return h(QItem, data, child)
     },
 
-    __getContent (h) {
+    __getContent () {
       const node = [
-        this.__getHeader(h),
+        this.__getHeader(),
 
         h(QSlideTransition, {
           props: { duration: this.duration },
@@ -272,7 +273,7 @@ export default Vue.extend({
     }
   },
 
-  render (h) {
+  render () {
     return h('div', {
       staticClass: 'q-expansion-item q-item-type',
       class: this.classes
@@ -280,7 +281,7 @@ export default Vue.extend({
       h(
         'div',
         { staticClass: 'q-expansion-item__container relative-position' },
-        this.__getContent(h)
+        this.__getContent()
       )
     ])
   },
@@ -289,7 +290,7 @@ export default Vue.extend({
     this.group !== void 0 && this.$root.$on(eventName, this.__eventHandler)
   },
 
-  beforeDestroy () {
+  beforeUnmount () {
     this.group !== void 0 && this.$root.$off(eventName, this.__eventHandler)
   }
 })

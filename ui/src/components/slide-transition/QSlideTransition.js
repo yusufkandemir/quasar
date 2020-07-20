@@ -1,9 +1,9 @@
-import Vue from 'vue'
+import { h, defineComponent, Transition } from 'vue'
 
 import { slot } from '../../utils/slot.js'
 import cache from '../../utils/cache.js'
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QSlideTransition',
 
   props: {
@@ -46,12 +46,12 @@ export default Vue.extend({
     }
   },
 
-  beforeDestroy () {
+  beforeUnmount () {
     this.animating && this.__cleanup()
   },
 
-  render (h) {
-    return h('transition', {
+  render () {
+    return h(Transition, {
       props: {
         css: false,
         appear: this.appear

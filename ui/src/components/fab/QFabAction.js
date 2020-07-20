@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { defineComponent, h } from 'vue'
 
 import QBtn from '../btn/QBtn.js'
 import QIcon from '../icon/QIcon.js'
@@ -16,7 +16,7 @@ const anchorMap = {
 
 const anchorValues = Object.keys(anchorMap)
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QFabAction',
 
   mixins: [ ListenersMixin, FabMixin ],
@@ -65,7 +65,7 @@ export default Vue.extend({
     }
   },
 
-  render (h) {
+  render () {
     const child = []
 
     this.icon !== '' && child.push(
@@ -75,7 +75,7 @@ export default Vue.extend({
     )
 
     this.label !== '' && child[this.labelProps.action](
-      h('div', this.labelProps.data, [ this.label ])
+      h('div', this.labelProps.data, [this.label])
     )
 
     return h(QBtn, {

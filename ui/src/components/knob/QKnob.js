@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { defineComponent, h } from 'vue'
 
 import { position, stopAndPrevent } from '../../utils/event.js'
 import { between, normalizeToInterval } from '../../utils/format.js'
@@ -12,11 +12,11 @@ import TouchPan from '../../directives/TouchPan.js'
 // PGDOWN, LEFT, DOWN, PGUP, RIGHT, UP
 const keyCodes = [34, 37, 40, 33, 39, 38]
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QKnob',
 
   mixins: [
-    { props: QCircularProgress.options.props },
+    { props: QCircularProgress.props },
     FormMixin
   ],
 
@@ -97,12 +97,12 @@ export default Vue.extend({
 
     onEvents () {
       return this.$q.platform.is.mobile === true
-        ? { click: this.__click }
+        ? { onClick: this.__click }
         : {
-          mousedown: this.__activate,
-          click: this.__click,
-          keydown: this.__keydown,
-          keyup: this.__keyup
+          onMousedown: this.__activate,
+          onClick: this.__click,
+          onKeydown: this.__keydown,
+          onKeyup: this.__keyup
         }
     },
 
@@ -242,19 +242,17 @@ export default Vue.extend({
     },
 
     __getNameInput () {
-      return this.$createElement('input', { attrs: this.formAttrs })
+      return h('input', { ...this.formAttrs })
     }
   },
 
-  render (h) {
+  render () {
     const data = {
       class: this.classes,
-      attrs: this.attrs,
-      props: {
-        ...this.$props,
-        value: this.model,
-        instantFeedback: this.computedInstantFeedback
-      }
+      ...this.attrs,
+      ...this.$props,
+      value: this.model,
+      instantFeedback: this.computedInstantFeedback
     }
 
     if (this.editable === true) {
@@ -270,7 +268,7 @@ export default Vue.extend({
       }])
 
       if (this.name !== void 0) {
-        data.scopedSlots = {
+        data.slots = {
           internal: this.__getNameInput
         }
       }

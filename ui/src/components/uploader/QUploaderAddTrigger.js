@@ -1,17 +1,18 @@
-import Vue from 'vue'
+import { defineComponent } from 'vue'
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QUploaderAddTrigger',
 
   inject: {
     __qUploaderGetInput: {
+      from: '__qUploaderGetInput',
       default () {
         console.error('QUploaderAddTrigger needs to be child of QUploader')
       }
     }
   },
 
-  render (h) {
-    return this.__qUploaderGetInput(h)
+  render () {
+    return this.__qUploaderGetInput()
   }
 })

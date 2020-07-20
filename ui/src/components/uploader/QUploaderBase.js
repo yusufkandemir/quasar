@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { h, defineComponent } from 'vue'
 
 import QBtn from '../btn/QBtn.js'
 import QIcon from '../icon/QIcon.js'
@@ -12,7 +12,7 @@ import { stop } from '../../utils/event.js'
 import { humanStorageSize } from '../../utils/format.js'
 import cache from '../../utils/cache.js'
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QUploaderBase',
 
   mixins: [ DarkMixin, FileMixin ],
@@ -198,7 +198,7 @@ export default Vue.extend({
         return false
       })
       this.queuedFiles = this.queuedFiles.filter(f => f.name !== file.name)
-      this.$emit('removed', [ file ])
+      this.$emit('removed', [file])
     },
 
     __revokeImgURLs () {
@@ -272,7 +272,7 @@ export default Vue.extend({
       this.autoUpload === true && this.upload()
     },
 
-    __getBtn (h, show, icon, fn) {
+    __getBtn (show, icon, fn) {
       if (show === true) {
         return h(QBtn, {
           props: {
@@ -282,11 +282,11 @@ export default Vue.extend({
             dense: true
           },
           on: icon === 'add' ? null : { click: fn }
-        }, icon === 'add' ? this.__getInputControl(h) : null)
+        }, icon === 'add' ? this.__getInputControl() : null)
       }
     },
 
-    __getInputControl (h) {
+    __getInputControl () {
       return [
         h('input', {
           ref: 'input',
@@ -307,17 +307,17 @@ export default Vue.extend({
       ]
     },
 
-    __getHeader (h) {
-      if (this.$scopedSlots.header !== void 0) {
-        return this.$scopedSlots.header(this)
+    __getHeader () {
+      if (this.$slots.header !== void 0) {
+        return this.$slots.header(this)
       }
 
       return [
         h('div', {
           staticClass: 'q-uploader__header-content flex flex-center no-wrap q-gutter-xs'
         }, [
-          this.__getBtn(h, this.queuedFiles.length > 0, 'removeQueue', this.removeQueuedFiles),
-          this.__getBtn(h, this.uploadedFiles.length > 0, 'removeUploaded', this.removeUploadedFiles),
+          this.__getBtn(this.queuedFiles.length > 0, 'removeQueue', this.removeQueuedFiles),
+          this.__getBtn(this.uploadedFiles.length > 0, 'removeUploaded', this.removeUploadedFiles),
 
           this.isUploading === true
             ? h(QSpinner, { staticClass: 'q-uploader__spinner' })
@@ -325,7 +325,7 @@ export default Vue.extend({
 
           h('div', { staticClass: 'col column justify-center' }, [
             this.label !== void 0
-              ? h('div', { staticClass: 'q-uploader__title' }, [ this.label ])
+              ? h('div', { staticClass: 'q-uploader__title' }, [this.label])
               : null,
 
             h('div', { staticClass: 'q-uploader__subtitle' }, [
@@ -333,16 +333,16 @@ export default Vue.extend({
             ])
           ]),
 
-          this.__getBtn(h, this.canAddFiles, 'add', this.pickFiles),
-          this.__getBtn(h, this.hideUploadBtn === false && this.canUpload === true, 'upload', this.upload),
-          this.__getBtn(h, this.isUploading, 'clear', this.abort)
+          this.__getBtn(this.canAddFiles, 'add', this.pickFiles),
+          this.__getBtn(this.hideUploadBtn === false && this.canUpload === true, 'upload', this.upload),
+          this.__getBtn(this.isUploading, 'clear', this.abort)
         ])
       ]
     },
 
-    __getList (h) {
-      if (this.$scopedSlots.list !== void 0) {
-        return this.$scopedSlots.list(this)
+    __getList () {
+      if (this.$slots.list !== void 0) {
+        return this.$slots.list(this)
       }
 
       return this.files.map(file => h('div', {
@@ -371,7 +371,7 @@ export default Vue.extend({
             : null,
 
           h('div', { staticClass: 'q-uploader__file-header-content col' }, [
-            h('div', { staticClass: 'q-uploader__title' }, [ file.name ]),
+            h('div', { staticClass: 'q-uploader__title' }, [file.name]),
             h('div', {
               staticClass: 'q-uploader__subtitle row items-center no-wrap'
             }, [
@@ -404,23 +404,23 @@ export default Vue.extend({
     }
   },
 
-  beforeDestroy () {
+  beforeUnmount () {
     this.isUploading === true && this.abort()
     this.files.length > 0 && this.__revokeImgURLs()
   },
 
-  render (h) {
+  render () {
     const children = [
       h('div', {
         staticClass: 'q-uploader__header',
         class: this.colorClass
-      }, this.__getHeader(h)),
+      }, this.__getHeader()),
 
       h('div', {
         staticClass: 'q-uploader__list scroll'
-      }, this.__getList(h)),
+      }, this.__getList()),
 
-      this.__getDnd(h, 'uploader')
+      this.__getDnd('uploader')
     ]
 
     this.isBusy === true && children.push(
