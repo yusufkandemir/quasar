@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { h, defineComponent } from 'vue'
 
 import DarkMixin from '../../mixins/dark.js'
 import ListenersMixin from '../../mixins/listeners.js'
@@ -17,7 +17,7 @@ export const margins = {
   xl: 24
 }
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QSeparator',
 
   mixins: [ DarkMixin, ListenersMixin ],
@@ -83,13 +83,13 @@ export default Vue.extend({
     }
   },
 
-  render (h) {
+  render () {
     return h('hr', {
-      staticClass: 'q-separator',
-      class: this.classes,
+      class: ['q-separator', this.classes],
       style: this.style,
-      attrs: this.attrs,
-      on: { ...this.qListeners }
+      ...this.attrs
+      // TODO: Vue 3, uses ListenersMixin
+      // on: { ...this.qListeners }
     })
   }
 })
