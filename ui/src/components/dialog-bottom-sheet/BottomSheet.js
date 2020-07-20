@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { defineComponent, h } from 'vue'
 
 import QDialog from '../dialog/QDialog.js'
 
@@ -16,7 +16,7 @@ import AttrsMixin from '../../mixins/attrs.js'
 
 import cache from '../../utils/cache.js'
 
-export default Vue.extend({
+export default defineComponent({
   name: 'BottomSheetPlugin',
 
   mixins: [ DarkMixin, AttrsMixin ],
@@ -33,6 +33,8 @@ export default Vue.extend({
     cardClass: [String, Array, Object],
     cardStyle: [String, Array, Object]
   },
+
+  emits: ['ok', 'hide'],
 
   computed: {
     dialogProps () {
@@ -57,37 +59,34 @@ export default Vue.extend({
       this.hide()
     },
 
-    __getGrid (h) {
+    __getGrid () {
       return this.actions.map(action => {
         const img = action.avatar || action.img
 
         return action.label === void 0
           ? h(QSeparator, {
-            staticClass: 'col-all',
-            props: { dark: this.isDark }
+            class: 'col-all',
+            dark: this.isDark
           })
           : h('div', {
-            staticClass: 'q-bottom-sheet__item q-hoverable q-focusable cursor-pointer relative-position',
-            class: action.classes,
-            attrs: { tabindex: 0 },
-            on: {
-              click: () => this.onOk(action),
-              keyup: e => {
-                e.keyCode === 13 && this.onOk(action)
-              }
+            class: ['q-bottom-sheet__item q-hoverable q-focusable cursor-pointer relative-position', action.classes],
+            tabindex: 0,
+            onClick: () => this.onOk(action),
+            onKeyup: e => {
+              e.keyCode === 13 && this.onOk(action)
             }
           }, [
-            h('div', { staticClass: 'q-focus-helper' }),
+            h('div', { class: 'q-focus-helper' }),
 
             action.icon
-              ? h(QIcon, { props: { name: action.icon, color: action.color } })
+              ? h(QIcon, { name: action.icon, color: action.color })
               : (
                 img
                   ? h('img', {
-                    attrs: { src: img },
-                    staticClass: action.avatar ? 'q-bottom-sheet__avatar' : null
+                    src: img,
+                    class: action.avatar ? 'q-bottom-sheet__avatar' : null
                   })
-                  : h('div', { staticClass: 'q-bottom-sheet__empty-icon' })
+                  : h('div', { class: 'q-bottom-sheet__empty-icon' })
               ),
 
             h('div', [ action.label ])
@@ -95,35 +94,30 @@ export default Vue.extend({
       })
     },
 
-    __getList (h) {
+    __getList () {
       return this.actions.map(action => {
         const img = action.avatar || action.img
 
         return action.label === void 0
-          ? h(QSeparator, { props: { spaced: true, dark: this.isDark } })
+          ? h(QSeparator, { spaced: true, dark: this.isDark })
           : h(QItem, {
-            staticClass: 'q-bottom-sheet__item',
-            class: action.classes,
-            props: {
-              tabindex: 0,
-              clickable: true,
-              dark: this.isDark
-            },
-            on: {
-              click: () => this.onOk(action),
-              keyup: e => {
-                e.keyCode === 13 && this.onOk(action)
-              }
+            class: ['q-bottom-sheet__item', action.classes],
+            tabindex: 0,
+            clickable: true,
+            dark: this.isDark,
+            onClick: () => this.onOk(action),
+            onKeyup: e => {
+              e.keyCode === 13 && this.onOk(action)
             }
           }, [
-            h(QItemSection, { props: { avatar: true } }, [
+            h(QItemSection, { avatar: true }, [
               action.icon
-                ? h(QIcon, { props: { name: action.icon, color: action.color } })
+                ? h(QIcon, { name: action.icon, color: action.color })
                 : (
                   img
                     ? h('img', {
-                      attrs: { src: img },
-                      staticClass: action.avatar ? 'q-bottom-sheet__avatar' : null
+                      src: img,
+                      class: action.avatar ? 'q-bottom-sheet__avatar' : null
                     })
                     : null
                 )
@@ -134,43 +128,45 @@ export default Vue.extend({
     }
   },
 
-  render (h) {
+  render () {
     const child = []
 
     this.title && child.push(
       h(QCardSection, {
-        staticClass: 'q-dialog__title'
+        class: 'q-dialog__title'
       }, [ this.title ])
     )
 
     this.message && child.push(
       h(QCardSection, {
-        staticClass: 'q-dialog__message'
+        class: 'q-dialog__message'
       }, [ this.message ])
     )
 
     child.push(
       this.grid === true
         ? h('div', {
-          staticClass: 'row items-stretch justify-start'
-        }, this.__getGrid(h))
-        : h('div', this.__getList(h))
+          class: 'row items-stretch justify-start'
+        }, this.__getGrid())
+        : h('div', this.__getList())
     )
 
     return h(QDialog, {
       ref: 'dialog',
-      props: this.dialogProps,
-      on: cache(this, 'hide', {
-        hide: () => {
+      ...this.dialogProps,
+      ...cache(this, 'hide', {
+        onHide: () => {
           this.$emit('hide')
         }
       })
     }, [
       h(QCard, {
-        staticClass: `q-bottom-sheet q-bottom-sheet--${this.grid === true ? 'grid' : 'list'}` +
-          (this.isDark === true ? ' q-bottom-sheet--dark q-dark' : ''),
-        style: this.cardStyle,
-        class: this.cardClass
+        class: [
+          `q-bottom-sheet ${this.grid === true ? 'q-bottom-sheet--grid' : 'q-bottom-sheet--list'}`,
+          (this.isDark === true ? 'q-bottom-sheet--dark q-dark' : ''),
+          this.cardClass
+        ],
+        style: this.cardStyle
       }, child)
     ])
   }

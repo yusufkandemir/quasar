@@ -54,6 +54,8 @@ export default defineComponent({
     cardStyle: [String, Array, Object]
   },
 
+  emits: ['ok', 'hide'],
+
   computed: {
     hasForm () {
       return this.prompt !== void 0 || this.options !== void 0
@@ -152,6 +154,8 @@ export default defineComponent({
 
           ...this.prompt.attrs,
           ...cache(this, 'prompt', {
+            // TODO: Update `prompt` to support new v-model:prompt Vue 3 syntax
+            // eslint-disable-next-line vue/no-mutating-props
             onInput: v => { this.prompt.model = v },
             onKeyup: evt => {
               // if ENTER key
@@ -180,6 +184,7 @@ export default defineComponent({
           dark: this.isDark,
 
           ...cache(this, 'opts', {
+            // eslint-disable-next-line vue/no-mutating-props
             onInput: v => { this.options.model = v }
           })
         })
@@ -284,10 +289,8 @@ export default defineComponent({
       })
     }, [
       h(QCard, {
-        class: 'q-dialog-plugin' +
-          (this.isDark === true ? ' q-dialog-plugin--dark q-dark' : ''),
+        class: ['q-dialog-plugin', (this.isDark === true ? ' q-dialog-plugin--dark q-dark' : ''), this.cardClass],
         style: this.cardStyle,
-        class: this.cardClass,
         dark: this.isDark
       }, child)
     ])
