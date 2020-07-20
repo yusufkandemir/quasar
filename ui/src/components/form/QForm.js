@@ -16,13 +16,15 @@ export default defineComponent({
     noResetFocus: Boolean,
     greedy: Boolean
   },
+  emits: ['submit', 'reset', 'validation-success', 'validation-error'],
 
   computed: {
     onEvents () {
       return {
-        ...this.qListeners,
-        submit: this.submit,
-        reset: this.reset
+        // TODO: Uses ListenersMixin
+        // ...this.qListeners,
+        onSubmit: this.submit,
+        onReset: this.reset
       }
     }
   },
@@ -122,6 +124,7 @@ export default defineComponent({
 
       this.validate().then(val => {
         if (val === true) {
+          // TODO: Vue 3, uses ListenersMixin
           if (this.qListeners.submit !== void 0) {
             this.$emit('submit', evt)
           }
@@ -162,8 +165,8 @@ export default defineComponent({
 
   render () {
     return h('form', {
-      staticClass: 'q-form',
-      on: this.onEvents
+      class: 'q-form',
+      ...this.onEvents
     }, slot(this, 'default'))
   }
 })
