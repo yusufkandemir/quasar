@@ -2,8 +2,6 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-mixed-operators */
 
-import { reactive } from 'vue'
-
 export const isSSR = typeof window === 'undefined'
 export let fromSSR = false
 export let onSSR = isSSR
