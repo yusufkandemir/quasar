@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { h, defineComponent } from 'vue'
 
 import QIcon from '../icon/QIcon.js'
 
@@ -6,11 +6,12 @@ import ListenersMixin from '../../mixins/listeners.js'
 
 import { slot, uniqueSlot } from '../../utils/slot.js'
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QTimelineEntry',
 
   inject: {
     __timeline: {
+      from: '__timeline',
       default () {
         console.error('QTimelineEntry needs to be child of QTimeline')
       }
@@ -56,7 +57,7 @@ export default Vue.extend({
     }
   },
 
-  render (h) {
+  render () {
     const child = uniqueSlot(this, 'default', [])
 
     if (this.body !== void 0) {
@@ -69,14 +70,15 @@ export default Vue.extend({
         h('div'),
         h(
           this.tag,
-          { staticClass: 'q-timeline__heading-title' },
+          { class: 'q-timeline__heading-title' },
           child
         )
       ]
 
       return h('div', {
-        staticClass: 'q-timeline__heading',
-        on: { ...this.qListeners }
+        class: 'q-timeline__heading'
+        // TODO: Vue 3, uses ListenersMixin
+      // on: { ...this.qListeners }
       }, this.reverse === true ? content.reverse() : content)
     }
 
@@ -85,39 +87,38 @@ export default Vue.extend({
     if (this.icon !== void 0) {
       dot = [
         h(QIcon, {
-          staticClass: 'row items-center justify-center',
-          props: { name: this.icon }
+          class: 'row items-center justify-center',
+          name: this.icon
         })
       ]
     }
     else if (this.avatar !== void 0) {
       dot = [
         h('img', {
-          staticClass: 'q-timeline__dot-img',
-          domProps: { src: this.avatar }
+          class: 'q-timeline__dot-img',
+          src: this.avatar
         })
       ]
     }
 
     const content = [
-      h('div', { staticClass: 'q-timeline__subtitle' }, [
+      h('div', { class: 'q-timeline__subtitle' }, [
         h('span', slot(this, 'subtitle', [ this.subtitle ]))
       ]),
 
       h('div', {
-        staticClass: 'q-timeline__dot',
-        class: this.colorClass
+        class: ['q-timeline__dot', this.colorClass]
       }, dot),
 
-      h('div', { staticClass: 'q-timeline__content' }, [
-        h('h6', { staticClass: 'q-timeline__title' }, slot(this, 'title', [ this.title ]))
+      h('div', { class: 'q-timeline__content' }, [
+        h('h6', { class: 'q-timeline__title' }, slot(this, 'title', [ this.title ]))
       ].concat(child))
     ]
 
     return h('li', {
-      staticClass: 'q-timeline__entry',
-      class: this.classes,
-      on: { ...this.qListeners }
+      class: ['q-timeline__entry', this.classes]
+      // TODO: Vue 3, uses ListenersMixin
+      // on: { ...this.qListeners }
     }, this.reverse === true ? content.reverse() : content)
   }
 })
