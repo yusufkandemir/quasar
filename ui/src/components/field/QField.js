@@ -142,9 +142,7 @@ export default defineComponent({
     },
 
     classes () {
-      return {
-        [this.fieldClass]: this.fieldClass !== void 0,
-
+      const classes = {
         [`q-field--${this.styleType}`]: true,
         'q-field--rounded': this.rounded,
         'q-field--square': this.square,
@@ -165,6 +163,12 @@ export default defineComponent({
         'q-field--readonly': this.readonly === true && this.disable !== true,
         'q-field--disabled': this.disable
       }
+
+      if ('fieldClass' in this && this.fieldClass !== void 0) {
+        classes[this.fieldClass] = true
+      }
+
+      return classes
     },
 
     styleType () {
@@ -320,11 +324,11 @@ export default defineComponent({
         )
       }
 
-      ;('__getInnerAppend' in this && this.__getInnerAppend !== void 0) && node.push(
+      ;('__getInnerAppend' in this && typeof this.__getInnerAppend === 'function') && node.push(
         this.__getInnerAppendNode('inner-append', this.__getInnerAppend())
       )
 
-      ;('__getControlChild' in this && this.__getControlChild !== void 0) && node.push(
+      ;('__getControlChild' in this && typeof this.__getControlChild === 'function') && node.push(
         this.__getControlChild()
       )
 
@@ -340,13 +344,13 @@ export default defineComponent({
         }, [ this.prefix ])
       )
 
-      if (this.hasShadow === true && this.__getShadowControl !== void 0) {
+      if ('hasShadow' in this && this.hasShadow === true && this.__getShadowControl !== void 0) {
         node.push(
           this.__getShadowControl()
         )
       }
 
-      if ('__getControl' in this && this.__getControl !== void 0) {
+      if ('__getControl' in this && typeof this.__getControl === 'function') {
         node.push(this.__getControl())
       }
       // internal usage only:
@@ -377,7 +381,7 @@ export default defineComponent({
       )
 
       return node.concat(
-        this.__getDefaultSlot !== void 0
+        ('__getDefaultSlot' in this && typeof this.__getDefaultSlot === 'function')
           ? this.__getDefaultSlot()
           : slot(this, 'default')
       )
@@ -387,7 +391,7 @@ export default defineComponent({
       let msg, key
 
       if (this.hasError === true) {
-        if (this.computedErrorMessage !== void 0) {
+        if ('computedErrorMessage' in this && this.computedErrorMessage !== void 0) {
           msg = [ h('div', [ this.computedErrorMessage ]) ]
           key = this.computedErrorMessage
         }
@@ -510,8 +514,8 @@ export default defineComponent({
   },
 
   render () {
-    this.__onPreRender !== void 0 && this.__onPreRender()
-    this.__onPostRender !== void 0 && this.$nextTick(this.__onPostRender)
+    ;('this.__onPreRender' in this && typeof this.__onPreRender === 'function') && this.__onPreRender()
+    ;('this.__onPostRender' in this && this.__onPostRender !== void 0) && this.$nextTick(this.__onPostRender)
 
     return h('label', {
       class: ['q-field q-validation-component row no-wrap items-start', this.classes],
