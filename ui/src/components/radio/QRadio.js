@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { defineComponent, h } from 'vue'
 
 import DarkMixin from '../../mixins/dark.js'
 import OptionSizeMixin from '../../mixins/option-size.js'
@@ -9,13 +9,13 @@ import { stopAndPrevent } from '../../utils/event.js'
 import { slot, mergeSlot } from '../../utils/slot.js'
 import cache from '../../utils/cache.js'
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QRadio',
 
   mixins: [ DarkMixin, OptionSizeMixin, FormMixin, RefocusTargetMixin ],
 
   props: {
-    value: {
+    modelValue: {
       required: true
     },
     val: {
@@ -33,9 +33,11 @@ export default Vue.extend({
     tabindex: [String, Number]
   },
 
+  emits: ['update:modelValue'],
+
   computed: {
     isTrue () {
-      return this.value === this.val
+      return this.modelValue === this.val
     },
 
     classes () {
@@ -66,7 +68,7 @@ export default Vue.extend({
 
       this.name !== void 0 && Object.assign(prop, {
         name: this.name,
-        value: this.val
+        modelValue: this.val
       })
 
       return prop
@@ -102,28 +104,25 @@ export default Vue.extend({
       }
 
       if (this.disable !== true && this.isTrue !== true) {
-        this.$emit('input', this.val, e)
+        this.$emit('update:modelValue', this.val, e)
       }
     }
   },
 
-  render (h) {
+  render () {
     const content = [
       h('svg', {
-        staticClass: 'q-radio__bg absolute',
-        attrs: { focusable: 'false' /* needed for IE11 */, viewBox: '0 0 24 24' }
+        class: 'q-radio__bg absolute',
+        focusable: 'false' /* needed for IE11 */,
+        viewBox: '0 0 24 24'
       }, [
         h('path', {
-          attrs: {
-            d: 'M12,22a10,10 0 0 1 -10,-10a10,10 0 0 1 10,-10a10,10 0 0 1 10,10a10,10 0 0 1 -10,10m0,-22a12,12 0 0 0 -12,12a12,12 0 0 0 12,12a12,12 0 0 0 12,-12a12,12 0 0 0 -12,-12'
-          }
+          d: 'M12,22a10,10 0 0 1 -10,-10a10,10 0 0 1 10,-10a10,10 0 0 1 10,10a10,10 0 0 1 -10,10m0,-22a12,12 0 0 0 -12,12a12,12 0 0 0 12,12a12,12 0 0 0 12,-12a12,12 0 0 0 -12,-12'
         }),
 
         h('path', {
-          staticClass: 'q-radio__check',
-          attrs: {
-            d: 'M12,6a6,6 0 0 0 -6,6a6,6 0 0 0 6,6a6,6 0 0 0 6,-6a6,6 0 0 0 -6,-6'
-          }
+          class: 'q-radio__check',
+          d: 'M12,6a6,6 0 0 0 -6,6a6,6 0 0 0 6,6a6,6 0 0 0 6,-6a6,6 0 0 0 -6,-6'
         })
       ])
     ]
@@ -136,8 +135,7 @@ export default Vue.extend({
 
     const child = [
       h('div', {
-        staticClass: 'q-radio__inner relative-position no-pointer-events',
-        class: this.innerClass,
+        class: ['q-radio__inner relative-position no-pointer-events', this.innerClass],
         style: this.sizeStyle
       }, content)
     ]
@@ -147,26 +145,26 @@ export default Vue.extend({
     }
 
     const label = this.label !== void 0
-      ? mergeSlot([ this.label ], this, 'default')
+      ? mergeSlot([this.label], this, 'default')
       : slot(this, 'default')
 
     label !== void 0 && child.push(
       h('div', {
-        staticClass: 'q-radio__label q-anchor--skip'
+        class: 'q-radio__label q-anchor--skip'
       }, label)
     )
 
     return h('div', {
       class: this.classes,
-      attrs: this.attrs,
-      on: cache(this, 'inpExt', {
-        click: this.set,
-        keydown: e => {
+      ...this.attrs,
+      ...cache(this, 'inpExt', {
+        onClick: this.set,
+        onKeydown: e => {
           if (e.keyCode === 13 || e.keyCode === 32) {
             stopAndPrevent(e)
           }
         },
-        keyup: e => {
+        onKeyup: e => {
           if (e.keyCode === 13 || e.keyCode === 32) {
             this.set(e)
           }

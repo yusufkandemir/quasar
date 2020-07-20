@@ -6,7 +6,7 @@
   },
 
   "props": {
-    "value": {
+    "modelValue": {
       "extends": "value",
       "type": [ "Number", "String" ],
       "required": true,
