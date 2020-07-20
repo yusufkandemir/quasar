@@ -1,10 +1,10 @@
-import Vue from 'vue'
+import { defineComponent, h } from 'vue'
 
 import ListenersMixin from '../../mixins/listeners.js'
 
 import { slot } from '../../utils/slot.js'
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QBadge',
 
   mixins: [ ListenersMixin ],
@@ -57,12 +57,13 @@ export default Vue.extend({
     }
   },
 
-  render (h) {
+  render () {
     return h('div', {
       style: this.style,
       class: this.classes,
-      attrs: this.attrs,
-      on: { ...this.qListeners }
+      ...this.attrs
+      // TODO: Vue 3, uses ListenersMixin
+      // on: { ...this.qListeners }
     }, this.label !== void 0 ? [ this.label ] : slot(this, 'default'))
   }
 })
