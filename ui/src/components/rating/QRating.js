@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { defineComponent, h } from 'vue'
 
 import { stopAndPrevent } from '../../utils/event.js'
 import { between } from '../../utils/format.js'
@@ -11,13 +11,13 @@ import ListenersMixin from '../../mixins/listeners.js'
 import cache from '../../utils/cache.js'
 import { slot } from '../../utils/slot.js'
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QRating',
 
   mixins: [ SizeMixin, FormMixin, ListenersMixin ],
 
   props: {
-    value: {
+    modelValue: {
       type: Number,
       required: true
     },
@@ -41,6 +41,8 @@ export default Vue.extend({
     readonly: Boolean,
     disable: Boolean
   },
+
+  emits: ['update:modelValue'],
 
   data () {
     return {
@@ -100,9 +102,9 @@ export default Vue.extend({
       if (this.editable === true) {
         const
           model = between(parseInt(value, 10), 1, parseInt(this.max, 10)),
-          newVal = this.noReset !== true && this.value === model ? 0 : model
+          newVal = this.noReset !== true && this.modelValue === model ? 0 : model
 
-        newVal !== this.value && this.$emit('input', newVal)
+        newVal !== this.modelValue && this.$emit('update:modelValue', newVal)
         this.mouseModel = 0
       }
     },
@@ -135,22 +137,22 @@ export default Vue.extend({
     }
   },
 
-  render (h) {
+  render () {
     const
       child = [],
       tabindex = this.editable === true ? 0 : null,
       icons = this.iconData,
-      ceil = Math.ceil(this.value)
+      ceil = Math.ceil(this.modelValue)
 
-    const halfIndex = this.iconHalf === void 0 || ceil === this.value
+    const halfIndex = this.iconHalf === void 0 || ceil === this.modelValue
       ? -1
       : ceil
 
     for (let i = 1; i <= this.max; i++) {
       const
-        active = (this.mouseModel === 0 && this.value >= i) || (this.mouseModel > 0 && this.mouseModel >= i),
+        active = (this.mouseModel === 0 && this.modelValue >= i) || (this.mouseModel > 0 && this.mouseModel >= i),
         half = halfIndex === i && this.mouseModel < i,
-        exSelected = this.mouseModel > 0 && (half === true ? ceil : this.value) >= i && this.mouseModel < i,
+        exSelected = this.mouseModel > 0 && (half === true ? ceil : this.modelValue) >= i && this.mouseModel < i,
         name = half === true
           ? (i <= icons.halfIconLen ? this.iconHalf[i - 1] : icons.halfIcon)
           : (
@@ -170,22 +172,22 @@ export default Vue.extend({
         h(QIcon, {
           key: i,
           ref: `rt${i}`,
-          staticClass: 'q-rating__icon',
           class: {
+            'q-rating__icon': true,
             'q-rating__icon--active': active === true || half === true,
             'q-rating__icon--exselected': exSelected,
             'q-rating__icon--hovered': this.mouseModel === i,
             [`text-${color}`]: color !== void 0
           },
-          props: { name: name || this.$q.iconSet.rating.icon },
-          attrs: { tabindex },
-          on: cache(this, 'i#' + i, {
-            click: () => { this.__set(i) },
-            mouseover: () => { this.__setHoverValue(i) },
-            mouseout: () => { this.mouseModel = 0 },
-            focus: () => { this.__setHoverValue(i) },
-            blur: () => { this.mouseModel = 0 },
-            keyup: e => { this.__keyup(e, i) }
+          name: name || this.$q.iconSet.rating.icon,
+          tabindex,
+          ...cache(this, 'i#' + i, {
+            onClick: () => { this.__set(i) },
+            onMouseover: () => { this.__setHoverValue(i) },
+            onMouseout: () => { this.mouseModel = 0 },
+            onFocus: () => { this.__setHoverValue(i) },
+            onBlur: () => { this.mouseModel = 0 },
+            onKeyup: e => { this.__keyup(e, i) }
           })
         }, slot(this, `tip-${i}`))
       )
@@ -196,11 +198,11 @@ export default Vue.extend({
     }
 
     return h('div', {
-      staticClass: 'q-rating row inline items-center',
-      class: this.classes,
+      class: ['q-rating row inline items-center', this.classes],
       style: this.sizeStyle,
-      attrs: this.attrs,
-      on: { ...this.qListeners }
+      ...this.attrs
+      // TODO: Vue 3, uses ListenersMixin
+      // on: { ...this.qListeners }
     }, child)
   }
 })

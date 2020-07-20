@@ -10,7 +10,7 @@
   },
 
   "props": {
-    "value": {
+    "movelValue": {
       "extends": "value",
       "type": "Number",
       "examples": [ ":value=\"2\"" ]
