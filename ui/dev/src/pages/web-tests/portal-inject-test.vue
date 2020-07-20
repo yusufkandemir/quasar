@@ -72,24 +72,27 @@
 </template>
 
 <script>
-export default {
+import { h, defineComponent } from 'vue'
+
+export default defineComponent({
   provide: {
     providedTest: 'Provide/Inject works!'
   },
 
   components: {
-    TestComponent: {
+    TestComponent: defineComponent({
       inject: {
         providedTest: {
+          from: 'providedTest',
           default: 'Provide/Inject DOES NOT WORKS'
         }
       },
-      render (h) {
+      render () {
         return h('div', {
-          staticClass: 'bg-white q-pa-xl'
+          class: 'bg-white q-pa-xl'
         }, this.providedTest)
       }
-    }
+    })
   },
 
   data () {
@@ -101,5 +104,5 @@ export default {
 
   methods: {
   }
-}
+})
 </script>

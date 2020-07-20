@@ -196,7 +196,7 @@
           <q-tree
             :nodes="props"
             default-expand-all
-            :selected.sync="selected"
+            v-model:selected="selected"
             node-key="label"
             class="bg-white"
           />
@@ -221,7 +221,7 @@
             :nodes="props"
             default-expand-all
             tick-strategy="leaf"
-            :ticked.sync="ticked"
+            v-model:ticked="ticked"
             node-key="label"
             class="bg-white"
           />

@@ -4,7 +4,7 @@
       bordered
       :data="rows"
       selection="multiple"
-      :selected.sync="selected"
+      v-model:selected="selected"
       row-key="name"
       :pagination="{rowsPerPage: 3}"
     />

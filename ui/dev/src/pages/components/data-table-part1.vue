@@ -236,7 +236,7 @@
         :columns="columns"
         :filter="filter"
         :selection="selection"
-        :selected.sync="selected"
+        v-model:selected="selected"
         @selection="onSelection"
         :visible-columns="visibleColumns"
         card-container-class="justify-center"
@@ -244,7 +244,9 @@
       >
         <template v-slot:top-right>
           <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
-            <q-icon slot="append" name="search" />
+            <template v-slot:append>
+              <q-icon name="search" />
+            </template>
           </q-input>
         </template>
 
@@ -276,7 +278,9 @@
       </q-table>
 
       <q-input filled v-model="filter" label="Search" debounce="300">
-        <q-icon slot="append" name="search" />
+        <template v-slot:append>
+          <q-icon name="search" />
+        </template>
       </q-input>
 
       <div>
@@ -295,16 +299,18 @@
         :filter="filter"
         :loading="loading"
         selection="multiple"
-        :selected.sync="selected"
+        v-model:selected="selected"
         :visible-columns="visibleColumns"
         row-key="name"
-        :pagination.sync="serverPagination"
+        v-model:pagination="serverPagination"
         :separator="separator"
         @request="request"
       >
         <template v-slot:top-right>
           <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
-            <q-icon slot="append" name="search" />
+            <template v-slot:append>
+              <q-icon name="search" />
+            </template>
           </q-input>
         </template>
       </q-table>
@@ -322,7 +328,7 @@
         :filter="filter"
         :loading="loading"
         selection="multiple"
-        :selected.sync="selected"
+        v-model:selected="selected"
         row-key="name"
       />
 
@@ -334,7 +340,7 @@
         :filter="filter"
         :loading="loading"
         :selection="selection"
-        :selected.sync="selected"
+        v-model:selected="selected"
         :visible-columns="visibleColumns"
         row-key="name"
         color="secondary"
@@ -404,7 +410,7 @@
         :filter="filter"
         :loading="loading"
         :selection="selection"
-        :selected.sync="selected"
+        v-model:selected="selected"
         :visible-columns="visibleColumns"
         row-key="name"
         color="amber"
@@ -645,7 +651,7 @@
         :color="color"
         row-key="name"
         :selection="selection"
-        :selected.sync="selected"
+        v-model:selected="selected"
         :loading="loading"
         :visible-columns="visibleColumns"
         :title="title"
@@ -711,7 +717,7 @@
         :color="color"
         row-key="name"
         :selection="selection"
-        :selected.sync="selected"
+        v-model:selected="selected"
         :loading="loading"
         :visible-columns="visibleColumns"
         :title="title"
@@ -745,7 +751,7 @@
         :color="color"
         row-key="name"
         :selection="selection"
-        :selected.sync="selected"
+        v-model:selected="selected"
         :loading="loading"
         :visible-columns="visibleColumns"
         :title="title"
@@ -769,7 +775,7 @@
         :color="color"
         row-key="name"
         :selection="selection"
-        :selected.sync="selected"
+        v-model:selected="selected"
         :loading="loading"
         :visible-columns="visibleColumns"
         :title="title"

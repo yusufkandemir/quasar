@@ -43,14 +43,14 @@
 <script>
 // eslint-disable-next-line no-unused-vars
 import Quasar, { Dark } from 'quasar'
-import Vue from 'vue'
+import * as Vue from 'vue'
 import languages from 'quasar/lang/index.json'
 
 if (process.env.SERVER !== true) {
   window.Vue = Vue
 }
 
-export default {
+export default Vue.defineComponent({
   meta: {
     title: 'Quasar Development'
   },
@@ -114,7 +114,7 @@ export default {
     })
     */
   }
-}
+})
 </script>
 
 <style lang="sass">

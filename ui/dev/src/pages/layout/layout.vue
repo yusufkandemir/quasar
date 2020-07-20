@@ -38,7 +38,9 @@
           </q-toolbar-title>
 
           <q-input value="" dense standout dark>
-            <q-icon slot="append" name="search" />
+            <template v-slot:append>
+              <q-icon name="search" />
+            <template>
           </q-input>
         </q-toolbar>
         <q-tabs indicator-color="yellow">

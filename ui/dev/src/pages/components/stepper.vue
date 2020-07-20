@@ -154,8 +154,9 @@
 </template>
 
 <script>
+import { defineComponent, h } from 'vue'
 
-export default {
+export default defineComponent({
   components: {
     KeepAliveTest: {
       name: 'KeepAliveTest',
@@ -176,12 +177,12 @@ export default {
         this.log('mounted')
       },
 
-      beforeDestroy () {
-        this.log('beforeDestroy')
+      beforeUnmount () {
+        this.log('beforeUnmount')
       },
 
-      destroyed () {
-        this.log('destroyed')
+      unmounted () {
+        this.log('unmounted')
       },
 
       methods: {
@@ -190,7 +191,7 @@ export default {
         }
       },
 
-      render (h) {
+      render () {
         return h('div', [ 'keep alive test ' + this.name ])
       }
     }
@@ -233,5 +234,5 @@ export default {
   mounted () {
     window.x = this.$refs.stepper
   }
-}
+})
 </script>

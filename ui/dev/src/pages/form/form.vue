@@ -175,37 +175,36 @@
 </template>
 
 <script>
-export default {
+import { h, defineComponent, resolveComponent } from 'vue'
+
+export default defineComponent({
   components: {
-    customInput: {
-      props: [ 'value' ],
-      render (h) {
-        return h('q-field', {
-          props: {
-            ...this.$attrs,
-            value: this.value
-          },
-          listeners: this.$listeners,
-          scopedSlots: {
-            control: () => this.value
+    customInput: defineComponent({
+      props: [ 'modelValue' ],
+      render () {
+        return h(resolveComponent('q-field'), {
+          ...this.$attrs,
+          modelValue: this.modelValue,
+          // TODO: Vue 3, $listeners
+          // listeners: this.$listeners,
+          slots: {
+            control: () => this.modelValue
           }
         })
       }
-    },
+    }),
 
-    myComp: {
-      render (h) {
+    myComp: defineComponent({
+      render () {
         return h('div', {
-          staticClass: 'q-validation-component'
+          class: 'q-validation-component'
         }, [
-          h('q-card', {
-            staticClass: 'text-subtitle2',
-            props: {
-              bordered: true,
-              flat: true
-            }
+          h(resolveComponent('q-card'), {
+            class: 'text-subtitle2',
+            bordered: true,
+            flat: true
           }, [
-            h('q-card-section', [ 'a custom component' ])
+            h(resolveComponent('q-card-section'), [ 'a custom component' ])
           ])
         ])
       },
@@ -216,7 +215,7 @@ export default {
           return true
         }
       }
-    }
+    })
   },
   data () {
     return {
@@ -307,5 +306,5 @@ export default {
       console.log('cliiick')
     }
   }
-}
+})
 </script>

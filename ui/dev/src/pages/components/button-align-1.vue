@@ -128,10 +128,10 @@
 
             <q-btn :type="type" v-bind="prop" :loading="loading" :percentage="percentage" color="primary" @click="startProgress">
               Btn with progress
-              <div slot="loading" class="row items-center">
+              <template v-slot:loading class="row items-center">
                 <q-spinner class="on-left" />
                 Computing...
-              </div>
+              </template>
             </q-btn>
 
             <q-btn :type="type" v-bind="prop" round :loading="loading" :percentage="percentage" color="primary" @click="startProgress" icon="wifi" />
@@ -202,7 +202,7 @@ export default {
     }
   },
 
-  beforeDestroy () {
+  beforeUnmount () {
     clearInterval(this.interval)
   }
 }

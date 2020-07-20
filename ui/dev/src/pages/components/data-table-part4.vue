@@ -1,7 +1,9 @@
 <template>
   <div class="q-layout-padding">
     <q-input filled v-model="filter" label="Search" debounce="300">
-      <q-icon slot="append" name="search" />
+      <template v-slot:append>
+        <q-icon name="search" />
+      </template>
     </q-input>
 
     <div>
@@ -26,7 +28,7 @@
       row-key="index"
       virtual-scroll
       :virtual-scroll-sticky-start="dense ? 24 : 48"
-      :pagination.sync="pagination"
+      v-model:pagination="pagination"
       :rows-per-page-options="[0]"
     />
 
@@ -62,7 +64,7 @@
       :virtual-scroll="pagination.rowsPerPage === 0"
       :virtual-scroll-sticky-start="dense ? 24 : 48"
       @virtual-scroll="onVirtualScroll"
-      :pagination.sync="pagination"
+      v-model:pagination="pagination"
     >
       <template v-slot:header="props">
         <q-tr :props="props">
@@ -107,7 +109,7 @@
       row-key="index"
       virtual-scroll
       :virtual-scroll-sticky-start="dense ? 24 : 48"
-      :pagination.sync="pagination"
+      v-model:pagination="pagination"
     >
       <template v-slot:header="props">
         <q-tr :props="props">

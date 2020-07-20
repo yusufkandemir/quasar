@@ -11,9 +11,9 @@
       title="Server side data"
       :filter="filter"
       selection="multiple"
-      :selected.sync="selected"
+      v-model:selected="selected"
       :row-key="getRowKey"
-      :pagination.sync="serverPagination"
+      v-model:pagination="serverPagination"
       @request="request"
       :loading="loading"
       flat
@@ -22,7 +22,9 @@
     >
       <template v-slot:top-right>
         <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
-          <q-icon slot="append" name="search" />
+          <template v-slot:append>
+            <q-icon name="search" />
+          </template>
         </q-input>
       </template>
     </q-table>
@@ -97,7 +99,9 @@
         <q-btn class="on-right" flat dense color="primary" :disable="loadingDyn" icon="refresh" label="Refresh" />
         <div class="col" />
         <q-input borderless dense debounce="300" color="primary" v-model="filterDyn">
-          <q-icon slot="append" name="search" />
+          <template v-slot:append>
+            <q-icon name="search" />
+          </template>
         </q-input>
       </template>
     </q-table>
@@ -115,7 +119,9 @@
     >
       <template v-slot:top-right>
         <q-input borderless dense debounce="300" color="primary" class="q-mr-sm" v-model="filter">
-          <q-icon slot="append" name="search" />
+          <template v-slot:append>
+            <q-icon name="search" />
+          </template>
         </q-input>
         <q-select
           v-model="visibleColumns"
@@ -266,7 +272,7 @@
       :columns="columns"
       row-key="name"
       selection="single"
-      :selected.sync="selected"
+      v-model:selected="selected"
     />
 
     <h4>Multiple selection</h4>
@@ -275,7 +281,7 @@
       :columns="columns"
       row-key="name"
       selection="multiple"
-      :selected.sync="selected"
+      v-model:selected="selected"
     />
 
     <h4>Selection actions</h4>
@@ -284,7 +290,7 @@
       :columns="columns"
       row-key="name"
       selection="multiple"
-      :selected.sync="selected"
+      v-model:selected="selected"
       color="secondary"
       title="Select some rows"
     >
@@ -303,7 +309,7 @@
       row-key="name"
       selection="single"
       dense
-      :selected.sync="selected"
+      v-model:selected="selected"
     />
     <h4>No Data - Default</h4>
     <q-table

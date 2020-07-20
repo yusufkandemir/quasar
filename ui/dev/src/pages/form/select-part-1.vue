@@ -29,8 +29,12 @@
         :options="stringOptions"
         label="Single"
       >
-        <q-icon slot="prepend" name="event" />
-        <q-icon slot="append" name="search" />
+        <template v-slot:prepend>
+          <q-icon name="event" />
+        </template>
+        <template v-slot:append>
+          <q-icon name="search" />
+        </template>
       </q-select>
 
       <q-select
@@ -40,8 +44,12 @@
         popup-content-class="bg-amber"
         label="Single - Colored popup"
       >
-        <q-icon slot="prepend" name="event" />
-        <q-icon slot="append" name="search" />
+        <template v-slot:prepend>
+          <q-icon name="event" />
+        </template>
+        <template v-slot:append>
+          <q-icon name="search" />
+        </template>
       </q-select>
 
       <div>{{ stringMultiple }}</div>

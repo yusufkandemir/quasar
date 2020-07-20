@@ -70,9 +70,11 @@
 </template>
 
 <script>
-export default {
+import { h, defineComponent } from 'vue'
+
+export default defineComponent({
   components: {
-    KeepAliveTest: {
+    KeepAliveTest: defineComponent({
       name: 'KeepAliveTest',
 
       props: {
@@ -91,12 +93,12 @@ export default {
         this.log('mounted')
       },
 
-      beforeDestroy () {
-        this.log('beforeDestroy')
+      beforeUnmount () {
+        this.log('beforeUnmount')
       },
 
-      destroyed () {
-        this.log('destroyed')
+      unmounted () {
+        this.log('unmounted')
       },
 
       methods: {
@@ -105,10 +107,10 @@ export default {
         }
       },
 
-      render (h) {
+      render () {
         return h('div', [ 'keep alive test ' + this.name ])
       }
-    }
+    })
   },
 
   data () {
@@ -118,5 +120,5 @@ export default {
   },
   methods: {
   }
-}
+})
 </script>

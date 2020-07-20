@@ -38,7 +38,7 @@
       class="q-my-lg"
       :color="$q.dark.isActive || dark ? 'amber' : 'primary'"
       :selection="selection"
-      :selected.sync="selected"
+      v-model:selected="selected"
       :dark="dark"
       flat
       bordered
@@ -56,7 +56,7 @@
       :dense="dense"
       selection="multiple"
       :rows-per-page-options="[1, 3, 5, 50, 0]"
-      :selected.sync="selected"
+      v-model:selected="selected"
       :dark="dark"
       @row-click="onRowClick"
     >

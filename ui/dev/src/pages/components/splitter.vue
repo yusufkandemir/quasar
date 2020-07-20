@@ -50,14 +50,15 @@
         </div>
       </template>
 
-      <q-icon
-        v-if="showSeparator"
-        color="primary"
-        slot="separator"
-        size="40px"
-        name="drag_indicator"
-        @click="separatorLog"
-      />
+      <template v-slot:separator>
+        <q-icon
+          v-if="showSeparator"
+          color="primary"
+          size="40px"
+          name="drag_indicator"
+          @click="separatorLog"
+        />
+      </template>
 
       <template v-slot:after>
         <div class="q-layout-padding">
@@ -93,40 +94,42 @@
         </div>
       </template>
 
-      <div v-if="showSeparator" slot="separator" class="flex justify-center">
-        <q-btn
-          color="primary"
-          unelevated
-          class="q-px-sm"
-          icon="drag_indicator"
-          @click="separatorLog"
-        />
-        <q-splitter
-          v-model="innerSeparatorSplitModel"
-          :reverse="modelReverse"
-          vertical
-          :disable="disable"
-          separator-class="bg-deep-orange"
-          class="bg-white rounded-borders"
-          style="width: 50vw; height: 30vh"
-        >
-          <template v-slot:before>
-            <div class="q-layout-padding">
-              <div v-for="n in 20" :key="n" class="q-my-md">
-                {{ n }}. Lorem ipsum dolor sit.
+      <template v-if="showSeparator" v-slot:separator>
+        <div class="flex justify-center">
+          <q-btn
+            color="primary"
+            unelevated
+            class="q-px-sm"
+            icon="drag_indicator"
+            @click="separatorLog"
+          />
+          <q-splitter
+            v-model="innerSeparatorSplitModel"
+            :reverse="modelReverse"
+            vertical
+            :disable="disable"
+            separator-class="bg-deep-orange"
+            class="bg-white rounded-borders"
+            style="width: 50vw; height: 30vh"
+          >
+            <template v-slot:before>
+              <div class="q-layout-padding">
+                <div v-for="n in 20" :key="n" class="q-my-md">
+                  {{ n }}. Lorem ipsum dolor sit.
+                </div>
               </div>
-            </div>
-          </template>
+            </template>
 
-          <template v-slot:after>
-            <div class="q-layout-padding">
-              <div v-for="n in 20" :key="n" class="q-my-md">
-                {{ n }}. Lorem ipsum dolor sit.
+            <template v-slot:after>
+              <div class="q-layout-padding">
+                <div v-for="n in 20" :key="n" class="q-my-md">
+                  {{ n }}. Lorem ipsum dolor sit.
+                </div>
               </div>
-            </div>
-          </template>
-        </q-splitter>
-      </div>
+            </template>
+          </q-splitter>
+        </div>
+      </template>
 
       <template v-slot:after>
         <q-splitter
@@ -147,15 +150,16 @@
             </div>
           </template>
 
-          <q-btn
-            v-if="showSeparator"
-            color="primary"
-            unelevated
-            class="q-px-sm test-separator"
-            slot="separator"
-            icon="touch_app"
-            @click="separatorLog"
-          />
+          <template v-slot:separator>
+            <q-btn
+              v-if="showSeparator"
+              color="primary"
+              unelevated
+              class="q-px-sm test-separator"
+              icon="touch_app"
+              @click="separatorLog"
+            />
+          </template>
 
           <template v-slot:after>
             <div class="q-layout-padding">

@@ -54,7 +54,7 @@
       :data="data"
       :columns="columns"
       row-key="name"
-      :expanded.sync="expanded"
+      v-model:expanded="expanded"
       title="With expanded.sync"
     >
       <template v-slot:body="props">

@@ -1,9 +1,13 @@
-export default {
+import { h, defineComponent, resolveComponent } from 'vue'
+
+export default defineComponent({
   name: 'CustomDialogComponentNoParent',
 
   props: {
     text: String
   },
+
+  emits: ['ok', 'hide'],
 
   data () {
     return {
@@ -27,91 +31,75 @@ export default {
     }
   },
 
-  render (h) {
-    return h('q-dialog', {
+  render () {
+    return h(resolveComponent('q-dialog'), {
       ref: 'dialog',
 
-      on: {
-        hide: () => {
-          this.$emit('hide')
-        }
+      onHide: () => {
+        this.$emit('hide')
       }
     }, [
-      h('q-card', {
-        staticClass: 'q-dialog-plugin' +
+      h(resolveComponent('q-card'), {
+        class: 'q-dialog-plugin' +
           (this.dark === true ? ' q-dialog-plugin--dark' : '')
       }, [
-        h('q-card-section', [
+        h(resolveComponent('q-card-section'), [
           'Custooom: ' + this.text
         ]),
 
-        h('q-card-section', [
-          h('q-select', {
-            props: {
-              label: 'Menu select',
-              color: 'accent',
-              options: this.options,
-              value: this.sel,
-              behavior: 'menu'
-            },
-            on: { input: val => { this.sel = val } }
+        h(resolveComponent('q-card-section'), [
+          h(resolveComponent('q-select'), {
+            label: 'Menu select',
+            color: 'accent',
+            options: this.options,
+            value: this.sel,
+            behavior: 'menu',
+            onInput: val => { this.sel = val }
           }),
 
-          h('q-select', {
-            props: {
-              label: 'Dialog select',
-              color: 'accent',
-              options: this.options,
-              value: this.sel,
-              behavior: 'dialog'
-            },
-            on: { input: val => { this.sel = val } }
+          h(resolveComponent('q-select'), {
+            label: 'Dialog select',
+            color: 'accent',
+            options: this.options,
+            modelValue: this.sel,
+            behavior: 'dialog',
+            onInput: val => { this.sel = val }
           })
         ]),
 
-        h('q-card-section', [
+        h(resolveComponent('q-card-section'), [
           'Reactivity:',
 
-          h('q-btn', {
-            staticClass: 'q-ml-xs',
-            props: {
-              label: 'Hit me: ' + this.inc,
-              color: 'accent',
-              noCaps: true
-            },
-            on: { click: this.increment }
+          h(resolveComponent('q-btn'), {
+            class: 'q-ml-xs',
+            label: 'Hit me: ' + this.inc,
+            color: 'accent',
+            noCaps: true,
+            onClick: this.increment
           })
         ]),
 
-        h('q-card-actions', {
+        h(resolveComponent('q-card-actions'), {
           props: {
             align: 'right'
           }
         }, [
-          h('q-btn', {
-            props: {
-              color: 'primary',
-              label: 'OK'
-            },
-            on: {
-              click: () => {
-                this.$emit('ok')
-                this.hide()
-              }
+          h(resolveComponent('q-btn'), {
+            color: 'primary',
+            label: 'OK',
+            onClick: () => {
+              this.$emit('ok')
+              this.hide()
             }
           }),
 
-          h('q-btn', {
-            props: {
-              color: 'primary',
-              label: 'Cancel'
-            },
-            on: {
-              click: this.hide
-            }
+          h(resolveComponent('q-btn'), {
+            color: 'primary',
+            label: 'Cancel',
+            onClick: this.hide
           })
         ])
       ])
     ])
   }
-}
+})

@@ -13,7 +13,7 @@
         ref="table"
         :pagination="pagination"
         :rows-per-page-options="[0]"
-        :expanded.sync="expanded"
+        v-model:expanded="expanded"
       >
         <template v-slot:body="props">
           <q-tr :props="props" :key="`m_${props.row.index}`" no-hover>

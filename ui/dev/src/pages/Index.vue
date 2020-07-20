@@ -39,6 +39,8 @@
 </template>
 
 <script>
+import { defineComponent } from 'vue'
+
 import pages from 'src/router/pages-list'
 
 const STORAGE_KEY = 'index-filter'
@@ -55,7 +57,7 @@ pages.map(page => page.slice(0, page.length - 4)).forEach(page => {
   })
 })
 
-export default {
+export default defineComponent({
   created () {
     this.list = list
   },
@@ -69,7 +71,7 @@ export default {
     this.$q.platform.is.desktop === true && this.$refs.filter.focus()
   },
 
-  beforeDestroy () {
+  beforeUnmount () {
     window.removeEventListener('keydown', this.onKeyup, { passive: false, capture: true })
   },
 
@@ -162,5 +164,5 @@ export default {
       }
     }
   }
-}
+})
 </script>
