@@ -40,7 +40,7 @@ export default defineComponent({
     color: String,
     textColor: String,
 
-    value: {
+    modelValue: {
       type: Boolean,
       default: true
     },
@@ -57,6 +57,8 @@ export default defineComponent({
     tabindex: [String, Number],
     disable: Boolean
   },
+
+  emits: ['update:selected', 'click', 'remove'],
 
   computed: {
     classes () {
