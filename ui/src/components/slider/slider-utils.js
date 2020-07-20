@@ -1,3 +1,5 @@
+import { h } from 'vue'
+
 import { between } from '../../utils/format.js'
 import { position } from '../../utils/event.js'
 
@@ -170,37 +172,38 @@ export const SliderMixin = {
     },
 
     panDirectives () {
-      return this.editable === true
-        ? [{
-          name: 'touch-pan',
-          value: this.__pan,
-          modifiers: {
-            [ this.orientation ]: true,
+      const directives = []
+
+      if (this.editable === true) {
+        directives.push([
+          TouchPan,
+          this.__pan,
+          '',
+          {
+            [this.orientation]: true,
             prevent: true,
             stop: true,
             mouse: true,
             mouseAllDir: true
           }
-        }]
-        : null
+        ])
+      }
+
+      return directives
     }
   },
 
   methods: {
-    __getThumbSvg (h) {
+    __getThumbSvg () {
       return h('svg', {
-        staticClass: 'q-slider__thumb absolute',
-        attrs: {
-          focusable: 'false', /* needed for IE11 */
-          viewBox: '0 0 20 20',
-          width: '20',
-          height: '20'
-        }
+        class: 'q-slider__thumb absolute',
+        focusable: 'false', /* needed for IE11 */
+        viewBox: '0 0 20 20',
+        width: '20',
+        height: '20'
       }, [
         h('path', {
-          attrs: {
-            d: this.thumbPath
-          }
+          d: this.thumbPath
         })
       ])
     },
@@ -284,7 +287,7 @@ export const SliderMixin = {
     }
   },
 
-  beforeDestroy () {
+  beforeUnmount () {
     document.removeEventListener('mouseup', this.__deactivate, true)
   }
 }
