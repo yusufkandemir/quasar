@@ -1,3 +1,5 @@
+import { defineComponent } from 'vue'
+
 function samePagination (oldPag, newPag) {
   for (const prop in newPag) {
     if (newPag[prop] !== oldPag[prop]) {
@@ -17,7 +19,7 @@ function fixPagination (p) {
   return p
 }
 
-export default {
+export default defineComponent({
   props: {
     pagination: Object,
     rowsPerPageOptions: {
@@ -26,8 +28,11 @@ export default {
     }
   },
 
+  emits: ['update:pagination'],
+
   computed: {
     computedPagination () {
+      // TODO: Vue 3, uses ListenersMixin
       const pag = this.qListeners['update:pagination'] !== void 0
         ? { ...this.innerPagination, ...this.pagination }
         : this.innerPagination
@@ -150,8 +155,9 @@ export default {
   },
 
   created () {
+    // TODO: Vue 3, uses ListenersMixin
     if (this.qListeners['update:pagination'] !== void 0) {
       this.$emit('update:pagination', { ...this.computedPagination })
     }
   }
-}
+})

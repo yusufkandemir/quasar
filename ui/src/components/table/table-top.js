@@ -1,4 +1,6 @@
-export default {
+import { h, defineComponent } from 'vue'
+
+export default defineComponent({
   computed: {
     marginalsProps () {
       return {
@@ -18,19 +20,19 @@ export default {
   },
 
   methods: {
-    getTop (h) {
+    getTop () {
       const
-        top = this.$scopedSlots.top,
-        topLeft = this.$scopedSlots['top-left'],
-        topRight = this.$scopedSlots['top-right'],
-        topSelection = this.$scopedSlots['top-selection'],
+        top = this.$slots.top,
+        topLeft = this.$slots['top-left'],
+        topRight = this.$slots['top-right'],
+        topSelection = this.$slots['top-selection'],
         hasSelection = this.hasSelectionMode === true &&
           topSelection !== void 0 &&
           this.rowsSelectedNumber > 0,
-        staticClass = 'q-table__top relative-position row items-center'
+        classes = 'q-table__top relative-position row items-center'
 
       if (top !== void 0) {
-        return h('div', { staticClass }, [ top(this.marginalsProps) ])
+        return h('div', { class: classes }, [ top(this.marginalsProps) ])
       }
 
       let child
@@ -43,24 +45,24 @@ export default {
 
         if (topLeft !== void 0) {
           child.push(
-            h('div', { staticClass: 'q-table-control' }, [
+            h('div', { class: 'q-table-control' }, [
               topLeft(this.marginalsProps)
             ])
           )
         }
         else if (this.title) {
           child.push(
-            h('div', { staticClass: 'q-table__control' }, [
-              h('div', { staticClass: 'q-table__title' }, this.title)
+            h('div', { class: 'q-table__control' }, [
+              h('div', { class: 'q-table__title' }, this.title)
             ])
           )
         }
       }
 
       if (topRight !== void 0) {
-        child.push(h('div', { staticClass: 'q-table__separator col' }))
+        child.push(h('div', { class: 'q-table__separator col' }))
         child.push(
-          h('div', { staticClass: 'q-table__control' }, [
+          h('div', { class: 'q-table__control' }, [
             topRight(this.marginalsProps)
           ])
         )
@@ -70,7 +72,7 @@ export default {
         return
       }
 
-      return h('div', { staticClass }, child)
+      return h('div', { class: classes }, child)
     }
   }
-}
+})

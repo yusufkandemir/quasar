@@ -1,6 +1,10 @@
+import { h, defineComponent } from 'vue'
+
 import QCheckbox from '../checkbox/QCheckbox.js'
 
-export default {
+export default defineComponent({
+  emits: ['row-click', 'row-dblclick'],
+
   methods: {
     getTableRowBody (row, body, pageIndex) {
       const
@@ -17,14 +21,14 @@ export default {
       }))
     },
 
-    getTableRow (h, row, pageIndex) {
+    getTableRow (row, pageIndex) {
       const
-        bodyCell = this.$scopedSlots['body-cell'],
+        bodyCell = this.$slots['body-cell'],
         key = this.getRowKey(row),
         selected = this.isRowSelected(key),
         child = this.computedCols.map(col => {
           const
-            bodyCellCol = this.$scopedSlots[`body-cell-${col.name}`],
+            bodyCellCol = this.$slots[`body-cell-${col.name}`],
             slot = bodyCellCol !== void 0 ? bodyCellCol : bodyCell
 
           return slot !== void 0
@@ -36,35 +40,32 @@ export default {
         })
 
       this.hasSelectionMode === true && child.unshift(
-        h('td', { staticClass: 'q-table--col-auto-width' }, [
+        h('td', { class: 'q-table--col-auto-width' }, [
           h(QCheckbox, {
-            props: {
-              value: selected,
-              color: this.color,
-              dark: this.isDark,
-              dense: this.dense
-            },
-            on: {
-              input: (adding, evt) => {
-                this.__updateSelection([ key ], [ row ], adding, evt)
-              }
+            modelValue: selected,
+            color: this.color,
+            dark: this.isDark,
+            dense: this.dense,
+            'onUpdate:modelValue': (adding, evt) => {
+              this.__updateSelection([ key ], [ row ], adding, evt)
             }
           })
         ])
       )
 
-      const data = { key, class: { selected }, on: {} }
+      const data = { key, class: { selected } }
 
+      // TODO: Vue 3, uses ListenersMixin
       if (this.qListeners['row-click'] !== void 0) {
         data.class['cursor-pointer'] = true
-        data.on.click = evt => {
+        data.onClick = evt => {
           this.$emit('row-click', evt, row)
         }
       }
 
       if (this.qListeners['row-dblclick'] !== void 0) {
         data.class['cursor-pointer'] = true
-        data.on.dblclick = evt => {
+        data.onDblclick = evt => {
           this.$emit('row-dblclick', evt, row)
         }
       }
@@ -72,14 +73,14 @@ export default {
       return h('tr', data, child)
     },
 
-    getTableBody (h) {
+    getTableBody () {
       const
-        body = this.$scopedSlots.body,
-        topRow = this.$scopedSlots['top-row'],
-        bottomRow = this.$scopedSlots['bottom-row'],
+        body = this.$slots.body,
+        topRow = this.$slots['top-row'],
+        bottomRow = this.$slots['bottom-row'],
         mapFn = body !== void 0
           ? (row, pageIndex) => this.getTableRowBody(row, body, pageIndex)
-          : (row, pageIndex) => this.getTableRow(h, row, pageIndex)
+          : (row, pageIndex) => this.getTableRow(row, pageIndex)
 
       let child = this.computedRows.map(mapFn)
 
@@ -93,12 +94,12 @@ export default {
       return h('tbody', child)
     },
 
-    getTableRowVirtual (h) {
-      const body = this.$scopedSlots.body
+    getTableRowVirtual () {
+      const body = this.$slots.body
 
       return body !== void 0
         ? (props, pageIndex) => this.getTableRowBody(props.item, body, pageIndex)
-        : (props, pageIndex) => this.getTableRow(h, props.item, pageIndex)
+        : (props, pageIndex) => this.getTableRow(props.item, pageIndex)
     },
 
     addBodyRowMeta (data) {
@@ -124,7 +125,7 @@ export default {
 
       data.cols = data.cols.map(col => {
         const c = { ...col }
-        Object.defineProperty(c, 'value', {
+        Object.defineProperty(c, 'modelValue', {
           get: () => this.getCellValue(col, data.row),
           configurable: true,
           enumerable: true
@@ -138,11 +139,12 @@ export default {
     addBodyCellMetaData (data) {
       data.rowIndex = this.firstRowIndex + data.pageIndex
 
-      Object.defineProperty(data, 'value', {
+      Object.defineProperty(data, 'modelValue', {
         get: () => this.getCellValue(data.col, data.row),
         configurable: true,
         enumerable: true
       })
+
       return data
     },
 
@@ -151,4 +153,4 @@ export default {
       return col.format !== void 0 ? col.format(val, row) : val
     }
   }
-}
+})

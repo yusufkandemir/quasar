@@ -1,4 +1,6 @@
-export default {
+import { defineComponent } from 'vue'
+
+export default defineComponent({
   props: {
     selection: {
       type: String,
@@ -10,6 +12,8 @@ export default {
       default: () => []
     }
   },
+
+  emits: ['update:selected', 'selection'],
 
   computed: {
     selectedKeys () {
@@ -73,4 +77,4 @@ export default {
       this.$emit('update:selected', payload)
     }
   }
-}
+})

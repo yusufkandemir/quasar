@@ -1,6 +1,7 @@
 import { isNumber } from '../../utils/is.js'
+import { defineComponent } from 'vue'
 
-export default {
+export default defineComponent({
   props: {
     visibleColumns: Array
   },
@@ -56,4 +57,4 @@ export default {
       return names
     }
   }
-}
+})

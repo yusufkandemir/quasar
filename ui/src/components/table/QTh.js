@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { defineComponent, h } from 'vue'
 
 import QIcon from '../icon/QIcon.js'
 
@@ -6,7 +6,7 @@ import ListenersMixin from '../../mixins/listeners.js'
 
 import { slot, uniqueSlot } from '../../utils/slot.js'
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QTh',
 
   mixins: [ ListenersMixin ],
@@ -16,18 +16,20 @@ export default Vue.extend({
     autoWidth: Boolean
   },
 
-  render (h) {
-    const on = { ...this.qListeners }
+  emits: ['click'],
+
+  render () {
+    const listeners = { ...this.qListeners }
 
     if (this.props === void 0) {
       return h('th', {
-        on,
+        ...listeners,
         class: this.autoWidth === true ? 'q-table--col-auto-width' : null
       }, slot(this, 'default'))
     }
 
     let col, child
-    const name = this.$vnode.key
+    const name = this.$.vnode.key
 
     if (name) {
       col = this.props.colsMap[name]
@@ -45,8 +47,8 @@ export default Vue.extend({
       child = uniqueSlot(this, 'default', [])
       child[action](
         h(QIcon, {
-          props: { name: this.$q.iconSet.table.arrowUp },
-          staticClass: col.__iconClass
+          name: this.$q.iconSet.table.arrowUp,
+          class: col.__iconClass
         })
       )
     }
@@ -54,17 +56,16 @@ export default Vue.extend({
       child = slot(this, 'default')
     }
 
-    const evt = col.sortable === true
-      ? {
-        click: evt => {
-          this.props.sort(col)
-          this.$emit('click', evt)
-        }
+    if (col.sortable === true) {
+      listeners.onClick = event => {
+        // eslint-disable-next-line vue/no-mutating-props
+        this.props.sort(col)
+        this.$emit('click', event)
       }
-      : {}
+    }
 
     return h('th', {
-      on: { ...on, ...evt },
+      ...listeners,
       style: col.headerStyle,
       class: col.__thClass +
         (this.autoWidth === true ? ' q-table--col-auto-width' : '')

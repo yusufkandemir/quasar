@@ -1,73 +1,69 @@
+import { h, defineComponent } from 'vue'
+
 import QCheckbox from '../checkbox/QCheckbox.js'
 import QSeparator from '../separator/QSeparator.js'
 
-export default {
+export default defineComponent({
+  emits: ['row-click', 'row-dblclick'],
+
   methods: {
-    getGridBody (h) {
-      const item = this.$scopedSlots.item !== void 0
-        ? this.$scopedSlots.item
+    getGridBody () {
+      const item = this.$slots.item !== void 0
+        ? this.$slots.item
         : scope => {
           const child = scope.cols.map(
-            col => h('div', { staticClass: 'q-table__grid-item-row' }, [
-              h('div', { staticClass: 'q-table__grid-item-title' }, [ col.label ]),
-              h('div', { staticClass: 'q-table__grid-item-value' }, [ col.value ])
+            col => h('div', { class: 'q-table__grid-item-row' }, [
+              h('div', { class: 'q-table__grid-item-title' }, [ col.label ]),
+              h('div', { class: 'q-table__grid-item-value' }, [ col.value ])
             ])
           )
 
           this.hasSelectionMode === true && child.unshift(
-            h('div', { staticClass: 'q-table__grid-item-row' }, [
+            h('div', { class: 'q-table__grid-item-row' }, [
               h(QCheckbox, {
-                props: {
-                  value: scope.selected,
-                  color: this.color,
-                  dark: this.isDark,
-                  dense: true
-                },
-                on: {
-                  input: (adding, evt) => {
-                    this.__updateSelection([ scope.key ], [ scope.row ], adding, evt)
-                  }
+                modelValue: scope.selected,
+                color: this.color,
+                dark: this.isDark,
+                dense: true,
+                'onUpdate:modelValue': (adding, evt) => {
+                  this.__updateSelection([ scope.key ], [ scope.row ], adding, evt)
                 }
               })
             ]),
 
-            h(QSeparator, { props: { dark: this.isDark } })
+            h(QSeparator, { dark: this.isDark })
           )
 
           const data = {
-            staticClass: 'q-table__grid-item-card' + this.cardDefaultClass,
-            class: this.cardClass,
-            style: this.cardStyle,
-            on: {}
+            class: ['q-table__grid-item-card', this.cardDefaultClass, this.cardClass],
+            style: this.cardStyle
           }
 
           if (this.qListeners['row-click'] !== void 0 || this.qListeners['row-dblclick'] !== void 0) {
-            data.staticClass += ' cursor-pointer'
+            data.class.push(' cursor-pointer')
           }
 
           if (this.qListeners['row-click'] !== void 0) {
-            data.on.click = evt => {
+            data.onClick = evt => {
               this.$emit('row-click', evt, scope.row)
             }
           }
 
           if (this.qListeners['row-dblclick'] !== void 0) {
-            data.on.dblclick = evt => {
+            data.onDblclick = evt => {
               this.$emit('row-dblclick', evt, scope.row)
             }
           }
 
           return h('div', {
-            staticClass: 'q-table__grid-item col-xs-12 col-sm-6 col-md-4 col-lg-3',
-            class: scope.selected === true ? 'q-table__grid-item--selected' : ''
+            class: ['q-table__grid-item col-xs-12 col-sm-6 col-md-4 col-lg-3', scope.selected === true ? 'q-table__grid-item--selected' : '']
           }, [
             h('div', data, child)
           ])
         }
 
       return h('div', {
-        staticClass: 'q-table__grid-content row',
-        class: this.cardContainerClass,
+        class: ['q-table__grid-content row', this.cardContainerClass],
         style: this.cardContainerStyle
       }, this.computedRows.map((row, pageIndex) => {
         const
@@ -85,20 +81,20 @@ export default {
       }))
     },
 
-    getGridHeader (h) {
+    getGridHeader () {
       const child = this.gridHeader === true
         ? [
-          h('table', { staticClass: 'q-table' }, [
-            this.getTableHeader(h)
+          h('table', { class: 'q-table' }, [
+            this.getTableHeader()
           ])
         ]
         : (
-          this.loading === true && this.$scopedSlots.loading === void 0
-            ? this.__getProgress(h)
+          this.loading === true && this.$slots.loading === void 0
+            ? this.__getProgress()
             : void 0
         )
 
-      return h('div', { staticClass: 'q-table__middle' }, child)
+      return h('div', { class: 'q-table__middle' }, child)
     }
   }
-}
+})

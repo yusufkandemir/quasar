@@ -1,10 +1,10 @@
-import Vue from 'vue'
+import { defineComponent, h } from 'vue'
 
 import ListenersMixin from '../../mixins/listeners.js'
 
 import { slot } from '../../utils/slot.js'
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QTr',
 
   mixins: [ ListenersMixin ],
@@ -21,9 +21,10 @@ export default Vue.extend({
     }
   },
 
-  render (h) {
+  render () {
     return h('tr', {
-      on: { ...this.qListeners },
+      // TODO: Vue 3, uses ListenersMixin
+      // on: { ...this.qListeners },
       class: this.classes
     }, slot(this, 'default'))
   }

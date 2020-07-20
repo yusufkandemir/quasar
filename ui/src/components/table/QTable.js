@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { defineComponent, h } from 'vue'
 
 import Top from './table-top.js'
 import TableHeader from './table-header.js'
@@ -26,7 +26,7 @@ import cache from '../../utils/cache.js'
 const commonVirtPropsObj = {}
 commonVirtPropsList.forEach(p => { commonVirtPropsObj[p] = {} })
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QTable',
 
   mixins: [
@@ -108,6 +108,8 @@ export default Vue.extend({
     cardStyle: [String, Array, Object],
     cardClass: [String, Array, Object]
   },
+
+  emits: ['virtual-scroll', 'request'],
 
   data () {
     return {
@@ -241,28 +243,26 @@ export default Vue.extend({
     }
   },
 
-  render (h) {
-    const child = [ this.getTop(h) ]
-    const data = { staticClass: this.containerClass }
+  render () {
+    const child = [ this.getTop() ]
+    const data = { class: [this.containerClass] }
 
     if (this.grid === true) {
-      child.push(this.getGridHeader(h))
+      child.push(this.getGridHeader())
     }
     else {
-      Object.assign(data, {
-        class: this.cardClass,
-        style: this.cardStyle
-      })
+      data.class.push(this.cardClass)
+      data.style = this.cardStyle
     }
 
     child.push(
-      this.getBody(h),
-      this.getBottom(h)
+      this.getBody(),
+      this.getBottom()
     )
 
-    if (this.loading === true && this.$scopedSlots.loading !== void 0) {
+    if (this.loading === true && this.$slots.loading !== void 0) {
       child.push(
-        this.$scopedSlots.loading()
+        this.$slots.loading()
       )
     }
 
@@ -284,40 +284,37 @@ export default Vue.extend({
       this.hasVirtScroll === true && this.$refs.virtScroll.reset()
     },
 
-    getBody (h) {
+    getBody () {
       if (this.grid === true) {
-        return this.getGridBody(h)
+        return this.getGridBody()
       }
 
-      const header = this.hideHeader !== true ? this.getTableHeader(h) : null
+      const header = this.hideHeader !== true ? this.getTableHeader() : null
 
       return this.hasVirtScroll === true
         ? h(QVirtualScroll, {
           ref: 'virtScroll',
-          props: {
-            ...this.virtProps,
-            items: this.computedRows,
-            type: '__qtable'
-          },
-          on: cache(this, 'vs', {
-            'virtual-scroll': this.__onVScroll
+          ...this.virtProps,
+          items: this.computedRows,
+          type: '__qtable',
+          ...cache(this, 'vs', {
+            'onVirtual-scroll': this.__onVScroll
           }),
           class: this.tableClass,
           style: this.tableStyle,
-          scopedSlots: {
+          slots: {
             before: header === null
               ? void 0
               : () => header,
-            default: this.getTableRowVirtual(h)
+            default: this.getTableRowVirtual()
           }
         })
-        : getTableMiddle(h, {
-          staticClass: 'scroll',
-          class: this.tableClass,
+        : getTableMiddle({
+          class: ['scroll', this.tableClass],
           style: this.tableStyle
         }, [
           header,
-          this.getTableBody(h)
+          this.getTableBody()
         ])
     },
 
@@ -350,16 +347,14 @@ export default Vue.extend({
       this.$emit('virtual-scroll', info)
     },
 
-    __getProgress (h) {
+    __getProgress () {
       return [
         h(QLinearProgress, {
-          staticClass: 'q-table__linear-progress',
-          props: {
-            color: this.color,
-            dark: this.isDark,
-            indeterminate: true,
-            trackColor: 'transparent'
-          }
+          class: 'q-table__linear-progress',
+          color: this.color,
+          dark: this.isDark,
+          indeterminate: true,
+          trackColor: 'transparent'
         })
       ]
     }

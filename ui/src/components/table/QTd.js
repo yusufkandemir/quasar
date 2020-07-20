@@ -1,10 +1,10 @@
-import Vue from 'vue'
+import { defineComponent, h } from 'vue'
 
 import ListenersMixin from '../../mixins/listeners.js'
 
 import { slot } from '../../utils/slot.js'
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QTd',
 
   mixins: [ ListenersMixin ],
@@ -22,17 +22,18 @@ export default Vue.extend({
     }
   },
 
-  render (h) {
-    const on = this.qListeners
+  render () {
+    // TODO: Vue 3, uses ListenersMixin
+    const listeners = this.qListeners
 
     if (this.props === void 0) {
       return h('td', {
-        on,
+        ...listeners,
         class: this.classes
       }, slot(this, 'default'))
     }
 
-    const name = this.$vnode.key
+    const name = this.$.vnode.key
 
     const col = this.props.colsMap !== void 0 && name
       ? this.props.colsMap[name]
@@ -41,9 +42,9 @@ export default Vue.extend({
     if (col === void 0) { return }
 
     return h('td', {
-      on,
+      ...listeners,
       style: col.style,
-      class: this.classes + ' ' + col.__tdClass
+      class: [this.classes, col.__tdClass]
     }, slot(this, 'default'))
   }
 })

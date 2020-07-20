@@ -1,20 +1,22 @@
+import { h, defineComponent } from 'vue'
+
 import QCheckbox from '../checkbox/QCheckbox.js'
 import QTh from './QTh.js'
 
 import cache from '../../utils/cache.js'
 
-export default {
+export default defineComponent({
   methods: {
-    getTableHeader (h) {
-      const child = this.getTableHeaderRow(h)
+    getTableHeader () {
+      const child = this.getTableHeaderRow()
 
-      if (this.loading === true && this.$scopedSlots.loading === void 0) {
+      if (this.loading === true && this.$slots.loading === void 0) {
         child.push(
-          h('tr', { staticClass: 'q-table__progress' }, [
+          h('tr', { class: 'q-table__progress' }, [
             h('th', {
-              staticClass: 'relative-position',
-              attrs: { colspan: '100%' }
-            }, this.__getProgress(h))
+              class: 'relative-position',
+              colspan: '100%'
+            }, this.__getProgress())
           ])
         )
       }
@@ -22,10 +24,10 @@ export default {
       return h('thead', child)
     },
 
-    getTableHeaderRow (h) {
+    getTableHeaderRow () {
       const
-        header = this.$scopedSlots.header,
-        headerCell = this.$scopedSlots['header-cell']
+        header = this.$slots.header,
+        headerCell = this.$slots['header-cell']
 
       if (header !== void 0) {
         return header(this.addTableHeaderRowMeta({
@@ -35,7 +37,7 @@ export default {
 
       const child = this.computedCols.map(col => {
         const
-          headerCellCol = this.$scopedSlots[`header-cell-${col.name}`],
+          headerCellCol = this.$slots[`header-cell-${col.name}`],
           slot = headerCellCol !== void 0 ? headerCellCol : headerCell,
           props = {
             col, cols: this.computedCols, sort: this.sort, colsMap: this.computedColsMap
@@ -45,28 +47,26 @@ export default {
           ? slot(props)
           : h(QTh, {
             key: col.name,
-            props: { props },
+            ...props,
             style: col.headerStyle,
             class: col.headerClasses
           }, col.label)
       })
 
       if (this.singleSelection === true && this.grid !== true) {
-        child.unshift(h('th', { staticClass: 'q-table--col-auto-width' }, [' ']))
+        child.unshift(h('th', { class: 'q-table--col-auto-width' }, [' ']))
       }
       else if (this.multipleSelection === true) {
-        child.unshift(h('th', { staticClass: 'q-table--col-auto-width' }, [
+        child.unshift(h('th', { class: 'q-table--col-auto-width' }, [
           h(QCheckbox, {
-            props: {
-              color: this.color,
-              value: this.someRowsSelected === true
-                ? null
-                : this.allRowsSelected,
-              dark: this.isDark,
-              dense: this.dense
-            },
-            on: cache(this, 'inp', {
-              input: val => {
+            color: this.color,
+            modelValue: this.someRowsSelected === true
+              ? null
+              : this.allRowsSelected,
+            dark: this.isDark,
+            dense: this.dense,
+            ...cache(this, 'inp', {
+              'onUpdate:modelValue': val => {
                 if (this.someRowsSelected === true) {
                   val = false
                 }
@@ -115,4 +115,4 @@ export default {
       return data
     }
   }
-}
+})

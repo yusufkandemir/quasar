@@ -1,7 +1,9 @@
+import { defineComponent } from 'vue'
+
 import { sortDate } from '../../utils/sort.js'
 import { isNumber, isDate } from '../../utils/is.js'
 
-export default {
+export default defineComponent({
   props: {
     sortMethod: {
       type: Function,
@@ -86,4 +88,4 @@ export default {
       this.setPagination({ sortBy, descending, page: 1 })
     }
   }
-}
+})

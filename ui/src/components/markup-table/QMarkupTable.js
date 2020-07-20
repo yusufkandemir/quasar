@@ -1,11 +1,11 @@
-import Vue from 'vue'
+import { defineComponent, h } from 'vue'
 
 import DarkMixin from '../../mixins/dark.js'
 import ListenersMixin from '../../mixins/listeners.js'
 
 import { slot } from '../../utils/slot.js'
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QMarkupTable',
 
   mixins: [ DarkMixin, ListenersMixin ],
@@ -35,13 +35,13 @@ export default Vue.extend({
     }
   },
 
-  render (h) {
+  render () {
     return h('div', {
-      staticClass: 'q-markup-table q-table__container q-table__card',
-      class: this.classes,
-      on: { ...this.qListeners }
+      class: ['q-markup-table q-table__container q-table__card', this.classes]
+      // TODO: Vue 3, uses ListenersMixin
+      // on: { ...this.qListeners }
     }, [
-      h('table', { staticClass: 'q-table' }, slot(this, 'default'))
+      h('table', { class: 'q-table' }, slot(this, 'default'))
     ])
   }
 })

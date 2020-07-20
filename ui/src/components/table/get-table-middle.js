@@ -1,8 +1,10 @@
-export default function (h, conf, content) {
+import { h } from 'vue'
+
+export default function (conf, content) {
   return h('div', {
     ...conf,
-    staticClass: 'q-table__middle' + (conf.staticClass !== void 0 ? ' ' + conf.staticClass : '')
+    class: ['q-table__middle', conf.class]
   }, [
-    h('table', { staticClass: 'q-table' }, content)
+    h('table', { class: 'q-table' }, content)
   ])
 }

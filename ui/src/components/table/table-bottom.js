@@ -1,12 +1,14 @@
+import { h, defineComponent } from 'vue'
+
 import QSelect from '../select/QSelect.js'
 import QBtn from '../btn/QBtn.js'
 import QIcon from '../icon/QIcon.js'
 
 import cache from '../../utils/cache.js'
 
-const staticClass = 'q-table__bottom row items-center'
+const classes = 'q-table__bottom row items-center'
 
-export default {
+export default defineComponent({
   props: {
     hideBottom: Boolean,
     hideSelectedBanner: Boolean,
@@ -27,7 +29,7 @@ export default {
   },
 
   methods: {
-    getBottom (h) {
+    getBottom () {
       if (this.hideBottom === true) {
         return
       }
@@ -41,31 +43,31 @@ export default {
           ? this.loadingLabel || this.$q.lang.table.loading
           : (this.filter ? this.noResultsLabel || this.$q.lang.table.noResults : this.noDataLabel || this.$q.lang.table.noData)
 
-        const noData = this.$scopedSlots['no-data']
+        const noData = this.$slots['no-data']
         const children = noData !== void 0
           ? [ noData({ message, icon: this.$q.iconSet.table.warning, filter: this.filter }) ]
           : [
             h(QIcon, {
-              staticClass: 'q-table__bottom-nodata-icon',
-              props: { name: this.$q.iconSet.table.warning }
+              class: 'q-table__bottom-nodata-icon',
+              name: this.$q.iconSet.table.warning
             }),
             message
           ]
 
         return h('div', {
-          staticClass: staticClass + ' q-table__bottom--nodata'
+          class: classes + ' q-table__bottom--nodata'
         }, children)
       }
 
-      const bottom = this.$scopedSlots.bottom
+      const bottom = this.$slots.bottom
 
       if (bottom !== void 0) {
-        return h('div', { staticClass }, [ bottom(this.marginalsProps) ])
+        return h('div', { class: classes }, [ bottom(this.marginalsProps) ])
       }
 
       const child = this.hideSelectedBanner !== true && this.hasSelectionMode === true && this.rowsSelectedNumber > 0
         ? [
-          h('div', { staticClass: 'q-table__control' }, [
+          h('div', { class: 'q-table__control' }, [
             h('div', [
               (this.selectedRowsLabel || this.$q.lang.table.selectedRecords)(this.rowsSelectedNumber)
             ])
@@ -75,53 +77,51 @@ export default {
 
       if (this.hidePagination !== true) {
         return h('div', {
-          staticClass: staticClass + ' justify-end'
-        }, this.getPaginationRow(h, child))
+          class: classes + ' justify-end'
+        }, this.getPaginationRow(child))
       }
 
       if (child.length > 0) {
-        return h('div', { staticClass }, child)
+        return h('div', { class: classes }, child)
       }
     },
 
-    getPaginationRow (h, child) {
+    getPaginationRow (child) {
       let control
       const
         { rowsPerPage } = this.computedPagination,
         paginationLabel = this.paginationLabel || this.$q.lang.table.pagination,
-        paginationSlot = this.$scopedSlots.pagination,
+        paginationSlot = this.$slots.pagination,
         hasOpts = this.rowsPerPageOptions.length > 1
 
       child.push(
-        h('div', { staticClass: 'q-table__separator col' })
+        h('div', { class: 'q-table__separator col' })
       )
 
       if (hasOpts === true) {
         child.push(
-          h('div', { staticClass: 'q-table__control' }, [
-            h('span', { staticClass: 'q-table__bottom-item' }, [
+          h('div', { class: 'q-table__control' }, [
+            h('span', { class: 'q-table__bottom-item' }, [
               this.rowsPerPageLabel || this.$q.lang.table.recordsPerPage
             ]),
             h(QSelect, {
-              staticClass: 'q-table__select inline q-table__bottom-item',
-              props: {
-                color: this.color,
-                value: rowsPerPage,
-                options: this.computedRowsPerPageOptions,
-                displayValue: rowsPerPage === 0
-                  ? this.$q.lang.table.allRows
-                  : rowsPerPage,
-                dark: this.isDark,
-                borderless: true,
-                dense: true,
-                optionsDense: true,
-                optionsCover: true
-              },
-              on: cache(this, 'pgSize', {
-                input: pag => {
+              class: 'q-table__select inline q-table__bottom-item',
+              color: this.color,
+              modelValue: rowsPerPage,
+              options: this.computedRowsPerPageOptions,
+              displayValue: rowsPerPage === 0
+                ? this.$q.lang.table.allRows
+                : rowsPerPage,
+              dark: this.isDark,
+              borderless: true,
+              dense: true,
+              optionsDense: true,
+              optionsCover: true,
+              ...cache(this, 'pgSize', {
+                'onUpdate:modelValue': pag => {
                   this.setPagination({
                     page: 1,
-                    rowsPerPage: pag.value
+                    rowsPerPage: pag.modelValue
                   })
                 }
               })
@@ -135,7 +135,7 @@ export default {
       }
       else {
         control = [
-          h('span', rowsPerPage !== 0 ? { staticClass: 'q-table__bottom-item' } : {}, [
+          h('span', rowsPerPage !== 0 ? { class: 'q-table__bottom-item' } : {}, [
             rowsPerPage
               ? paginationLabel(this.firstRowIndex + 1, Math.min(this.lastRowIndex, this.computedRowsNumber), this.computedRowsNumber)
               : paginationLabel(1, this.filteredSortedRowsNumber, this.computedRowsNumber)
@@ -157,56 +157,48 @@ export default {
           this.pagesNumber > 2 && control.push(
             h(QBtn, {
               key: 'pgFirst',
-              props: {
-                ...btnProps,
-                icon: this.navIcon[0],
-                disable: this.isFirstPage
-              },
-              on: cache(this, 'pgFirst', { click: this.firstPage })
+              ...btnProps,
+              icon: this.navIcon[0],
+              disable: this.isFirstPage,
+              ...cache(this, 'pgFirst', { onClick: this.firstPage })
             })
           )
 
           control.push(
             h(QBtn, {
               key: 'pgPrev',
-              props: {
-                ...btnProps,
-                icon: this.navIcon[1],
-                disable: this.isFirstPage
-              },
-              on: cache(this, 'pgPrev', { click: this.prevPage })
+              ...btnProps,
+              icon: this.navIcon[1],
+              disable: this.isFirstPage,
+              ...cache(this, 'pgPrev', { onClick: this.prevPage })
             }),
 
             h(QBtn, {
               key: 'pgNext',
-              props: {
-                ...btnProps,
-                icon: this.navIcon[2],
-                disable: this.isLastPage
-              },
-              on: cache(this, 'pgNext', { click: this.nextPage })
+              ...btnProps,
+              icon: this.navIcon[2],
+              disable: this.isLastPage,
+              ...cache(this, 'pgNext', { onClick: this.nextPage })
             })
           )
 
           this.pagesNumber > 2 && control.push(
             h(QBtn, {
               key: 'pgLast',
-              props: {
-                ...btnProps,
-                icon: this.navIcon[3],
-                disable: this.isLastPage
-              },
-              on: cache(this, 'pgLast', { click: this.lastPage })
+              ...btnProps,
+              icon: this.navIcon[3],
+              disable: this.isLastPage,
+              ...cache(this, 'pgLast', { onClick: this.lastPage })
             })
           )
         }
       }
 
       child.push(
-        h('div', { staticClass: 'q-table__control' }, control)
+        h('div', { class: 'q-table__control' }, control)
       )
 
       return child
     }
   }
-}
+})

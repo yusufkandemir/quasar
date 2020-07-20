@@ -1,13 +1,17 @@
+import { defineComponent } from 'vue'
+
 function getVal (val) {
   return Array.isArray(val)
     ? val.slice()
     : []
 }
 
-export default {
+export default defineComponent({
   props: {
-    expanded: Array // sync
+    expanded: Array // v-model:expanded
   },
+
+  emits: ['update:expanded'],
 
   data () {
     return {
@@ -51,4 +55,4 @@ export default {
       }
     }
   }
-}
+})

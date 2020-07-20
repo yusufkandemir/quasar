@@ -1,4 +1,6 @@
-export default {
+import { defineComponent } from 'vue'
+
+export default defineComponent({
   props: {
     filter: [String, Object],
     filterMethod: {
@@ -22,4 +24,4 @@ export default {
       deep: true
     }
   }
-}
+})
