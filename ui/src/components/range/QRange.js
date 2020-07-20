@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { h, defineComponent, withDirectives } from 'vue'
 
 import {
   getRatio,
@@ -16,13 +16,13 @@ const dragType = {
   MAX: 2
 }
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QRange',
 
   mixins: [ SliderMixin ],
 
   props: {
-    value: {
+    modelValue: {
       type: Object,
       default: () => ({
         min: null,
@@ -43,15 +43,17 @@ export default Vue.extend({
     rightLabelColor: String,
     rightLabelTextColor: String,
 
-    leftLabelValue: [ String, Number ],
-    rightLabelValue: [ String, Number ]
+    leftLabelValue: [String, Number],
+    rightLabelValue: [String, Number]
   },
+
+  emits: ['update:modelValue', 'change'],
 
   data () {
     return {
       model: {
-        min: this.value.min === null ? this.min : this.value.min,
-        max: this.value.max === null ? this.max : this.value.max
+        min: this.modelValue.min === null ? this.min : this.modelValue.min,
+        max: this.modelValue.max === null ? this.max : this.modelValue.max
       },
       curMinRatio: 0,
       curMaxRatio: 0
@@ -109,21 +111,21 @@ export default Vue.extend({
 
     trackStyle () {
       return {
-        [ this.positionProp ]: `${100 * this.ratioMin}%`,
-        [ this.sizeProp ]: `${100 * (this.ratioMax - this.ratioMin)}%`
+        [this.positionProp]: `${100 * this.ratioMin}%`,
+        [this.sizeProp]: `${100 * (this.ratioMax - this.ratioMin)}%`
       }
     },
 
     minThumbStyle () {
       return {
-        [ this.positionProp ]: `${100 * this.ratioMin}%`,
+        [this.positionProp]: `${100 * this.ratioMin}%`,
         'z-index': this.__nextFocus === 'min' ? 2 : void 0
       }
     },
 
     maxThumbStyle () {
       return {
-        [ this.positionProp ]: `${100 * this.ratioMax}%`
+        [this.positionProp]: `${100 * this.ratioMax}%`
       }
     },
 
@@ -148,10 +150,10 @@ export default Vue.extend({
         const evt = { mousedown: this.__activate }
 
         this.dragOnlyRange === true && Object.assign(evt, {
-          focus: () => { this.__focus('both') },
-          blur: this.__blur,
-          keydown: this.__keydown,
-          keyup: this.__keyup
+          onFocus: () => { this.__focus('both') },
+          onBlur: this.__blur,
+          onKeydown: this.__keydown,
+          onKeyup: this.__keyup
         })
 
         return evt
@@ -161,10 +163,10 @@ export default Vue.extend({
     minEvents () {
       if (this.editable === true && this.$q.platform.is.mobile !== true && this.dragOnlyRange !== true) {
         return {
-          focus: () => { this.__focus('min') },
-          blur: this.__blur,
-          keydown: this.__keydown,
-          keyup: this.__keyup
+          onFocus: () => { this.__focus('min') },
+          onBlur: this.__blur,
+          onKeydown: this.__keydown,
+          onKeyup: this.__keyup
         }
       }
     },
@@ -172,10 +174,10 @@ export default Vue.extend({
     maxEvents () {
       if (this.editable === true && this.$q.platform.is.mobile !== true && this.dragOnlyRange !== true) {
         return {
-          focus: () => { this.__focus('max') },
-          blur: this.__blur,
-          keydown: this.__keydown,
-          keyup: this.__keyup
+          onFocus: () => { this.__focus('max') },
+          onBlur: this.__blur,
+          onKeydown: this.__keydown,
+          onKeyup: this.__keyup
         }
       }
     },
@@ -234,15 +236,15 @@ export default Vue.extend({
       return {
         type: 'hidden',
         name: this.name,
-        value: `${this.value.min}|${this.value.max}`
+        value: `${this.modelValue.min}|${this.modelValue.max}`
       }
     }
   },
 
   methods: {
     __updateValue (change) {
-      if (this.model.min !== this.value.min || this.model.max !== this.value.max) {
-        this.$emit('input', this.model)
+      if (this.model.min !== this.modelValue.min || this.model.max !== this.modelValue.max) {
+        this.$emit('update:modelValue', this.model)
       }
       change === true && this.$emit('change', this.model)
     },
@@ -438,26 +440,24 @@ export default Vue.extend({
       this.__updateValue()
     },
 
-    __getThumb (h, which) {
+    __getThumb (which) {
       const child = [
-        this.__getThumbSvg(h),
-        h('div', { staticClass: 'q-slider__focus-ring' })
+        this.__getThumbSvg(),
+        h('div', { class: 'q-slider__focus-ring' })
       ]
 
       if (this.label === true || this.labelAlways === true) {
         child.push(
           h('div', {
-            staticClass: `q-slider__pin q-slider__pin${this.axis} absolute`,
-            style: this[which + 'PinStyle'].pin,
-            class: this[which + 'PinClass']
+            class: [`q-slider__pin q-slider__pin${this.axis} absolute`, this[which + 'PinClass']],
+            style: this[which + 'PinStyle'].pin
           }, [
             h('div', {
-              staticClass: `q-slider__pin-text-container q-slider__pin-text-container${this.axis}`,
+              class: `q-slider__pin-text-container q-slider__pin-text-container${this.axis}`,
               style: this[which + 'PinStyle'].pinTextContainer
             }, [
               h('span', {
-                staticClass: 'q-slider__pin-text',
-                class: this[which + 'PinTextClass']
+                class: ['q-slider__pin-text', this[which + 'PinTextClass']]
               }, [
                 this[which + 'Label']
               ])
@@ -465,65 +465,62 @@ export default Vue.extend({
           ]),
 
           h('div', {
-            staticClass: `q-slider__arrow q-slider__arrow${this.axis}`,
-            class: this[which + 'PinClass']
+            class: [`q-slider__arrow q-slider__arrow${this.axis}`, this[which + 'PinClass']]
           })
         )
       }
 
       return h('div', {
         ref: which + 'Thumb',
-        staticClass: `q-slider__thumb-container q-slider__thumb-container${this.axis} absolute non-selectable`,
+        class: [`q-slider__thumb-container q-slider__thumb-container${this.axis} absolute non-selectable`, this[which + 'ThumbClass']],
         style: this[which + 'ThumbStyle'],
-        class: this[which + 'ThumbClass'],
-        on: this[which + 'Events'],
-        attrs: { tabindex: this.dragOnlyRange !== true ? this.computedTabindex : null }
+        ...this[which + 'Events'],
+        tabindex: this.dragOnlyRange !== true ? this.computedTabindex : null
       }, child)
     }
   },
 
-  render (h) {
+  render () {
     const track = [
       h('div', {
-        staticClass: `q-slider__track q-slider__track${this.axis} absolute`,
+        class: `q-slider__track q-slider__track${this.axis} absolute`,
         style: this.trackStyle
       })
     ]
 
     this.markers === true && track.push(
       h('div', {
-        staticClass: `q-slider__track-markers q-slider__track-markers${this.axis} absolute-full fit`,
+        class: `q-slider__track-markers q-slider__track-markers${this.axis} absolute-full fit`,
         style: this.markerStyle
       })
     )
 
     const child = [
       h('div', {
-        staticClass: `q-slider__track-container q-slider__track-container${this.axis} absolute`
+        class: `q-slider__track-container q-slider__track-container${this.axis} absolute`
       }, track),
 
-      this.__getThumb(h, 'min'),
-      this.__getThumb(h, 'max')
+      this.__getThumb('min'),
+      this.__getThumb('max')
     ]
 
     if (this.name !== void 0 && this.disable !== true) {
       this.__injectFormInput(child, 'push')
     }
 
-    return h('div', {
-      staticClass: this.value.min === null || this.value.max === null
-        ? 'q-slider--no-value'
-        : void 0,
-      attrs: {
+    return withDirectives(
+      h('div', {
+        class: [this.modelValue.min === null || this.modelValue.max === null ? 'q-slider--no-value' : void 0, this.classes],
         ...this.attrs,
-        'aria-valuenow': this.value.min + '|' + this.value.max,
-        tabindex: this.dragOnlyRange === true && this.$q.platform.is.mobile !== true
-          ? this.computedTabindex
-          : null
-      },
-      class: this.classes,
-      on: this.events,
-      directives: this.panDirectives
-    }, child)
+        'aria-valuenow': this.modelValue.min + '|' + this.modelValue.max,
+        tabindex: (
+          this.dragOnlyRange === true && this.$q.platform.is.mobile !== true
+            ? this.computedTabindex
+            : null
+        ),
+        ...this.events
+      }, child),
+      this.panDirectives
+    )
   }
 })
