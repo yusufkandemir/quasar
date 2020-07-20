@@ -1,9 +1,9 @@
-import Vue from 'vue'
+import { defineComponent, h } from 'vue'
 
 import QIcon from '../icon/QIcon.js'
 import CheckboxMixin from '../../mixins/checkbox.js'
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QToggle',
 
   mixins: [ CheckboxMixin ],
@@ -34,19 +34,17 @@ export default Vue.extend({
   },
 
   methods: {
-    __getInner (h) {
+    __getInner () {
       return [
-        h('div', { staticClass: 'q-toggle__track' }),
+        h('div', { class: 'q-toggle__track' }),
 
         h('div', {
-          staticClass: 'q-toggle__thumb absolute flex flex-center no-wrap'
+          class: 'q-toggle__thumb absolute flex flex-center no-wrap'
         }, this.computedIcon !== void 0
           ? [
             h(QIcon, {
-              props: {
-                name: this.computedIcon,
-                color: this.computedIconColor
-              }
+              name: this.computedIcon,
+              color: this.computedIconColor
             })
           ]
           : void 0
@@ -58,4 +56,7 @@ export default Vue.extend({
   created () {
     this.type = 'toggle'
   }
+
+  // TODO: Vue 3, render function from the mixin somehow can't make it into here
+  // see: https://github.com/vuejs/vue-next/issues/1630
 })

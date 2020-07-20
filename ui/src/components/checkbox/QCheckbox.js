@@ -1,35 +1,32 @@
-import Vue from 'vue'
+import { defineComponent, h } from 'vue'
 
 import CheckboxMixin from '../../mixins/checkbox.js'
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QCheckbox',
 
   mixins: [ CheckboxMixin ],
 
   methods: {
-    __getInner (h) {
+    __getInner () {
       return [
         h('div', {
-          staticClass: 'q-checkbox__bg absolute'
+          class: 'q-checkbox__bg absolute'
         }, [
           h('svg', {
-            staticClass: 'q-checkbox__svg fit absolute-full',
-            attrs: { focusable: 'false' /* needed for IE11 */, viewBox: '0 0 24 24' }
+            class: 'q-checkbox__svg fit absolute-full',
+            focusable: 'false' /* needed for IE11 */,
+            viewBox: '0 0 24 24'
           }, [
             h('path', {
-              staticClass: 'q-checkbox__truthy',
-              attrs: {
-                fill: 'none',
-                d: 'M1.73,12.91 8.1,19.28 22.79,4.59'
-              }
+              class: 'q-checkbox__truthy',
+              fill: 'none',
+              d: 'M1.73,12.91 8.1,19.28 22.79,4.59'
             }),
 
             h('path', {
-              staticClass: 'q-checkbox__indet',
-              attrs: {
-                d: 'M4,14H20V10H4'
-              }
+              class: 'q-checkbox__indet',
+              d: 'M4,14H20V10H4'
             })
           ])
         ])
@@ -40,4 +37,7 @@ export default Vue.extend({
   created () {
     this.type = 'checkbox'
   }
+
+  // TODO: Vue 3, render function from the mixin somehow can't make it into here
+  // see: https://github.com/vuejs/vue-next/issues/1630
 })
