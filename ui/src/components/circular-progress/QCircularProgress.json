@@ -10,7 +10,7 @@
   },
 
   "props": {
-    "value": {
+    "modelValue": {
       "type": "Number",
       "default": 0,
       "desc": "Current progress (must be between min/max)",
