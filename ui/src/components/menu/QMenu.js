@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { defineComponent, h, Transition, withDirectives } from 'vue'
 
 import AnchorMixin from '../../mixins/anchor.js'
 import ModelToggleMixin from '../../mixins/model-toggle.js'
@@ -18,7 +18,7 @@ import {
   validatePosition, validateOffset, setPosition, parsePosition
 } from '../../utils/position-engine.js'
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QMenu',
 
   mixins: [
@@ -30,6 +30,7 @@ export default Vue.extend({
     TransitionMixin
   ],
 
+  // TODO: This is probably useless now, because the directive is used directly, needs some investigation
   directives: {
     ClickOutside
   },
@@ -76,6 +77,8 @@ export default Vue.extend({
     }
   },
 
+  emits: ['show', 'hide', 'click', 'escape-key'],
+
   computed: {
     horizSide () {
       return this.$q.lang.rtl === true ? 'right' : 'left'
@@ -96,8 +99,8 @@ export default Vue.extend({
     },
 
     menuClass () {
-      return (this.square === true ? ' q-menu--square' : '') +
-        (this.isDark === true ? ' q-menu--dark q-dark' : '')
+      return (this.square === true ? 'q-menu--square' : '') +
+        (this.isDark === true ? 'q-menu--dark q-dark' : '')
     },
 
     hideOnRouteChange () {
@@ -105,19 +108,20 @@ export default Vue.extend({
     },
 
     onEvents () {
-      const on = {
-        ...this.qListeners,
+      const listeners = {
+        // TODO: Vue 3, uses ListenersMixin
+        // ...this.qListeners,
         // stop propagating these events from children
-        input: stop,
-        'popup-show': stop,
-        'popup-hide': stop
+        onInput: stop,
+        'onPopup-show': stop,
+        'onPopup-hide': stop
       }
 
       if (this.autoClose === true) {
-        on.click = this.__onAutoClose
+        listeners.onClick = this.__onAutoClose
       }
 
-      return on
+      return listeners
     },
 
     attrs () {
@@ -308,32 +312,33 @@ export default Vue.extend({
       }
     },
 
-    __renderPortal (h) {
-      return h('transition', {
-        props: { name: this.transition }
+    __renderPortal () {
+      return h(Transition, {
+        name: this.transition
       }, [
-        this.showing === true ? h('div', {
-          ref: 'inner',
-          staticClass: 'q-menu q-position-engine scroll' + this.menuClass,
-          class: this.contentClass,
-          style: this.contentStyle,
-          attrs: this.attrs,
-          on: this.onEvents,
-          directives: [{
-            name: 'click-outside',
-            value: this.__onClickOutside,
-            arg: this.anchorEl
-          }]
-        }, slot(this, 'default')) : null
+        this.showing === true
+          ? withDirectives(
+            h('div', {
+              ref: 'inner',
+              class: ['q-menu q-position-engine scroll', this.menuClass, this.contentClass],
+              style: this.contentStyle,
+              ...this.attrs,
+              ...this.onEvents
+            }, slot(this, 'default')),
+            [
+              [ClickOutside, this.__onClickOutside, this.anchorEl]
+            ]
+          )
+          : null
       ])
     }
   },
 
   mounted () {
-    this.__processModelChange(this.value)
+    this.__processModelChange(this.modelValue)
   },
 
-  beforeDestroy () {
+  beforeUnmount () {
     // When the menu is destroyed while open we can only emit the event on anchorEl
     if (this.showing === true && this.anchorEl !== void 0) {
       this.anchorEl.dispatchEvent(

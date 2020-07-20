@@ -35,7 +35,7 @@ function globalHandler (evt) {
 export default {
   name: 'click-outside',
 
-  bind (el, { value, arg }, vnode) {
+  beforeMount (el, { value, arg }, vnode) {
     const vmEl = vnode.componentInstance || vnode.context
 
     const ctx = {
@@ -88,7 +88,7 @@ export default {
     }, 500)
   },
 
-  update (el, { value, oldValue, arg }) {
+  updated (el, { value, oldValue, arg }) {
     const ctx = el.__qclickoutside
 
     if (value !== oldValue) {
@@ -99,7 +99,7 @@ export default {
     }
   },
 
-  unbind (el) {
+  unmounted (el) {
     const ctx = el.__qclickoutside_old || el.__qclickoutside
     if (ctx !== void 0) {
       clearTimeout(ctx.timerFocusin)
