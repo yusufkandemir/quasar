@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { defineComponent, h } from 'vue'
 
 import CanRenderMixin from '../../mixins/can-render.js'
 import TagMixin from '../../mixins/tag.js'
@@ -6,7 +6,7 @@ import ListenersMixin from '../../mixins/listeners.js'
 
 import { slot } from '../../utils/slot.js'
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QNoSsr',
 
   mixins: [ CanRenderMixin, TagMixin, ListenersMixin ],
@@ -15,9 +15,10 @@ export default Vue.extend({
     placeholder: String
   },
 
-  render (h) {
+  render () {
     const data = {
-      on: { ...this.qListeners }
+      // TODO: Vue 3, uses ListenersMixin
+      // on: { ...this.qListeners }
     }
 
     if (this.canRender === true) {
@@ -27,7 +28,7 @@ export default Vue.extend({
         : (node.length > 1 ? h(this.tag, data, node) : node[0])
     }
 
-    data.staticClass = 'q-no-ssr-placeholder'
+    data.class = 'q-no-ssr-placeholder'
 
     const node = slot(this, 'placeholder')
     if (node !== void 0) {
