@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { defineComponent, h } from 'vue'
 
 import QIcon from '../icon/QIcon.js'
 
@@ -7,7 +7,7 @@ import ListenersMixin from '../../mixins/listeners.js'
 
 import { mergeSlotSafely } from '../../utils/slot.js'
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QAvatar',
 
   mixins: [ ListenersMixin, SizeMixin ],
@@ -40,19 +40,19 @@ export default Vue.extend({
     }
   },
 
-  render (h) {
+  render () {
     const icon = this.icon !== void 0
-      ? [ h(QIcon, { props: { name: this.icon } }) ]
+      ? [ h(QIcon, { name: this.icon }) ]
       : void 0
 
     return h('div', {
-      staticClass: 'q-avatar',
-      style: this.sizeStyle,
-      on: { ...this.qListeners }
+      class: 'q-avatar',
+      style: this.sizeStyle
+      // TODO: Vue 3, uses ListenersMixin
+      // on: { ...this.qListeners }
     }, [
       h('div', {
-        staticClass: 'q-avatar__content row flex-center overflow-hidden',
-        class: this.contentClass,
+        class: ['q-avatar__content row flex-center overflow-hidden', this.contentClass],
         style: this.contentStyle
       }, mergeSlotSafely(icon, this, 'default'))
     ])
