@@ -1,10 +1,10 @@
-import Vue from 'vue'
+import { defineComponent, h } from 'vue'
 
 import AlignMixin from '../../mixins/align.js'
 import { slot } from '../../utils/slot.js'
 import ListenersMixin from '../../mixins/listeners.js'
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QBreadcrumbs',
 
   mixins: [ ListenersMixin, AlignMixin ],
@@ -44,7 +44,7 @@ export default Vue.extend({
     }
   },
 
-  render (h) {
+  render () {
     const nodes = slot(this, 'default')
     if (nodes === void 0) { return }
 
@@ -53,8 +53,8 @@ export default Vue.extend({
     const
       child = [],
       len = nodes.filter(c => c.tag !== void 0 && c.tag.endsWith('-QBreadcrumbsEl')).length,
-      separator = this.$scopedSlots.separator !== void 0
-        ? this.$scopedSlots.separator
+      separator = this.$slots.separator !== void 0
+        ? this.$slots.separator
         : () => this.separator
 
     nodes.forEach(comp => {
@@ -63,13 +63,12 @@ export default Vue.extend({
         els++
 
         child.push(h('div', {
-          staticClass: 'flex items-center',
-          class: middle ? this.activeClass : 'q-breadcrumbs--last'
+          class: ['flex items-center', middle ? this.activeClass : 'q-breadcrumbs--last']
         }, [ comp ]))
 
         if (middle) {
           child.push(h('div', {
-            staticClass: 'q-breadcrumbs__separator', class: this.sepClass
+            class: ['q-breadcrumbs__separator', this.sepClass]
           }, separator()))
         }
       }
@@ -79,12 +78,12 @@ export default Vue.extend({
     })
 
     return h('div', {
-      staticClass: 'q-breadcrumbs',
-      on: { ...this.qListeners }
+      class: 'q-breadcrumbs'
+      // TODO: Vue 3, uses ListenersMixin
+      // on: { ...this.qListeners }
     }, [
       h('div', {
-        staticClass: 'flex items-center',
-        class: this.classes
+        class: ['flex items-center', this.classes]
       }, child)
     ])
   }
