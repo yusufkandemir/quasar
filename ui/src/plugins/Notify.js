@@ -415,7 +415,7 @@ const Notifications = {
     }
   },
 
-  beforeDestroy () {
+  beforeUnmount () {
     this.unwatchFullscreen !== void 0 && this.unwatchFullscreen()
   }
 }
