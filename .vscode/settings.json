@@ -2,5 +2,10 @@
   "eslint.workingDirectories": [
     "./docs",
     "./ui"
+  ],
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "vue"
   ]
 }
