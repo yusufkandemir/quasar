@@ -14,7 +14,7 @@ export default {
   mixins: [ DarkMixin, OptionSizeMixin, FormMixin, RefocusTargetMixin ],
 
   props: {
-    value: {
+    modelValue: {
       required: true,
       default: null
     },
@@ -42,19 +42,19 @@ export default {
     tabindex: [String, Number]
   },
 
-  emits: ['input'],
+  emits: ['update:modelValue'],
 
   computed: {
     isTrue () {
       return this.modelIsArray === true
         ? this.index > -1
-        : this.value === this.trueValue
+        : this.modelValue === this.trueValue
     },
 
     isFalse () {
       return this.modelIsArray === true
         ? this.index === -1
-        : this.value === this.falseValue
+        : this.modelValue === this.falseValue
     },
 
     isIndeterminate () {
@@ -63,12 +63,12 @@ export default {
 
     index () {
       if (this.modelIsArray === true) {
-        return this.value.indexOf(this.val)
+        return this.modelValue.indexOf(this.val)
       }
     },
 
     modelIsArray () {
-      return this.val !== void 0 && Array.isArray(this.value)
+      return this.val !== void 0 && Array.isArray(this.modelValue)
     },
 
     computedTabindex () {
@@ -141,19 +141,19 @@ export default {
       }
 
       if (this.disable !== true) {
-        this.$emit('input', this.__getNextValue(), e)
+        this.$emit('update:modelValue', this.__getNextValue(), e)
       }
     },
 
     __getNextValue () {
       if (this.modelIsArray === true) {
         if (this.isTrue === true) {
-          const val = this.value.slice()
+          const val = this.modelValue.slice()
           val.splice(this.index, 1)
           return val
         }
 
-        return this.value.concat([ this.val ])
+        return this.modelValue.concat([ this.val ])
       }
 
       if (this.isTrue === true) {

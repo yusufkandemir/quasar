@@ -153,7 +153,7 @@ const Portal = {
     }
   },
 
-  beforeDestroy () {
+  beforeUnmount () {
     this.__hidePortal()
   }
 }

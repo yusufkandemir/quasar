@@ -8,13 +8,13 @@ export default {
   mixins: [ TimeoutMixin, ListenersMixin ],
 
   props: {
-    value: {
+    modelValue: {
       type: Boolean,
       default: void 0
     }
   },
 
-  emits: ['input', 'before-show', 'show', 'before-hide', 'hide'],
+  emits: ['update:modelValue', 'before-show', 'show', 'before-hide', 'hide'],
 
   data () {
     return {
@@ -43,7 +43,7 @@ export default {
       }
 
       if (this.qListeners.input !== void 0 && isSSR === false) {
-        this.$emit('input', true)
+        this.$emit('update:modelValue', true)
         this.payload = evt
         this.$nextTick(() => {
           if (this.payload === evt) {
@@ -86,7 +86,7 @@ export default {
       }
 
       if (this.qListeners.input !== void 0 && isSSR === false) {
-        this.$emit('input', false)
+        this.$emit('update:modelValue', false)
         this.payload = evt
         this.$nextTick(() => {
           if (this.payload === evt) {
@@ -120,7 +120,7 @@ export default {
 
     __processModelChange (val) {
       if (this.disable === true && val === true) {
-        this.qListeners.input !== void 0 && this.$emit('input', false)
+        this.qListeners.input !== void 0 && this.$emit('update:modelValue', false)
       }
       else if ((val === true) !== this.showing) {
         this[`__process${val === true ? 'Show' : 'Hide'}`](this.payload)
