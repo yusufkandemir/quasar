@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { defineComponent, h } from 'vue'
 
 import SizeMixin from '../../mixins/size.js'
 import TagMixin from '../../mixins/tag.js'
@@ -6,7 +6,7 @@ import ListenersMixin from '../../mixins/listeners.js'
 
 import { slot, mergeSlot } from '../../utils/slot.js'
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QIcon',
 
   mixins: [ ListenersMixin, SizeMixin, TagMixin ],
@@ -68,11 +68,9 @@ export default Vue.extend({
           cls: this.classes,
           nodes: def.split('&&').map(path => {
             const [ d, style, transform ] = path.split('@@')
-            return this.$createElement('path', {
-              attrs: {
-                d,
-                transform
-              },
+            return h('path', {
+              d,
+              transform,
               style
             })
           }),
@@ -140,15 +138,14 @@ export default Vue.extend({
     }
   },
 
-  render (h) {
+  render () {
     const data = {
       class: this.type.cls,
       style: this.sizeStyle,
-      on: { ...this.qListeners },
-      attrs: {
-        'aria-hidden': 'true',
-        role: 'presentation'
-      }
+      // TODO: Vue 3, ListenersMixin
+      // on: { ...this.qListeners },
+      'aria-hidden': 'true',
+      role: 'presentation'
     }
 
     if (this.type.none === true) {
@@ -156,13 +153,13 @@ export default Vue.extend({
     }
 
     if (this.type.img === true) {
-      data.attrs.src = this.type.src
+      data.src = this.type.src
       return h('img', data)
     }
 
     if (this.type.svg === true) {
-      data.attrs.focusable = 'false' /* needed for IE11 */
-      data.attrs.viewBox = this.type.viewBox
+      data.focusable = 'false' /* needed for IE11 */
+      data.viewBox = this.type.viewBox
 
       return h('svg', data, mergeSlot(this.type.nodes, this, 'default'))
     }

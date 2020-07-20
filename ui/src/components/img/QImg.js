@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { defineComponent, h, Transition } from 'vue'
 
 import QSpinner from '../spinner/QSpinner.js'
 
@@ -7,7 +7,7 @@ import ListenersMixin from '../../mixins/listeners.js'
 
 import { slot } from '../../utils/slot.js'
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QImg',
 
   mixins: [ ListenersMixin, RatioMixin ],
@@ -43,6 +43,8 @@ export default Vue.extend({
     spinnerColor: String,
     spinnerSize: String
   },
+
+  emits: ['load', 'error'],
 
   data () {
     return {
@@ -223,12 +225,13 @@ export default Vue.extend({
       }
     },
 
-    __getImage (h) {
+    __getImage () {
       const nativeImg = this.nativeContextMenu === true
         ? [
           h('img', {
-            staticClass: 'absolute-full fit',
-            attrs: { src: this.url, 'aria-hidden': 'true' }
+            class: 'absolute-full fit',
+            src: this.url,
+            'aria-hidden': 'true'
           })
         ]
         : void 0
@@ -236,43 +239,40 @@ export default Vue.extend({
       const content = this.url !== void 0
         ? h('div', {
           key: this.url,
-          staticClass: 'q-img__image absolute-full',
-          class: this.imgClass,
+          class: ['q-img__image absolute-full', this.imgClass],
           style: this.imgContainerStyle
         }, nativeImg)
         : null
 
       return this.basic === true
         ? content
-        : h('transition', {
-          props: { name: 'q-transition--' + this.transition }
+        : h(Transition, {
+          name: 'q-transition--' + this.transition
         }, [ content ])
     },
 
-    __getContent (h) {
+    __getContent () {
       const slotVm = slot(this, this.hasError === true ? 'error' : 'default')
 
       if (this.basic === true) {
         return h('div', {
           key: 'content',
-          staticClass: 'q-img__content absolute-full'
+          class: 'q-img__content absolute-full'
         }, slotVm)
       }
 
       const content = this.isLoading === true
         ? h('div', {
           key: 'placeholder',
-          staticClass: 'q-img__loading absolute-full flex flex-center'
-        }, this.$scopedSlots.loading !== void 0
-          ? this.$scopedSlots.loading()
+          class: 'q-img__loading absolute-full flex flex-center'
+        }, this.$slots.loading !== void 0
+          ? this.$slots.loading()
           : (
             this.noDefaultSpinner === false
               ? [
                 h(QSpinner, {
-                  props: {
-                    color: this.spinnerColor,
-                    size: this.spinnerSize
-                  }
+                  color: this.spinnerColor,
+                  size: this.spinnerSize
                 })
               ]
               : void 0
@@ -280,25 +280,26 @@ export default Vue.extend({
         )
         : h('div', {
           key: 'content',
-          staticClass: 'q-img__content absolute-full'
+          class: 'q-img__content absolute-full'
         }, slotVm)
 
-      return h('transition', {
-        props: { name: 'q-transition--fade' }
+      return h(Transition, {
+        name: 'q-transition--fade'
       }, [ content ])
     }
   },
 
-  render (h) {
+  render () {
     return h('div', {
       class: this.classes,
       style: this.style,
-      attrs: this.attrs,
-      on: { ...this.qListeners }
+      ...this.attrs
+      // TODO: Vue 3, uses ListenersMixin
+      // on: { ...this.qListeners }
     }, [
       h('div', { style: this.ratioStyle }),
-      this.__getImage(h),
-      this.__getContent(h)
+      this.__getImage(),
+      this.__getContent()
     ])
   },
 
@@ -311,7 +312,7 @@ export default Vue.extend({
     this.isLoading === true && this.__load()
   },
 
-  beforeDestroy () {
+  beforeUnmount () {
     this.destroyed = true
     clearTimeout(this.ratioTimer)
     this.unwatch !== void 0 && this.unwatch()
