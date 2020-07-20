@@ -18,7 +18,7 @@ const PanelWrapper = defineComponent({
       role: 'tabpanel',
       // stop propagation of content emitted @input
       // which would tamper with Panel's model
-      ...cache(this, 'stop', { onInput: stop })
+      ...cache(this, 'stop', { 'onUpdate:modelValue': stop })
     }, slot(this, 'default'))
   }
 })
@@ -227,7 +227,7 @@ export const PanelParentMixin = {
             role: 'tabpanel',
             // stop propagation of content emitted @input
             // which would tamper with Panel's model
-            ...cache(this, 'stop', { onInput: stop })
+            ...cache(this, 'stop', { 'onUpdate:modelValue': stop })
           }, [ panel ])
         ]
 

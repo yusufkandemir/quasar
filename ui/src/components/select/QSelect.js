@@ -282,11 +282,11 @@ export default defineComponent({
         }
 
         const itemEvents = {
-          click: () => { this.toggleOption(opt) }
+          onClick: () => { this.toggleOption(opt) }
         }
 
         if (this.$q.platform.is.desktop === true) {
-          itemEvents.mousemove = () => { this.setOptionIndex(index) }
+          itemEvents.onMousemove = () => { this.setOptionIndex(index) }
         }
 
         return {
@@ -347,7 +347,7 @@ export default defineComponent({
 
     inputControlEvents () {
       const listeners = {
-        onInput: this.__onInput,
+        'onUpdate:modelValue': this.__onInput,
         // Safari < 10.2 & UIWebView doesn't fire compositionend when
         // switching focus before confirming composition choice
         // this also fixes the issue where some browsers e.g. iOS Chrome

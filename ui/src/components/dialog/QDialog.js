@@ -135,7 +135,7 @@ export default defineComponent({
         // TODO: Vue 3, uses ListenersMixin
         // ...this.qListeners,
         // stop propagating these events from children
-        onInput: stop,
+        'onUpdate:modelValue': stop,
         'onPopup-show': stop,
         'onPopup-hide': stop
       }

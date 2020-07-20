@@ -156,7 +156,7 @@ export default defineComponent({
           ...cache(this, 'prompt', {
             // TODO: Update `prompt` to support new v-model:prompt Vue 3 syntax
             // eslint-disable-next-line vue/no-mutating-props
-            onInput: v => { this.prompt.model = v },
+            'onUpdate:modelValue': v => { this.prompt.model = v },
             onKeyup: evt => {
               // if ENTER key
               if (
@@ -185,7 +185,7 @@ export default defineComponent({
 
           ...cache(this, 'opts', {
             // eslint-disable-next-line vue/no-mutating-props
-            onInput: v => { this.options.model = v }
+            'onUpdate:modelValue': v => { this.options.model = v }
           })
         })
       ]

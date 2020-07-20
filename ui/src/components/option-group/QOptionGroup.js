@@ -125,7 +125,7 @@ export default defineComponent({
         dense: this.dense,
         keepColor: opt.keepColor || this.keepColor,
         ...cache(this, 'inp', {
-          onInput: this.__update
+          'onUpdate:modelValue': this.__update
         })
       })
     ])))

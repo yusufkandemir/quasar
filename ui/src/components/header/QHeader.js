@@ -132,7 +132,7 @@ export default defineComponent({
         // TODO: Vue 3, ListenersMixin
         // ...this.qListeners,
         onFocusin: this.__onFocusin,
-        onInput: stop
+        'onUpdate:modelValue': stop
       }
     }
   },

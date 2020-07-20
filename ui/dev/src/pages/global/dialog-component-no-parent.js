@@ -54,7 +54,7 @@ export default defineComponent({
             options: this.options,
             value: this.sel,
             behavior: 'menu',
-            onInput: val => { this.sel = val }
+            'onUpdate:modelValue': val => { this.sel = val }
           }),
 
           h(resolveComponent('q-select'), {
@@ -63,7 +63,7 @@ export default defineComponent({
             options: this.options,
             modelValue: this.sel,
             behavior: 'dialog',
-            onInput: val => { this.sel = val }
+            'onUpdate:modelValue': val => { this.sel = val }
           })
         ]),
 
