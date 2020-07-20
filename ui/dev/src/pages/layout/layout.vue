@@ -40,7 +40,7 @@
           <q-input value="" dense standout dark>
             <template v-slot:append>
               <q-icon name="search" />
-            <template>
+            </template>
           </q-input>
         </q-toolbar>
         <q-tabs indicator-color="yellow">
