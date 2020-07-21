@@ -1,4 +1,4 @@
-import { defineComponent, h } from 'vue'
+import { h, defineComponent } from 'vue'
 
 import { PanelChildMixin } from '../../mixins/panel.js'
 
@@ -25,9 +25,10 @@ export default defineComponent({
 
   render () {
     return h('div', {
-      staticClass: 'q-carousel__slide',
-      style: this.style,
-      on: { ...this.qListeners }
+      class: 'q-carousel__slide',
+      style: this.style
+      // TODO: Vue 3, uses ListenersMixin
+      // on: { ...this.qListeners }
     }, slot(this, 'default'))
   }
 })

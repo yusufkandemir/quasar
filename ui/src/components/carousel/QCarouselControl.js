@@ -1,4 +1,4 @@
-import { defineComponent, h } from 'vue'
+import { h, defineComponent } from 'vue'
 
 import ListenersMixin from '../../mixins/listeners.js'
 
@@ -40,10 +40,10 @@ export default defineComponent({
 
   render () {
     return h('div', {
-      staticClass: 'q-carousel__control absolute',
-      style: this.style,
-      class: this.classes,
-      on: { ...this.qListeners }
+      class: ['q-carousel__control absolute', this.classes],
+      style: this.style
+      // TODO: Vue 3, uses ListenersMixin
+      // on: { ...this.qListeners }
     }, slot(this, 'default'))
   }
 })

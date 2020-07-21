@@ -1,4 +1,4 @@
-import { defineComponent, h } from 'vue'
+import { h, defineComponent } from 'vue'
 
 import QBtn from '../btn/QBtn.js'
 
@@ -135,7 +135,7 @@ export default defineComponent({
           (this.controlColor !== void 0 ? ` text-${this.controlColor}` : '')
       }, [
         h('div', {
-          staticClass: 'q-carousel__navigation-inner flex no-wrap justify-center'
+          class: 'q-carousel__navigation-inner flex no-wrap justify-center'
         }, this.__getAvailablePanels().map(mapping))
       ])
     },
@@ -150,12 +150,10 @@ export default defineComponent({
           return h(QBtn, {
             key: name,
             class: `q-carousel__navigation-icon q-carousel__navigation-icon--${name === this.value ? '' : 'in'}active`,
-            props: {
-              icon: this.navIcon,
-              size: 'sm',
-              ...this.controlProps
-            },
-            on: cache(this, 'nav#' + name, { click: () => { this.goTo(name) } })
+            icon: this.navIcon,
+            size: 'sm',
+            ...this.controlProps,
+            ...cache(this, 'nav#' + name, { onClick: () => { this.goTo(name) } })
           })
         }))
       }
@@ -168,12 +166,10 @@ export default defineComponent({
           const slide = panel.componentOptions.propsData
 
           return h('img', {
-            class: `q-carousel__thumbnail q-carousel__thumbnail--${slide.name === this.value ? '' : 'in'}active` + color,
-            attrs: {
-              src: slide.imgSrc
-            },
             key: 'tmb#' + slide.name,
-            on: cache(this, 'tmb#' + slide.name, { click: () => { this.goTo(slide.name) } })
+            class: `q-carousel__thumbnail q-carousel__thumbnail--${slide.name === this.value ? '' : 'in'}active` + color,
+            src: slide.imgSrc,
+            ...cache(this, 'tmb#' + slide.name, { onClick: () => { this.goTo(slide.name) } })
           })
         }))
       }
@@ -181,19 +177,21 @@ export default defineComponent({
       if (this.arrows === true) {
         node.push(
           h('div', {
-            staticClass: `q-carousel__control q-carousel__arrow q-carousel__prev-arrow q-carousel__prev-arrow--${this.direction} absolute flex flex-center`
+            class: `q-carousel__control q-carousel__arrow q-carousel__prev-arrow q-carousel__prev-arrow--${this.direction} absolute flex flex-center`
           }, [
             h(QBtn, {
-              props: { icon: this.arrowIcons[0], ...this.controlProps },
-              on: cache(this, 'prev', { click: this.previous })
+              icon: this.arrowIcons[0],
+              ...this.controlProps,
+              ...cache(this, 'prev', { onClick: this.previous })
             })
           ]),
           h('div', {
-            staticClass: `q-carousel__control q-carousel__arrow q-carousel__next-arrow q-carousel__next-arrow--${this.direction} absolute flex flex-center`
+            class: `q-carousel__control q-carousel__arrow q-carousel__next-arrow q-carousel__next-arrow--${this.direction} absolute flex flex-center`
           }, [
             h(QBtn, {
-              props: { icon: this.arrowIcons[1], ...this.controlProps },
-              on: cache(this, 'next', { click: this.next })
+              icon: this.arrowIcons[1],
+              ...this.controlProps,
+              ...cache(this, 'next', { onClick: this.next })
             })
           ])
         )
