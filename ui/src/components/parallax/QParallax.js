@@ -32,6 +32,8 @@ export default defineComponent({
     }
   },
 
+  emits: ['scroll'],
+
   data () {
     return {
       scrolling: false,
@@ -55,7 +57,8 @@ export default defineComponent({
   methods: {
     __update (percentage) {
       this.percentScrolled = percentage
-      this.qListeners.scroll !== void 0 && this.$emit('scroll', percentage)
+      // TODO: Vue 3, uses ListenersMixin
+      // this.qListeners.scroll !== void 0 && this.$emit('scroll', percentage)
     },
 
     __updatePos () {
@@ -112,25 +115,24 @@ export default defineComponent({
 
   render () {
     return h('div', {
-      staticClass: 'q-parallax',
-      style: { height: `${this.height}px` },
-      on: { ...this.qListeners }
+      class: 'q-parallax',
+      style: { height: `${this.height}px` }
+      // TODO: Vue 3, uses ListenersMixin
+      // on: { ...this.qListeners }
     }, [
       h('div', {
         ref: 'mediaParent',
-        staticClass: 'q-parallax__media absolute-full'
+        class: 'q-parallax__media absolute-full'
       }, this.$slots.media !== void 0 ? this.$slots.media() : [
         h('img', {
           ref: 'media',
-          attrs: {
-            src: this.src
-          }
+          src: this.src
         })
       ]),
 
       h(
         'div',
-        { staticClass: 'q-parallax__content absolute-full column flex-center' },
+        { class: 'q-parallax__content absolute-full column flex-center' },
         this.$slots.content !== void 0
           ? this.$slots.content({ percentScrolled: this.percentScrolled })
           : slot(this, 'default')
