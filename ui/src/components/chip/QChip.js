@@ -2,7 +2,7 @@ import { h, defineComponent, withDirectives } from 'vue'
 
 import QIcon from '../icon/QIcon.js'
 
-import Ripple from 'directives/Ripple.js'
+import Ripple from '../../directives/Ripple.js'
 
 import DarkMixin from '../../mixins/dark.js'
 import RippleMixin from '../../mixins/ripple.js'
