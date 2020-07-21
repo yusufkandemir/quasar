@@ -62,11 +62,11 @@ export default defineComponent({
         class: this.messageClass
       }, [
         h('div', { class: this.textClass }, [
-          h('div', { domProps: { [domPropText]: msg } }),
+          h('div', { [domPropText]: msg }),
           this.stamp
             ? h('div', {
-              staticClass: 'q-message-stamp',
-              domProps: { [domPropStamp]: this.stamp }
+              class: 'q-message-stamp',
+              [domPropStamp]: this.stamp
             })
             : null
         ])
@@ -78,15 +78,14 @@ export default defineComponent({
 
       this.stamp !== void 0 && content.push(
         h('div', {
-          staticClass: 'q-message-stamp',
-          domProps: { [this.stampSanitize === true ? 'textContent' : 'innerHTML']: this.stamp }
+          class: 'q-message-stamp',
+          [this.stampSanitize === true ? 'textContent' : 'innerHTML']: this.stamp
         })
       )
 
       return h('div', { class: this.messageClass }, [
         h('div', {
-          staticClass: 'q-message-text-content',
-          class: this.textClass
+          class: ['q-message-text-content', this.textClass]
         }, content)
       ])
     }
@@ -102,7 +101,8 @@ export default defineComponent({
       container.push(
         h('img', {
           class: `q-message-avatar q-message-avatar--${this.op}`,
-          attrs: { src: this.avatar, 'aria-hidden': 'true' }
+          src: this.avatar,
+          'aria-hidden': 'true'
         })
       )
     }
@@ -112,7 +112,7 @@ export default defineComponent({
     this.name !== void 0 && msg.push(
       h('div', {
         class: `q-message-name q-message-name--${this.op}`,
-        domProps: { [this.nameSanitize === true ? 'textContent' : 'innerHTML']: this.name }
+        [this.nameSanitize === true ? 'textContent' : 'innerHTML']: this.name
       })
     )
 
@@ -132,8 +132,8 @@ export default defineComponent({
 
     this.label && child.push(
       h('div', {
-        staticClass: 'q-message-label text-center',
-        domProps: { [this.labelSanitize === true ? 'textContent' : 'innerHTML']: this.label }
+        class: 'q-message-label text-center',
+        [this.labelSanitize === true ? 'textContent' : 'innerHTML']: this.label
       })
     )
 
@@ -142,8 +142,9 @@ export default defineComponent({
     )
 
     return h('div', {
-      class: `q-message q-message-${this.op}`,
-      on: { ...this.qListeners }
+      class: `q-message q-message-${this.op}`
+      // TODO: Vue 3, uses ListenersMixin
+      // on: { ...this.qListeners }
     }, child)
   }
 })
