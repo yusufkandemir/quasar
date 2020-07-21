@@ -10,7 +10,7 @@
   },
 
   "props": {
-    "value": {
+    "modelValue": {
       "extends": "value",
       "type": "String",
       "examples": [ "v-model=\"myColor\"" ]
