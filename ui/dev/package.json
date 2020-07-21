@@ -9,7 +9,8 @@
     "test": "echo \"No test specified\" && exit 0"
   },
   "devDependencies": {
-    "module-alias": "^2.2.2"
+    "module-alias": "^2.2.2",
+    "sass": "1.26.10"
   },
   "browserslist": [
     "last 2 Chrome versions",

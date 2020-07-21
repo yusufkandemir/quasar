@@ -21,12 +21,12 @@ import { isRunningOnPWA } from './ssr-pwa'
 <% } %>
 <% } %>
 
-import App from 'app/<%= sourceFiles.rootComponent %>'
+import App from '/app/<%= sourceFiles.rootComponent %>'
 
 <% if (store) { %>
-import createStore from 'app/<%= sourceFiles.store %>'
+import createStore from '/app/<%= sourceFiles.store %>'
 <% } %>
-import createRouter from 'app/<%= sourceFiles.router %>'
+import createRouter from '/app/<%= sourceFiles.router %>'
 
 <% if (ctx.mode.capacitor && capacitor.hideSplashscreen !== false) { %>
 import { Plugins } from '@capacitor/core'

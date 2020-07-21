@@ -41,7 +41,7 @@
 <script>
 import { defineComponent } from 'vue'
 
-import pages from 'src/router/pages-list'
+import pages from '/src/router/pages-list'
 
 const STORAGE_KEY = 'index-filter'
 

@@ -179,7 +179,7 @@ async function goLive () {
     await installMissing(argv.mode, argv.target)
   }
 
-  const DevServer = require('../lib/dev-server')
+  const DevServer = require('../lib/dev-server-vite')
   const QuasarConfig = require('../lib/quasar-config')
   const Generator = require('../lib/generator')
   const getQuasarCtx = require('../lib/helpers/get-quasar-ctx')

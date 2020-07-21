@@ -36,7 +36,7 @@ import '<%= asset.path %>'
 import createApp from './app.js'
 
 <% if (ctx.mode.pwa) { %>
-import 'app/<%= sourceFiles.registerServiceWorker %>'
+import '/app/<%= sourceFiles.registerServiceWorker %>'
 <% if (ctx.mode.ssr) { %>
 import { isRunningOnPWA } from './ssr-pwa'
 <% } %>
