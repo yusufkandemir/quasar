@@ -32,6 +32,8 @@ export default defineComponent({
     reverse: Boolean
   },
 
+  emits: ['load'],
+
   data () {
     return {
       index: 0,
@@ -187,15 +189,15 @@ export default defineComponent({
     if (this.disable !== true && this.working === true) {
       child[this.reverse === false ? 'push' : 'unshift'](
         h('div', {
-          staticClass: 'q-infinite-scroll__loading',
-          class: this.fetching === true ? '' : 'invisible'
+          class: ['q-infinite-scroll__loading', this.fetching === true ? '' : 'invisible']
         }, slot(this, 'loading'))
       )
     }
 
     return h('div', {
-      staticClass: 'q-infinite-scroll',
-      on: { ...this.qListeners }
+      class: 'q-infinite-scroll'
+      // TODO: Vue 3, uses ListenersMixin
+      // on: { ...this.qListeners }
     }, child)
   }
 })
