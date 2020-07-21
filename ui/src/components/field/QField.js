@@ -122,7 +122,8 @@ export default defineComponent({
       return this.stackLabel === true ||
         this.focused === true ||
         (
-          this.inputValue !== void 0 && this.hideSelected === true
+          // inputValue is from q-select
+          'inputValue' in this && this.inputValue !== void 0 && this.hideSelected === true
             ? this.inputValue.length > 0
             : this.hasValue === true
         ) ||
