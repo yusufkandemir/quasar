@@ -18,11 +18,9 @@ export default defineComponent({
   computed: {
     iframeData () {
       return {
-        attrs: {
-          src: this.src,
-          frameborder: '0',
-          allowfullscreen: true
-        }
+        src: this.src,
+        frameborder: '0',
+        allowfullscreen: true
       }
     },
 
@@ -35,8 +33,9 @@ export default defineComponent({
   render () {
     return h('div', {
       class: this.classes,
-      style: this.ratioStyle,
-      on: { ...this.qListeners }
+      style: this.ratioStyle
+      // TODO: Vue 3, uses ListenersMixin
+      // on: { ...this.qListeners }
     }, [
       h('iframe', this.iframeData)
     ])
