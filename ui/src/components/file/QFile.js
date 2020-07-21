@@ -17,7 +17,7 @@ export default defineComponent({
 
   props: {
     /* SSR does not know about File & FileList */
-    value: isSSR === true
+    modelValue: isSSR === true
       ? {}
       : [ File, FileList, Array ],
 
@@ -36,6 +36,8 @@ export default defineComponent({
     inputStyle: [ Array, String, Object ]
   },
 
+  emits: ['update:modelValue'],
+
   data () {
     return {
       dnd: false
@@ -44,8 +46,8 @@ export default defineComponent({
 
   computed: {
     innerValue () {
-      return Object(this.value) === this.value
-        ? ('length' in this.value ? Array.from(this.value) : [ this.value ])
+      return Object(this.modelValue) === this.modelValue
+        ? ('length' in this.modelValue ? Array.from(this.modelValue) : [ this.modelValue ])
         : []
     },
 
@@ -112,7 +114,7 @@ export default defineComponent({
     },
 
     __emitValue (files) {
-      this.$emit('input', this.multiple === true ? files : files[0])
+      this.$emit('update:modelValue', this.multiple === true ? files : files[0])
     },
 
     __onKeyup (e) {
@@ -135,22 +137,23 @@ export default defineComponent({
     },
 
     __getControl () {
-      const data = {
-        ref: 'target',
-        staticClass: 'q-field__native row items-center cursor-pointer',
-        attrs: {
-          tabindex: this.tabindex
-        }
-      }
-
-      if (this.editable === true) {
-        data.on = cache(this, 'native', {
-          dragover: this.__onDragOver,
-          keyup: this.__onKeyup
-        })
-      }
-
-      return h('div', data, [ this.__getInput() ].concat(this.__getSelection()))
+      return h(
+        'div',
+        {
+          ref: 'target',
+          class: 'q-field__native row items-center cursor-pointer',
+          tabindex: this.tabindex,
+          ...(
+            this.editable === true
+              ? cache(this, 'native', {
+                onDragover: this.__onDragOver,
+                onKeyup: this.__onKeyup
+              })
+              : null
+          )
+        },
+        [ this.__getInput() ].concat(this.__getSelection())
+      )
     },
 
     __getControlChild () {
@@ -158,32 +161,28 @@ export default defineComponent({
     },
 
     __getSelection () {
-      if (this.$scopedSlots.file !== void 0) {
-        return this.innerValue.map((file, index) => this.$scopedSlots.file({ index, file, ref: this }))
+      if (this.$slots.file !== void 0) {
+        return this.innerValue.map((file, index) => this.$slots.file({ index, file, ref: this }))
       }
 
-      if (this.$scopedSlots.selected !== void 0) {
-        return this.$scopedSlots.selected({ files: this.innerValue, ref: this })
+      if (this.$slots.selected !== void 0) {
+        return this.$slots.selected({ files: this.innerValue, ref: this })
       }
 
       if (this.useChips === true) {
         return this.innerValue.map((file, i) => h(QChip, {
           key: 'file-' + i,
-          props: {
-            removable: this.editable,
-            dense: true,
-            textColor: this.color,
-            tabindex: this.tabindex
-          },
-          on: cache(this, 'rem#' + i, {
-            remove: () => { this.removeAtIndex(i) }
+          removable: this.editable,
+          dense: true,
+          textColor: this.color,
+          tabindex: this.tabindex,
+          ...cache(this, 'rem#' + i, {
+            onRemove: () => { this.removeAtIndex(i) }
           })
         }, [
           h('span', {
-            staticClass: 'ellipsis',
-            domProps: {
-              textContent: file.name
-            }
+            class: 'ellipsis',
+            textContent: file.name
           })
         ]))
       }
@@ -192,31 +191,24 @@ export default defineComponent({
         h('div', {
           style: this.inputStyle,
           class: this.inputClass,
-          domProps: {
-            textContent: this.displayValue !== void 0
-              ? this.displayValue
-              : this.selectedString
-          }
+          textContent: this.displayValue !== void 0
+            ? this.displayValue
+            : this.selectedString
         })
       ]
     },
 
     __getInput () {
-      const data = {
+      return h('input', {
         ref: 'input',
-        staticClass: 'q-field__input fit absolute-full cursor-pointer',
-        attrs: this.inputAttrs,
-        domProps: this.formDomProps,
-        on: cache(this, 'input', {
-          change: this.__addFiles
+        class: 'q-field__input fit absolute-full cursor-pointer',
+        ...this.inputAttrs,
+        ...this.formDomProps,
+        multiple: this.multiple === true,
+        ...cache(this, 'input', {
+          onChange: this.__addFiles
         })
-      }
-
-      if (this.multiple === true) {
-        data.attrs.multiple = true
-      }
-
-      return h('input', data)
+      })
     }
   },
 
@@ -226,5 +218,8 @@ export default defineComponent({
     // necessary for QField's clearable
     // and FileValueMixin
     this.type = 'file'
-  }
+  },
+
+  // TODO: uses QField as mixin, `render` function can't make it into here. see: https://github.com/vuejs/vue-next/issues/1630
+  render: QField.render
 })
