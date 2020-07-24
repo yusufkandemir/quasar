@@ -38,10 +38,6 @@ export function getModel (ratio, min, max, step, decimals) {
 export const SliderMixin = {
   mixins: [ DarkMixin, FormMixin ],
 
-  directives: {
-    TouchPan
-  },
-
   props: {
     min: {
       type: Number,
