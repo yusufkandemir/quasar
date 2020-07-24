@@ -12,17 +12,18 @@ export default defineComponent({
 
   render () {
     return h('div', {
-      staticClass: 'q-responsive',
-      on: { ...this.qListeners }
+      class: 'q-responsive'
+      // TODO: Vue 3, uses ListenersMixin
+      // on: { ...this.qListeners }
     }, [
       h('div', {
-        staticClass: 'q-responsive__filler overflow-hidden'
+        class: 'q-responsive__filler overflow-hidden'
       }, [
         h('div', { style: this.ratioStyle })
       ]),
 
       h('div', {
-        staticClass: 'q-responsive__content absolute-full fit'
+        class: 'q-responsive__content absolute-full fit'
       }, slot(this, 'default'))
     ])
   }
