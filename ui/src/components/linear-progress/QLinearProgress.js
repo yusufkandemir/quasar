@@ -95,21 +95,19 @@ export default defineComponent({
   render () {
     const child = [
       h('div', {
-        staticClass: 'q-linear-progress__track absolute-full',
-        style: this.trackStyle,
-        class: this.trackClass
+        class: ['q-linear-progress__track absolute-full', this.trackClass],
+        style: this.trackStyle
       }),
 
       h('div', {
-        staticClass: 'q-linear-progress__model absolute-full',
-        style: this.modelStyle,
-        class: this.modelClasses
+        class: ['q-linear-progress__model absolute-full', this.modelClasses],
+        style: this.modelStyle
       })
     ]
 
     this.stripe === true && this.motion === false && child.push(
       h('div', {
-        staticClass: 'q-linear-progress__stripe absolute-full',
+        class: 'q-linear-progress__stripe absolute-full',
         style: this.stripeStyle
       })
     )
@@ -117,8 +115,9 @@ export default defineComponent({
     return h('div', {
       style: this.sizeStyle,
       class: this.classes,
-      attrs: this.attrs,
-      on: { ...this.qListeners }
+      ...this.attrs
+      // TODO: Vue 3, uses ListenersMixin
+      // on: { ...this.qListeners }
     }, mergeSlot(child, this, 'default'))
   }
 })
