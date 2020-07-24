@@ -123,10 +123,10 @@ export default defineComponent({
     const content = slot(this, 'default')
 
     return h('div', {
-      staticClass: 'q-page-sticky row flex-center',
-      class: this.classes,
-      style: this.style,
-      on: { ...this.qListeners }
+      class: ['q-page-sticky row flex-center', this.classes],
+      style: this.style
+      // TODO: Vue 3, uses ListenersMixin
+      // on: { ...this.qListeners }
     },
     this.expand === true
       ? content
