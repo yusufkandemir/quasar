@@ -26,7 +26,7 @@ export default {
       name: 'LoadingBar',
       render: () => h(QAjaxBar, {
         ref: 'bar',
-        props
+        ...props
       })
     })
     barApp.config.globalProperties.$q = $q
