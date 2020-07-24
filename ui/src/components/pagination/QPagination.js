@@ -17,7 +17,7 @@ export default defineComponent({
   mixins: [ DarkMixin, ListenersMixin ],
 
   props: {
-    value: {
+    modelValue: {
       type: Number,
       required: true
     },
@@ -80,6 +80,8 @@ export default defineComponent({
     }
   },
 
+  emits: ['update:modelValue'],
+
   data () {
     return {
       newPage: null
@@ -88,18 +90,18 @@ export default defineComponent({
 
   watch: {
     min () {
-      this.model = this.value
+      this.model = this.modelValue
     },
 
     max () {
-      this.model = this.value
+      this.model = this.modelValue
     }
   },
 
   computed: {
     model: {
       get () {
-        return this.value
+        return this.modelValue
       },
       set (val) {
         val = parseInt(val, 10)
@@ -107,7 +109,7 @@ export default defineComponent({
           return
         }
         const value = between(val, this.min, this.max)
-        this.$emit('input', value)
+        this.$emit('update:modelValue', value)
       }
     },
 
@@ -181,22 +183,20 @@ export default defineComponent({
         : otherwise
     },
 
-    __getBtn (data, props, page) {
-      data.props = {
-        ...this.btnProps,
-        ...props
-      }
-
+    __getBtn (props, page) {
       if (page !== void 0) {
         if (this.toFn !== void 0) {
-          data.props.to = this.toFn(page)
+          props.to = this.toFn(page)
         }
         else {
-          data.on = { click: () => this.set(page) }
+          props.onClick = () => this.set(page)
         }
       }
 
-      return h(QBtn, data)
+      return h(QBtn, {
+        ...this.btnProps,
+        ...props
+      })
     }
   },
 
@@ -208,59 +208,51 @@ export default defineComponent({
 
     if (this.__boundaryLinks) {
       contentStart.push(this.__getBtn({
-        key: 'bls'
-      }, {
-        disable: this.disable || this.value <= this.min,
+        key: 'bls',
+        disable: this.disable || this.modelValue <= this.min,
         icon: this.icons[0]
       }, this.min))
       contentEnd.unshift(this.__getBtn({
-        key: 'ble'
-      }, {
-        disable: this.disable || this.value >= this.max,
+        key: 'ble',
+        disable: this.disable || this.modelValue >= this.max,
         icon: this.icons[3]
       }, this.max))
     }
 
     if (this.__directionLinks) {
       contentStart.push(this.__getBtn({
-        key: 'bdp'
-      }, {
-        disable: this.disable || this.value <= this.min,
+        key: 'bdp',
+        disable: this.disable || this.modelValue <= this.min,
         icon: this.icons[1]
-      }, this.value - 1))
+      }, this.modelValue - 1))
       contentEnd.unshift(this.__getBtn({
-        key: 'bdn'
-      }, {
-        disable: this.disable || this.value >= this.max,
+        key: 'bdn',
+        disable: this.disable || this.modelValue >= this.max,
         icon: this.icons[2]
-      }, this.value + 1))
+      }, this.modelValue + 1))
     }
 
     if (this.input === true) {
       contentMiddle.push(h(QInput, {
-        staticClass: 'inline',
+        class: 'inline',
         style: {
           width: `${this.inputPlaceholder.length / 1.5}em`
         },
-        props: {
-          type: 'number',
-          dense: true,
-          value: this.newPage,
-          disable: this.disable,
-          dark: this.isDark,
-          borderless: true,
-          inputClass: this.inputClass,
-          inputStyle: this.inputStyle
-        },
-        attrs: {
-          placeholder: this.inputPlaceholder,
-          min: this.min,
-          max: this.max
-        },
-        on: cache(this, 'inp', {
-          input: value => { this.newPage = value },
-          keyup: e => { isKeyCode(e, 13) === true && this.__update() },
-          blur: this.__update
+        type: 'number',
+        dense: true,
+        modelValue: this.newPage,
+        disable: this.disable,
+        dark: this.isDark,
+        borderless: true,
+        inputClass: this.inputClass,
+        inputStyle: this.inputStyle,
+        placeholder: this.inputPlaceholder,
+        min: this.min,
+        max: this.max,
+        ...cache(this, 'inp', {
+          onInput: value => { this.newPage = value },
+          onKeyup: e => { isKeyCode(e, 13) === true && this.__update() },
+          onBlur: this.__update
         })
       }))
     }
@@ -279,7 +271,7 @@ export default defineComponent({
 
       if (this.maxPages && maxPages < (this.max - this.min + 1)) {
         maxPages = 1 + Math.floor(maxPages / 2) * 2
-        pgFrom = Math.max(this.min, Math.min(this.max - maxPages + 1, this.value - Math.floor(maxPages / 2)))
+        pgFrom = Math.max(this.min, Math.min(this.max - maxPages + 1, this.modelValue - Math.floor(maxPages / 2)))
         pgTo = Math.min(this.max, pgFrom + maxPages - 1)
         if (this.__boundaryNumbers) {
           boundaryStart = true
@@ -302,11 +294,10 @@ export default defineComponent({
         minWidth: `${Math.max(2, String(this.max).length)}em`
       }
       if (boundaryStart) {
-        const active = this.min === this.value
+        const active = this.min === this.modelValue
         contentStart.push(this.__getBtn({
           key: 'bns',
-          style
-        }, {
+          style,
           disable: this.disable,
           flat: !active,
           textColor: active ? this.textColor : null,
@@ -314,11 +305,10 @@ export default defineComponent({
         }, this.min))
       }
       if (boundaryEnd) {
-        const active = this.max === this.value
+        const active = this.max === this.modelValue
         contentEnd.unshift(this.__getBtn({
           key: 'bne',
-          style
-        }, {
+          style,
           disable: this.disable,
           flat: !active,
           textColor: active ? this.textColor : null,
@@ -328,8 +318,7 @@ export default defineComponent({
       if (ellipsesStart) {
         contentStart.push(this.__getBtn({
           key: 'bes',
-          style
-        }, {
+          style,
           disable: this.disable,
           label: '…',
           ripple: false
@@ -338,19 +327,17 @@ export default defineComponent({
       if (ellipsesEnd) {
         contentEnd.unshift(this.__getBtn({
           key: 'bee',
-          style
-        }, {
+          style,
           disable: this.disable,
           label: '…',
           ripple: false
         }, pgTo + 1))
       }
       for (let i = pgFrom; i <= pgTo; i++) {
-        const active = i === this.value
+        const active = i === this.modelValue
         contentMiddle.push(this.__getBtn({
           key: `bpg${i}`,
-          style
-        }, {
+          style,
           disable: this.disable,
           flat: !active,
           textColor: active ? this.textColor : null,
@@ -360,18 +347,23 @@ export default defineComponent({
     }
 
     return h('div', {
-      staticClass: 'q-pagination row no-wrap items-center',
-      class: { disabled: this.disable },
-      attrs: this.attrs,
-      on: { ...this.qListeners }
+      class: {
+        'q-pagination row no-wrap items-center': true,
+        disabled: this.disable
+      },
+      ...this.attrs
+      // TODO: Vue 3, uses ListenersMixin
+      // on: { ...this.qListeners }
     }, [
       contentStart,
 
       h('div', {
-        staticClass: 'row justify-center',
-        on: this.input === true
-          ? cache(this, 'stop', { input: stop })
-          : null
+        class: 'row justify-center',
+        ...(
+          this.input === true
+            ? cache(this, 'stop', { onInput: stop })
+            : null
+        )
       }, [
         contentMiddle
       ]),

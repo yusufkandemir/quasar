@@ -13,7 +13,7 @@
         then hit &lt;ENTER&gt;
       </p>
 
-      <q-pagination @change="onChange" @input="onInput" v-model="page"
+      <q-pagination @change="onChange" @update:modelValue="onModelUpdate" v-model="page"
                     :min="min"
                     :max="max"
                     :boundary-links="boundaryLinks"
@@ -25,7 +25,7 @@
       <p class="caption">
         Inline
       </p>
-      <q-pagination class="inline" @change="onChange" @input="onInput" v-model="page"
+      <q-pagination class="inline" @change="onChange" @update:modelValue="onModelUpdate" v-model="page"
                     :min="min"
                     :max="max"
                     :boundary-links="boundaryLinks"
@@ -34,7 +34,7 @@
                     :input-class="inputClass"
                     :to-fn="toFn"
       />
-      <q-pagination class="inline" @change="onChange" @input="onInput" v-model="page"
+      <q-pagination class="inline" @change="onChange" @update:modelValue="onModelUpdate" v-model="page"
                     :min="min"
                     :max="max"
                     :boundary-links="boundaryLinks"
@@ -47,7 +47,7 @@
       <p class="caption">
         Disabled State
       </p>
-      <q-pagination @change="onChange" @input="onInput" v-model="page" disable
+      <q-pagination @change="onChange" @update:modelValue="onModelUpdate" v-model="page" disable
                     :min="min"
                     :max="max"
                     :boundary-links="boundaryLinks"
@@ -60,7 +60,7 @@
       <p class="caption">
         Page buttons
       </p>
-      <q-pagination @change="onChange" @input="onInput" v-model="page" color="red" type="select"
+      <q-pagination @change="onChange" @update:modelValue="onModelUpdate" v-model="page" color="red" type="select"
                     :min="min"
                     :max="max"
                     :boundary-links="boundaryLinks"
@@ -76,7 +76,7 @@
       <p class="caption">
         Page buttons - disabled
       </p>
-      <q-pagination @change="onChange" @input="onInput" v-model="page" color="red" type="select" disable
+      <q-pagination @change="onChange" @update:modelValue="onModelUpdate" v-model="page" color="red" type="select" disable
                     :min="min"
                     :max="max"
                     :boundary-links="boundaryLinks"
@@ -174,8 +174,8 @@ export default {
     onChange (val) {
       console.log('@change', JSON.stringify(val))
     },
-    onInput (val) {
-      console.log('@input', JSON.stringify(val))
+    onModelUpdate (val) {
+      console.log('@update:modelValue', JSON.stringify(val))
     }
   }
 }
