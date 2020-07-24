@@ -1,4 +1,4 @@
-import { defineComponent, h } from 'vue'
+import { h, defineComponent, withDirectives, Transition } from 'vue'
 
 import { onSSR } from '../../plugins/Platform.js'
 
@@ -14,10 +14,6 @@ export default defineComponent({
 
   mixins: [ TagMixin, ListenersMixin ],
 
-  directives: {
-    Intersection
-  },
-
   props: {
     once: Boolean,
     transition: String,
@@ -29,6 +25,8 @@ export default defineComponent({
 
     disable: Boolean
   },
+
+  emits: ['visibility'],
 
   data () {
     return {
@@ -50,15 +48,13 @@ export default defineComponent({
     },
 
     directives () {
+      const directives = []
+
       if (this.disable !== true && (onSSR !== true || this.once !== true || this.ssrPrerender !== true)) {
-        return [{
-          name: 'intersection',
-          value: this.value,
-          modifiers: {
-            once: this.once
-          }
-        }]
+        directives.push([Intersection, this.value, '', { once: this.once }])
       }
+
+      return directives
     }
   },
 
@@ -79,17 +75,20 @@ export default defineComponent({
       ? [ h('div', { key: 'content' }, slot(this, 'default')) ]
       : void 0
 
-    return h(this.tag, {
-      staticClass: 'q-intersection',
-      on: { ...this.qListeners },
-      directives: this.directives
-    }, this.transition
-      ? [
-        h('transition', {
-          props: { name: 'q-transition--' + this.transition }
-        }, content)
-      ]
-      : content
+    return withDirectives(
+      h(this.tag, {
+        class: 'q-intersection'
+        // TODO: Vue 3, uses ListenersMixin
+        // on: { ...this.qListeners },
+      }, this.transition
+        ? [
+          h(Transition, {
+            name: 'q-transition--' + this.transition
+          }, content)
+        ]
+        : content
+      ),
+      this.directives
     )
   }
 })
