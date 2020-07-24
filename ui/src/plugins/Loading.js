@@ -1,4 +1,4 @@
-import { createApp, h, Transition } from 'vue'
+import { createApp, h, Transition, ref } from 'vue'
 
 import QSpinner from '../components/spinner/QSpinner.js'
 import { isSSR } from './Platform.js'
@@ -6,6 +6,7 @@ import cache from '../utils/cache.js'
 import { preventScroll } from '../mixins/prevent-scroll.js'
 
 let
+  app,
   vm,
   uid = 0,
   timeout,
@@ -24,7 +25,13 @@ const
   defaults = { ...originalDefaults }
 
 const Loading = {
-  isActive: false,
+  _isActive: ref(false),
+  get isActive () {
+    return this._isActive.value
+  },
+  set isActive (value) {
+    this._isActive.value = value
+  },
 
   show (opts) {
     if (isSSR === true) { return }
@@ -50,28 +57,29 @@ const Loading = {
       const node = document.createElement('div')
       document.body.appendChild(node)
 
-      // TODO: Investigate this if it needs createApp or defineComponent
-      vm = createApp({
+      app = createApp({
         name: 'QLoading',
 
         mounted () {
           preventScroll(true)
         },
 
-        render: () => {
+        render: (_ctx, _cache) => {
           return h(Transition, {
             name: 'q-transition--fade',
             appear: true,
-            // TODO: Vue 3
-            on: cache(this, 'tr', {
-              'after-leave': () => {
-                // might be called to finalize
-                // previous leave, even if it was cancelled
+            ...cache(this, 'tr', {
+              'onAfter-leave': () => {
+              // might be called to finalize
+              // previous leave, even if it was cancelled
                 if (this.isActive !== true && vm !== void 0) {
                   preventScroll(false)
-                  vm.$destroy()
+
+                  app.unmount(node)
                   vm.$el.remove()
+                  node.remove()
                   vm = void 0
+                  app = void 0
                 }
               }
             })
@@ -91,7 +99,9 @@ const Loading = {
             ]) : null
           ])
         }
-      }).mount(node)
+      })
+
+      vm = app.mount(node)
     }, props.delay)
   },
 
