@@ -317,10 +317,6 @@ export default defineComponent({
     },
 
     contentCloseDirective () {
-      if (this.noSwipeClose === true) {
-        return null
-      }
-
       const dir = this.$q.lang.rtl === true ? this.otherSide : this.side
 
       return [
@@ -335,10 +331,6 @@ export default defineComponent({
     },
 
     backdropCloseDirective () {
-      if (this.noSwipeBackdrop === true) {
-        return []
-      }
-
       const dir = this.$q.lang.rtl === true ? this.otherSide : this.side
 
       return [
@@ -666,7 +658,7 @@ export default defineComponent({
             class: `q-drawer__opener fixed-${this.side}`,
             ...ariaHidden
           }),
-          this.openDirective
+          [ this.openDirective ]
         )
       )
 
@@ -681,9 +673,7 @@ export default defineComponent({
               : null,
             ...cache(this, 'bkdrop', { onClick: this.hide })
           }),
-          [
-            this.showing === false ? void 0 : this.backdropCloseDirective
-          ]
+          (this.showing === false || this.noSwipeBackdrop === true) ? [] : [this.backdropCloseDirective]
         )
       )
     }
@@ -714,9 +704,7 @@ export default defineComponent({
           style: this.style,
           ...this.eventListeners
         }, content),
-        [
-          this.belowBreakpoint === true && this.contentCloseDirective !== null && this.contentCloseDirective
-        ]
+        (this.belowBreakpoint === true && this.noSwipeClose !== true) ? [this.contentCloseDirective] : []
       )
     )
 
