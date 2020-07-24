@@ -32,10 +32,6 @@ export default defineComponent({
 
   mixins: [ DarkMixin, HistoryMixin, ModelToggleMixin, PreventScrollMixin ],
 
-  directives: {
-    TouchPan
-  },
-
   props: {
     side: {
       type: String,
@@ -79,7 +75,7 @@ export default defineComponent({
     noSwipeBackdrop: Boolean
   },
 
-  emits: ['click', 'on-layout', 'mini-state'],
+  emits: ['update:modelValue', 'show', 'hide', 'click', 'on-layout', 'mini-state'],
 
   data () {
     const belowBreakpoint = (
@@ -91,7 +87,7 @@ export default defineComponent({
       belowBreakpoint,
       showing: this.showIfAbove === true && belowBreakpoint === false
         ? true
-        : this.value === true
+        : this.modelValue === true
     }
   },
 
@@ -115,13 +111,6 @@ export default defineComponent({
           this.show(false)
         }
       }
-    },
-
-    'layout.totalWidth' (val) {
-      this.__updateLocal('belowBreakpoint', (
-        this.behavior === 'mobile' ||
-        (this.behavior !== 'desktop' && val <= this.breakpoint)
-      ))
     },
 
     side (newSide, oldSide) {
@@ -151,14 +140,6 @@ export default defineComponent({
       ))
     },
 
-    'layout.container' (val) {
-      this.showing === true && this.__preventScroll(val !== true)
-    },
-
-    'layout.scrollbarWidth' () {
-      this.__applyPosition(this.showing === true ? 0 : void 0)
-    },
-
     offset (val) {
       this.__update('offset', val)
     },
@@ -181,12 +162,8 @@ export default defineComponent({
       this.__updateSizeOnLayout(val, this.size)
     },
 
-    '$q.lang.rtl' () {
-      this.__applyPosition()
-    },
-
     mini () {
-      if (this.value === true) {
+      if (this.modelValue === true) {
         this.__animateMini()
         this.layout.__animate()
       }
@@ -605,11 +582,12 @@ export default defineComponent({
 
     if (
       this.showIfAbove === true &&
-      this.value !== true &&
+      this.modelValue !== true &&
       this.showing === true &&
+      // TODO: Vue 3, uses ListenersMixin
       this.qListeners.input !== void 0
     ) {
-      this.$emit('input', true)
+      this.$emit('update:modelValue', true)
     }
   },
 
@@ -631,9 +609,29 @@ export default defineComponent({
       return
     }
 
-    this.watcher = this.$watch('layout.totalWidth', () => {
-      this.watcher()
-      this.watcher = void 0
+    this.$watch(() => this.layout.totalWidth, val => {
+      this.__updateLocal('belowBreakpoint', (
+        this.behavior === 'mobile' ||
+        (this.behavior !== 'desktop' && val <= this.breakpoint)
+      ))
+    })
+
+    this.$watch(() => this.layout.container, val => {
+      this.showing === true && this.__preventScroll(val !== true)
+    })
+
+    this.$watch(() => this.layout.scrollbarWidth, val => {
+      this.__applyPosition(this.showing === true ? 0 : void 0)
+    })
+
+    this.$watch(() => this.$q.lang.rtl, val => {
+      this.__applyPosition()
+    })
+
+    // one time watcher
+    this.stopWatcher = this.$watch(() => this.layout.totalWidth, () => {
+      this.stopWatcher()
+      this.stopWatcher = void 0
 
       if (this.showing === false && this.showIfAbove === true && this.belowBreakpoint === false) {
         this.show(false)
@@ -645,7 +643,7 @@ export default defineComponent({
   },
 
   beforeUnmount () {
-    this.watcher !== void 0 && this.watcher()
+    this.stopWatcher !== void 0 && this.stopWatcher()
     clearTimeout(this.timerMini)
 
     this.showing === true && this.__cleanup()
@@ -663,11 +661,13 @@ export default defineComponent({
 
     if (this.belowBreakpoint === true) {
       this.noSwipeOpen !== true && child.push(
-        h('div', {
-          class: `q-drawer__opener fixed-${this.side}`,
-          ...ariaHidden,
-          directives: this.openDirective
-        })
+        withDirectives(
+          h('div', {
+            class: `q-drawer__opener fixed-${this.side}`,
+            ...ariaHidden
+          }),
+          this.openDirective
+        )
       )
 
       child.push(
