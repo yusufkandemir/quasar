@@ -1,4 +1,4 @@
-import { defineComponent, h } from 'vue'
+import { defineComponent, h, withDirectives } from 'vue'
 
 import { position, stopAndPrevent } from '../../utils/event.js'
 import { between, normalizeToInterval } from '../../utils/format.js'
@@ -20,10 +20,6 @@ export default defineComponent({
     FormMixin
   ],
 
-  directives: {
-    TouchPan
-  },
-
   props: {
     step: {
       type: Number,
@@ -40,15 +36,17 @@ export default defineComponent({
     readonly: Boolean
   },
 
+  emits: ['update:modelValue', 'change', 'drag-value'],
+
   data () {
     return {
-      model: this.value,
+      model: this.modelValue,
       dragging: false
     }
   },
 
   watch: {
-    value (value) {
+    modelValue (value) {
       if (value < this.min) {
         this.model = this.min
       }
@@ -62,8 +60,8 @@ export default defineComponent({
         return
       }
 
-      if (this.model !== this.value) {
-        this.$emit('input', this.model)
+      if (this.model !== this.modelValue) {
+        this.$emit('update:modelValue', this.model)
         this.$emit('change', this.model)
       }
     }
@@ -111,7 +109,7 @@ export default defineComponent({
         role: 'slider',
         'aria-valuemin': this.min,
         'aria-valuemax': this.max,
-        'aria-valuenow': this.value
+        'aria-valuenow': this.modelValue
       }
 
       if (this.editable === true) {
@@ -237,7 +235,7 @@ export default defineComponent({
     },
 
     __updateValue (change) {
-      this.value !== this.model && this.$emit('input', this.model)
+      this.modelValue !== this.model && this.$emit('update:modelValue', this.model)
       change === true && this.$emit('change', this.model)
     },
 
@@ -251,21 +249,27 @@ export default defineComponent({
       class: this.classes,
       ...this.attrs,
       ...this.$props,
-      value: this.model,
+      modelValue: this.model,
       instantFeedback: this.computedInstantFeedback
     }
 
+    let directives = []
+
     if (this.editable === true) {
-      data.on = this.onEvents
-      data.directives = cache(this, 'dir', [{
-        name: 'touch-pan',
-        value: this.__pan,
-        modifiers: {
-          prevent: true,
-          stop: true,
-          mouse: true
-        }
-      }])
+      Object.assign(data, this.onEvents)
+
+      directives = cache(this, 'dir', [
+        [
+          TouchPan,
+          this.__pan,
+          '',
+          {
+            prevent: true,
+            stop: true,
+            mouse: true
+          }
+        ]
+      ])
 
       if (this.name !== void 0) {
         data.slots = {
@@ -274,6 +278,9 @@ export default defineComponent({
       }
     }
 
-    return h(QCircularProgress, data, slot(this, 'default'))
+    return withDirectives(
+      h(QCircularProgress, data, slot(this, 'default')),
+      directives
+    )
   }
 })
