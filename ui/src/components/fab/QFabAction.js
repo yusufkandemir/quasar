@@ -38,11 +38,14 @@ export default defineComponent({
 
   inject: {
     __qFabClose: {
+      from: '__qFabClose',
       default () {
         console.error('QFabAction needs to be child of QFab')
       }
     }
   },
+
+  emits: ['click'],
 
   computed: {
     classes () {
@@ -50,10 +53,11 @@ export default defineComponent({
       return this.formClass + (align !== void 0 ? ` ${align}` : '')
     },
 
-    onEvents () {
+    eventListeners () {
       return {
-        ...this.qListeners,
-        click: this.click
+        // TODO: Vue 3, uses ListenersMixin
+        // ...this.qListeners,
+        onClick: this.click
       }
     }
   },
@@ -70,7 +74,7 @@ export default defineComponent({
 
     this.icon !== '' && child.push(
       h(QIcon, {
-        props: { name: this.icon }
+        name: this.icon
       })
     )
 
@@ -80,16 +84,14 @@ export default defineComponent({
 
     return h(QBtn, {
       class: this.classes,
-      props: {
-        ...this.$props,
-        noWrap: true,
-        stack: this.stacked,
-        icon: void 0,
-        label: void 0,
-        noCaps: true,
-        fabMini: true
-      },
-      on: this.onEvents
+      ...this.$props,
+      noWrap: true,
+      stack: this.stacked,
+      icon: void 0,
+      label: void 0,
+      noCaps: true,
+      fabMini: true,
+      ...this.eventListeners
     }, mergeSlot(child, this, 'default'))
   }
 })

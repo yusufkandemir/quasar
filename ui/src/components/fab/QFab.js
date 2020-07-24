@@ -74,14 +74,14 @@ export default defineComponent({
     const child = []
 
     this.hideIcon !== true && child.push(
-      h('div', { staticClass: 'q-fab__icon-holder' }, [
+      h('div', { class: 'q-fab__icon-holder' }, [
         h(QIcon, {
-          staticClass: 'q-fab__icon absolute-full',
-          props: { name: this.icon || this.$q.iconSet.fab.icon }
+          class: 'q-fab__icon absolute-full',
+          name: this.icon || this.$q.iconSet.fab.icon
         }),
         h(QIcon, {
-          staticClass: 'q-fab__active-icon absolute-full',
-          props: { name: this.activeIcon || this.$q.iconSet.fab.activeIcon }
+          class: 'q-fab__active-icon absolute-full',
+          name: this.activeIcon || this.$q.iconSet.fab.activeIcon
         })
       ])
     )
@@ -91,30 +91,27 @@ export default defineComponent({
     )
 
     return h('div', {
-      staticClass: 'q-fab z-fab row inline justify-center',
-      class: this.classes,
-      on: { ...this.qListeners }
+      class: ['q-fab z-fab row inline justify-center', this.classes]
+      // TODO: Vue 3, uses ListenersMixin
+      // on: { ...this.qListeners }
     }, [
       h('div', {
-        staticClass: 'q-fab__actions flex no-wrap inline',
-        class: `q-fab__actions--${this.direction}`
+        class: ['q-fab__actions flex no-wrap inline', `q-fab__actions--${this.direction}`]
       }, slot(this, 'default')),
 
       h(QBtn, {
         ref: 'trigger',
         class: this.formClass,
-        props: {
-          ...this.$props,
-          noWrap: true,
-          stack: this.stacked,
-          align: void 0,
-          icon: void 0,
-          label: void 0,
-          noCaps: true,
-          fab: true
-        },
-        on: cache(this, 'tog', {
-          click: this.toggle
+        ...this.$props,
+        noWrap: true,
+        stack: this.stacked,
+        align: void 0,
+        icon: void 0,
+        label: void 0,
+        noCaps: true,
+        fab: true,
+        ...cache(this, 'tog', {
+          onClick: this.toggle
         })
       }, mergeSlot(child, this, 'tooltip'))
     ])

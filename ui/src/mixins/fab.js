@@ -56,11 +56,13 @@ export default {
         return {
           action: 'push',
           data: {
-            staticClass: `q-fab__label q-tooltip--style q-fab__label--external` +
-              ` q-fab__label--external-${this.labelPosition}` +
-              (hideLabel === true ? ' q-fab__label--external-hidden' : ''),
-            style: this.labelStyle,
-            class: this.labelClass
+            class: [
+              'q-fab__label q-tooltip--style q-fab__label--external',
+              `q-fab__label--external-${this.labelPosition}`,
+              (hideLabel === true ? 'q-fab__label--external-hidden' : ''),
+              this.labelClass
+            ],
+            style: this.labelStyle
           }
         }
       }
@@ -70,10 +72,12 @@ export default {
           ? 'unshift'
           : 'push',
         data: {
-          staticClass: `q-fab__label q-fab__label--internal q-fab__label--internal-${this.labelPosition}` +
-            (this.hideLabel === true ? ' q-fab__label--internal-hidden' : ''),
-          style: this.labelStyle,
-          class: this.labelClass
+          class: [
+            `q-fab__label q-fab__label--internal q-fab__label--internal-${this.labelPosition}`,
+            (this.hideLabel === true ? 'q-fab__label--internal-hidden' : ''),
+            this.labelClass
+          ],
+          style: this.labelStyle
         }
       }
     }
