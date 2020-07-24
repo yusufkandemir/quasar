@@ -9,7 +9,7 @@ export default {
   mixins: [ DarkMixin, FormMixin, ListenersMixin ],
 
   props: {
-    value: {
+    modelValue: {
       required: true
     },
 
