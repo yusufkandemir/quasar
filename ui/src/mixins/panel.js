@@ -26,12 +26,8 @@ const PanelWrapper = defineComponent({
 export const PanelParentMixin = {
   mixins: [ ListenersMixin ],
 
-  directives: {
-    TouchSwipe
-  },
-
   props: {
-    value: {
+    modelValue: {
       required: true
     },
 
@@ -55,23 +51,27 @@ export const PanelParentMixin = {
 
   computed: {
     panelDirectives () {
+      const directives = []
+
       if (this.swipeable === true) {
-        return [{
-          name: 'touch-swipe',
-          value: this.__swipe,
-          modifiers: {
+        directives.push([
+          TouchSwipe,
+          this.__swipe, '',
+          {
             horizontal: this.vertical !== true,
             vertical: this.vertical,
             mouse: true
           }
-        }]
+        ])
       }
+
+      return directives
     },
 
     contentKey () {
-      return typeof this.value === 'string' || typeof this.value === 'number'
-        ? this.value
-        : String(this.value)
+      return typeof this.modelValue === 'string' || typeof this.modelValue === 'number'
+        ? this.modelValue
+        : String(this.modelValue)
     },
 
     transitionPrevComputed () {
@@ -194,7 +194,7 @@ export const PanelParentMixin = {
     },
 
     __updatePanelIndex () {
-      const index = this.__getPanelIndex(this.value)
+      const index = this.__getPanelIndex(this.modelValue)
 
       if (this.panelIndex !== index) {
         this.panelIndex = index
@@ -208,7 +208,7 @@ export const PanelParentMixin = {
         return
       }
 
-      const panel = this.__isValidPanelName(this.value) &&
+      const panel = this.__isValidPanelName(this.modelValue) &&
         this.__updatePanelIndex() &&
         this.panels[this.panelIndex]
 
