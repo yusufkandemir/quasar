@@ -1,4 +1,4 @@
-import { defineComponent, h } from 'vue'
+import { defineComponent, h, Transition } from 'vue'
 
 import QPageSticky from '../page-sticky/QPageSticky.js'
 import { getScrollTarget, setScrollPosition } from '../../utils/scroll.js'
@@ -28,11 +28,14 @@ export default defineComponent({
 
   inject: {
     layout: {
+      from: 'layout',
       default () {
         console.error('QPageScroller needs to be used within a QLayout')
       }
     }
   },
+
+  emits: ['click'],
 
   data () {
     return {
@@ -47,19 +50,16 @@ export default defineComponent({
         : this.layout.height
     },
 
-    onEvents () {
+    eventListeners () {
       return {
-        ...this.qListeners,
-        click: this.__onClick
+        // TODO: Vue 3, uses ListenersMixin
+        // ...this.qListeners,
+        onClick: this.__onClick
       }
     }
   },
 
   watch: {
-    'layout.scroll.position' () {
-      this.__updateVisibility()
-    },
-
     reverse: {
       handler (val) {
         if (val === true) {
@@ -104,15 +104,21 @@ export default defineComponent({
     }
   },
 
+  mounted () {
+    this.$watch(() => this.layout.scroll.position, () => {
+      this.__updateVisibility()
+    })
+  },
+
   render () {
-    return h('transition', {
-      props: { name: 'q-transition--fade' }
+    return h(Transition, {
+      name: 'q-transition--fade'
     },
     this.showing === true
       ? [
         h('div', {
-          staticClass: 'q-page-scroller',
-          on: this.onEvents
+          class: 'q-page-scroller',
+          ...this.eventListeners
         }, [
           QPageSticky.options.render.call(this)
         ])
