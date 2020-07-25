@@ -284,6 +284,11 @@ export default defineComponent({
       })
     },
 
+    // TODO: Vue 3, find a better solution, I don't even know if this is working or not
+    hasOwnProperty (prop) {
+      return Object.prototype.hasOwnProperty.call(this, prop)
+    },
+
     __getCurValue () {
       return this.hasOwnProperty('tempValue') === true
         ? this.tempValue
@@ -317,6 +322,7 @@ export default defineComponent({
 
   // TODO: Vue 3, render function from the mixin somehow can't make it into here
   // see: https://github.com/vuejs/vue-next/issues/1630
+  render: QField.render,
 
   mounted () {
     // textarea only
