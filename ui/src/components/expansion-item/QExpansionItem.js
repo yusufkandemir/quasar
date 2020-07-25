@@ -1,4 +1,4 @@
-import { defineComponent, h } from 'vue'
+import { defineComponent, h, withDirectives, vShow } from 'vue'
 
 import QItem from '../item/QItem.js'
 import QItemSection from '../item/QItemSection.js'
@@ -53,6 +53,8 @@ export default defineComponent({
     headerClass: [Array, String, Object]
   },
 
+  emits: ['click', 'after-show', 'after-hide'],
+
   data () {
     return {
       showing: this.value !== void 0
@@ -69,10 +71,10 @@ export default defineComponent({
     group (newVal, oldVal) {
       if (newVal !== void 0 && oldVal === void 0) {
         // TODO: Vue 3, events API change
-        this.$root.$on(eventName, this.__eventHandler)
+        // this.$root.$on(eventName, this.__eventHandler)
       }
       else if (newVal === void 0 && oldVal !== void 0) {
-        this.$root.$off(eventName, this.__eventHandler)
+        // this.$root.$off(eventName, this.__eventHandler)
       }
     }
   },
@@ -129,38 +131,39 @@ export default defineComponent({
 
     __getToggleIcon () {
       const data = {
-        staticClass: `q-focusable relative-position cursor-pointer${this.denseToggle === true && this.switchToggleSide === true ? ' items-end' : ''}`,
-        class: this.expandIconClass,
-        props: {
-          side: this.switchToggleSide !== true,
-          avatar: this.switchToggleSide
-        }
+        class: [
+          'q-focusable relative-position cursor-pointer',
+          this.denseToggle === true && this.switchToggleSide === true ? 'items-end' : '',
+          this.expandIconClass
+        ],
+        side: this.switchToggleSide !== true,
+        avatar: this.switchToggleSide
       }
 
       const child = [
         h(QIcon, {
-          staticClass: 'q-expansion-item__toggle-icon',
-          class: this.expandedIcon === void 0 && this.showing === true
-            ? 'q-expansion-item__toggle-icon--rotated'
-            : void 0,
-          props: { name: this.expansionIcon }
+          class: {
+            'q-expansion-item__toggle-icon': true,
+            'q-expansion-item__toggle-icon--rotated': this.expandedIcon === void 0 && this.showing === true
+          },
+          name: this.expansionIcon
         })
       ]
 
       if (this.activeToggleIcon === true) {
         Object.assign(data, {
-          attrs: { tabindex: 0 },
-          on: cache(this, 'inpExt', {
-            click: this.__toggleIcon,
-            keyup: this.__toggleIconKeyboard
+          tabindex: 0,
+          ...cache(this, 'inpExt', {
+            onClick: this.__toggleIcon,
+            onKeyup: this.__toggleIconKeyboard
           })
         })
 
         child.unshift(
           h('div', {
             ref: 'blurTarget',
-            staticClass: 'q-expansion-item__toggle-focus q-icon q-focus-helper q-focus-helper--rounded',
-            attrs: { tabindex: -1 }
+            class: 'q-expansion-item__toggle-focus q-icon q-focus-helper q-focus-helper--rounded',
+            tabindex: -1
           })
         )
       }
@@ -178,12 +181,13 @@ export default defineComponent({
         child = [
           h(QItemSection, [
             h(QItemLabel, {
-              props: { lines: this.labelLines }
+              lines: this.labelLines
             }, [this.label || '']),
 
             this.caption
               ? h(QItemLabel, {
-                props: { lines: this.captionLines, caption: true }
+                lines: this.captionLines,
+                caption: true
               }, [this.caption])
               : null
           ])
@@ -191,13 +195,11 @@ export default defineComponent({
 
         this.icon && child[this.switchToggleSide === true ? 'push' : 'unshift'](
           h(QItemSection, {
-            props: {
-              side: this.switchToggleSide === true,
-              avatar: this.switchToggleSide !== true
-            }
+            side: this.switchToggleSide === true,
+            avatar: this.switchToggleSide !== true
           }, [
             h(QIcon, {
-              props: { name: this.icon }
+              name: this.icon
             })
           ])
         )
@@ -211,25 +213,22 @@ export default defineComponent({
         ref: 'item',
         style: this.headerStyle,
         class: this.headerClass,
-        props: {
-          dark: this.isDark,
-          disable: this.disable,
-          dense: this.dense,
-          insetLevel: this.headerInsetLevel
-        }
+        dark: this.isDark,
+        disable: this.disable,
+        dense: this.dense,
+        insetLevel: this.headerInsetLevel
       }
 
       if (this.isClickable === true) {
-        const evtProp = this.hasRouterLink === true ? 'nativeOn' : 'on'
-
-        data.props.clickable = true
-        data[evtProp] = {
-          ...this.qListeners,
-          click: this.__onHeaderClick
-        }
+        data.clickable = true
+        Object.assign(data, {
+          // TODO: Vue 3, uses ListenersMixin
+          // ...this.qListeners,
+          onClick: this.__onHeaderClick
+        })
 
         this.hasRouterLink === true && Object.assign(
-          data.props,
+          data,
           this.routerLinkProps
         )
       }
@@ -242,29 +241,33 @@ export default defineComponent({
         this.__getHeader(),
 
         h(QSlideTransition, {
-          props: { duration: this.duration },
-          on: cache(this, 'slide', {
-            show: () => { this.$emit('after-show') },
-            hide: () => { this.$emit('after-hide') }
+          duration: this.duration,
+          ...cache(this, 'slide', {
+            onShow: () => { this.$emit('after-show') },
+            onHide: () => { this.$emit('after-hide') }
           })
         }, [
-          h('div', {
-            staticClass: 'q-expansion-item__content relative-position',
-            style: this.contentStyle,
-            directives: [{ name: 'show', value: this.showing }]
-          }, slot(this, 'default'))
+          withDirectives(
+            h('div', {
+              class: 'q-expansion-item__content relative-position',
+              style: this.contentStyle
+            }, slot(this, 'default')),
+            [
+              [vShow, this.showing]
+            ]
+          )
         ])
       ]
 
       if (this.expandSeparator) {
         node.push(
           h(QSeparator, {
-            staticClass: 'q-expansion-item__border q-expansion-item__border--top absolute-top',
-            props: { dark: this.isDark }
+            class: 'q-expansion-item__border q-expansion-item__border--top absolute-top',
+            dark: this.isDark
           }),
           h(QSeparator, {
-            staticClass: 'q-expansion-item__border q-expansion-item__border--bottom absolute-bottom',
-            props: { dark: this.isDark }
+            class: 'q-expansion-item__border q-expansion-item__border--bottom absolute-bottom',
+            dark: this.isDark
           })
         )
       }
@@ -275,22 +278,23 @@ export default defineComponent({
 
   render () {
     return h('div', {
-      staticClass: 'q-expansion-item q-item-type',
-      class: this.classes
+      class: ['q-expansion-item q-item-type', this.classes]
     }, [
       h(
         'div',
-        { staticClass: 'q-expansion-item__container relative-position' },
+        { class: 'q-expansion-item__container relative-position' },
         this.__getContent()
       )
     ])
   },
 
   created () {
-    this.group !== void 0 && this.$root.$on(eventName, this.__eventHandler)
+    // TODO: Vue 3, uses removed events API
+    // this.group !== void 0 && this.$root.$on(eventName, this.__eventHandler)
   },
 
   beforeUnmount () {
-    this.group !== void 0 && this.$root.$off(eventName, this.__eventHandler)
+    // TODO: Vue 3, uses removed events API
+    // this.group !== void 0 && this.$root.$off(eventName, this.__eventHandler)
   }
 })
