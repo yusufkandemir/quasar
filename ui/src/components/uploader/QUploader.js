@@ -5,5 +5,6 @@ import UploaderXHRMixin from './uploader-xhr-mixin.js'
 
 export default defineComponent({
   name: 'QUploader',
-  mixins: [ QUploaderBase, UploaderXHRMixin ]
+  mixins: [ QUploaderBase, UploaderXHRMixin ],
+  render: QUploaderBase.render
 })

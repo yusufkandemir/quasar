@@ -41,6 +41,8 @@ export default defineComponent({
     }
   },
 
+  emits: ['added', 'removed', 'start', 'finish'],
+
   data () {
     return {
       files: [],
@@ -275,13 +277,11 @@ export default defineComponent({
     __getBtn (show, icon, fn) {
       if (show === true) {
         return h(QBtn, {
-          props: {
-            type: 'a',
-            icon: this.$q.iconSet.uploader[icon],
-            flat: true,
-            dense: true
-          },
-          on: icon === 'add' ? null : { click: fn }
+          type: 'a',
+          icon: this.$q.iconSet.uploader[icon],
+          flat: true,
+          dense: true,
+          ...(icon === 'add' ? null : { onClick: fn })
         }, icon === 'add' ? this.__getInputControl() : null)
       }
     },
@@ -290,18 +290,16 @@ export default defineComponent({
       return [
         h('input', {
           ref: 'input',
-          staticClass: 'q-uploader__input overflow-hidden absolute-full',
-          attrs: {
-            tabindex: -1,
-            type: 'file',
-            title: '', // try to remove default tooltip
-            accept: this.accept,
-            capture: this.capture,
-            ...(this.multiple === true ? { multiple: true } : {})
-          },
-          on: cache(this, 'input', {
-            mousedown: stop, // need to stop refocus from QBtn
-            change: this.__addFiles
+          class: 'q-uploader__input overflow-hidden absolute-full',
+          tabindex: -1,
+          type: 'file',
+          title: '', // try to remove default tooltip
+          accept: this.accept,
+          capture: this.capture,
+          ...(this.multiple === true ? { multiple: true } : {}),
+          ...cache(this, 'input', {
+            onMousedown: stop, // need to stop refocus from QBtn
+            onChange: this.__addFiles
           })
         })
       ]
@@ -314,21 +312,21 @@ export default defineComponent({
 
       return [
         h('div', {
-          staticClass: 'q-uploader__header-content flex flex-center no-wrap q-gutter-xs'
+          class: 'q-uploader__header-content flex flex-center no-wrap q-gutter-xs'
         }, [
           this.__getBtn(this.queuedFiles.length > 0, 'removeQueue', this.removeQueuedFiles),
           this.__getBtn(this.uploadedFiles.length > 0, 'removeUploaded', this.removeUploadedFiles),
 
           this.isUploading === true
-            ? h(QSpinner, { staticClass: 'q-uploader__spinner' })
+            ? h(QSpinner, { class: 'q-uploader__spinner' })
             : null,
 
-          h('div', { staticClass: 'col column justify-center' }, [
+          h('div', { class: 'col column justify-center' }, [
             this.label !== void 0
-              ? h('div', { staticClass: 'q-uploader__title' }, [this.label])
+              ? h('div', { class: 'q-uploader__title' }, [this.label])
               : null,
 
-            h('div', { staticClass: 'q-uploader__subtitle' }, [
+            h('div', { class: 'q-uploader__subtitle' }, [
               this.uploadSizeLabel + ' / ' + this.uploadProgressLabel
             ])
           ]),
@@ -347,8 +345,8 @@ export default defineComponent({
 
       return this.files.map(file => h('div', {
         key: file.name,
-        staticClass: 'q-uploader__file relative-position',
         class: {
+          'q-uploader__file relative-position': true,
           'q-uploader__file--img': this.noThumbnails !== true && file.__img !== void 0,
           'q-uploader__file--failed': file.__status === 'failed',
           'q-uploader__file--uploaded': file.__status === 'uploaded'
@@ -358,22 +356,20 @@ export default defineComponent({
         } : null
       }, [
         h('div', {
-          staticClass: 'q-uploader__file-header row flex-center no-wrap'
+          class: 'q-uploader__file-header row flex-center no-wrap'
         }, [
           file.__status === 'failed'
             ? h(QIcon, {
-              staticClass: 'q-uploader__file-status',
-              props: {
-                name: this.$q.iconSet.type.negative,
-                color: 'negative'
-              }
+              class: 'q-uploader__file-status',
+              name: this.$q.iconSet.type.negative,
+              color: 'negative'
             })
             : null,
 
-          h('div', { staticClass: 'q-uploader__file-header-content col' }, [
-            h('div', { staticClass: 'q-uploader__title' }, [file.name]),
+          h('div', { class: 'q-uploader__file-header-content col' }, [
+            h('div', { class: 'q-uploader__title' }, [file.name]),
             h('div', {
-              staticClass: 'q-uploader__subtitle row items-center no-wrap'
+              class: 'q-uploader__subtitle row items-center no-wrap'
             }, [
               file.__sizeLabel + ' / ' + file.__progressLabel
             ])
@@ -381,23 +377,17 @@ export default defineComponent({
 
           file.__status === 'uploading'
             ? h(QCircularProgress, {
-              props: {
-                value: file.__progress,
-                min: 0,
-                max: 1,
-                indeterminate: file.__progress === 0
-              }
+              modelValue: file.__progress,
+              min: 0,
+              max: 1,
+              indeterminate: file.__progress === 0
             })
             : h(QBtn, {
-              props: {
-                round: true,
-                dense: true,
-                flat: true,
-                icon: this.$q.iconSet.uploader[file.__status === 'uploaded' ? 'done' : 'clear']
-              },
-              on: {
-                click: () => { this.removeFile(file) }
-              }
+              round: true,
+              dense: true,
+              flat: true,
+              icon: this.$q.iconSet.uploader[file.__status === 'uploaded' ? 'done' : 'clear'],
+              onClick: () => { this.removeFile(file) }
             })
         ])
       ]))
@@ -412,12 +402,11 @@ export default defineComponent({
   render () {
     const children = [
       h('div', {
-        staticClass: 'q-uploader__header',
-        class: this.colorClass
+        class: ['q-uploader__header', this.colorClass]
       }, this.__getHeader()),
 
       h('div', {
-        staticClass: 'q-uploader__list scroll'
+        class: 'q-uploader__list scroll'
       }, this.__getList()),
 
       this.__getDnd('uploader')
@@ -425,22 +414,24 @@ export default defineComponent({
 
     this.isBusy === true && children.push(
       h('div', {
-        staticClass: 'q-uploader__overlay absolute-full flex flex-center'
+        class: 'q-uploader__overlay absolute-full flex flex-center'
       }, [ h(QSpinner) ])
     )
 
     return h('div', {
-      staticClass: 'q-uploader column no-wrap',
       class: {
+        'q-uploader column no-wrap': true,
         'q-uploader--dark q-dark': this.isDark,
         'q-uploader--bordered': this.bordered,
         'q-uploader--square no-border-radius': this.square,
         'q-uploader--flat no-shadow': this.flat,
         'disabled q-uploader--disable': this.disable
       },
-      on: this.canAddFiles === true
-        ? cache(this, 'drag', { dragover: this.__onDragOver })
-        : null
+      ...(
+        this.canAddFiles === true
+          ? cache(this, 'drag', { onDragover: this.__onDragOver })
+          : null
+      )
     }, children)
   }
 })

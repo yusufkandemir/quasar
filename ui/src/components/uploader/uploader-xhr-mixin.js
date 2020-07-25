@@ -13,7 +13,7 @@ export default {
     },
     fieldName: {
       type: [ Function, String ],
-      default: file => file.name
+      default: () => file => file.name
     },
     headers: [ Function, Array ],
     formFields: [ Function, Array ],

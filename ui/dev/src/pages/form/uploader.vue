@@ -64,10 +64,9 @@
         />
 
         <q-uploader
-          :dark="dark"
+          v-bind="props"
           label="Fn returning immediately"
           multiple
-          :batch="batch"
           :factory="files => ({ url: 'http://localhost:4444/upload' })"
           @added="onAdded"
           @removed="onRemoved"
@@ -79,10 +78,9 @@
         />
 
         <q-uploader
-          :dark="dark"
+          v-bind="props"
           label="Fn returning promise"
           multiple
-          :batch="batch"
           :factory="promiseFn"
           @added="onAdded"
           @removed="onRemoved"
@@ -95,10 +93,9 @@
 
         <q-uploader
           ref="aborter"
-          :dark="dark"
+          v-bind="props"
           label="Aborting & fn returning promise"
           multiple
-          :batch="batch"
           :factory="promiseFnAbort"
           @added="onAdded"
           @removed="onRemoved"
@@ -110,10 +107,9 @@
         />
 
         <q-uploader
-          :dark="dark"
+          v-bind="props"
           label="Fn returning promise - reject"
           multiple
-          :batch="batch"
           :factory="rejectFn"
           @added="onAdded"
           @removed="onRemoved"
