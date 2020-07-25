@@ -22,7 +22,7 @@ export default {
           ...mergeProps(
             { class: ['hidden', className] },
             this.formAttrs,
-            this.formDomProps
+            'formDomProps' in this && this.formDomProps
           )
         })
       )
