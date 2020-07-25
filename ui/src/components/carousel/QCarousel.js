@@ -1,4 +1,4 @@
-import { h, defineComponent } from 'vue'
+import { h, defineComponent, withDirectives } from 'vue'
 
 import QBtn from '../btn/QBtn.js'
 
@@ -207,11 +207,12 @@ export default defineComponent({
         // TODO: Vue 3, usese ListenersMixin
         // on: { ...this.qListeners }
       }, [
-        h('div', {
-          class: 'q-carousel__slides-container'
-          // TODO: Vue 3 directive API change
-          // directives: this.panelDirectives
-        }, this.__getPanelContent())
+        withDirectives(
+          h('div', {
+            class: 'q-carousel__slides-container'
+          }, this.__getPanelContent()),
+          this.panelDirectives
+        )
       ].concat(this.__getContent()))
     }
   },
