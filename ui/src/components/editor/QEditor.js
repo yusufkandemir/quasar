@@ -18,7 +18,7 @@ export default defineComponent({
   mixins: [ ListenersMixin, FullscreenMixin, DarkMixin ],
 
   props: {
-    value: {
+    modelValue: {
       type: String,
       required: true
     },
@@ -63,6 +63,8 @@ export default defineComponent({
     flat: Boolean,
     dense: Boolean
   },
+
+  emits: ['update:modelValue', 'click', 'mouseup', 'keyup', 'keydown', 'touchend', 'blur'],
 
   computed: {
     editable () {
@@ -275,7 +277,7 @@ export default defineComponent({
   },
 
   watch: {
-    value (v) {
+    modelValue (v) {
       if (this.editWatcher === true) {
         this.__setContent(v)
       }
@@ -292,7 +294,7 @@ export default defineComponent({
           ? this.$refs.content.innerText
           : this.$refs.content.innerHTML
 
-        if (val !== this.value) {
+        if (val !== this.modelValue) {
           this.editWatcher = false
           this.$emit('update:modelValue', val)
         }
@@ -411,7 +413,7 @@ export default defineComponent({
 
   mounted () {
     this.caret = new Caret(this.$refs.content, this)
-    this.__setContent(this.value)
+    this.__setContent(this.modelValue)
     this.refreshToolbar()
   },
 
@@ -424,16 +426,14 @@ export default defineComponent({
       bars.push(
         h('div', {
           key: 'qedt_top',
-          staticClass: 'q-editor__toolbar row no-wrap scroll-x',
-          class: this.toolbarBackgroundClass
+          class: ['q-editor__toolbar row no-wrap scroll-x', this.toolbarBackgroundClass]
         }, getToolbar(this))
       )
 
       this.editLinkUrl !== null && bars.push(
         h('div', {
           key: 'qedt_btm',
-          staticClass: 'q-editor__toolbar row no-wrap items-center scroll-x',
-          class: this.toolbarBackgroundClass
+          class: ['q-editor__toolbar row no-wrap items-center scroll-x', this.toolbarBackgroundClass]
         }, getLinkEditor(this, this.$q.platform.is.ie))
       )
 
@@ -444,8 +444,9 @@ export default defineComponent({
     }
 
     const listeners = {
-      ...this.qListeners,
-      'onUpdate:modelValue': this.__onInput,
+      // TODO: Vue 3, uses ListenersMixin
+      // ...this.qListeners,
+      onInput: this.__onInput,
       onKeydown: this.__onKeydown,
       onClick: this.__onClick,
       onBlur: this.__onBlur,
@@ -470,16 +471,15 @@ export default defineComponent({
         'div',
         {
           ref: 'content',
-          staticClass: `q-editor__content`,
+          class: ['q-editor__content', this.innerClass],
           style: this.innerStyle,
-          class: this.innerClass,
-          attrs: {
-            contenteditable: this.editable,
-            placeholder: this.placeholder
-          },
-          domProps: isSSR
-            ? { innerHTML: this.value }
-            : undefined,
+          contenteditable: this.editable,
+          placeholder: this.placeholder,
+          ...(
+            isSSR
+              ? { innerHTML: this.modelValue }
+              : undefined
+          ),
           ...listeners
         }
       )
