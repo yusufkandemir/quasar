@@ -54,11 +54,13 @@
           <q-btn dense round icon="map" class="absolute-top-right" />
 
           <input v-model="myInput">
+          <!--
           <q-uploader
             multiple
             label="Multiple"
             url="http://localhost:4444/upload"
           />
+          -->
           <div v-for="n in 10" :key="'1.'+n">
             {{ n }} Step 1
           </div>

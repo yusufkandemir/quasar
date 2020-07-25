@@ -1,4 +1,4 @@
-import { h, defineComponent } from 'vue'
+import { h, defineComponent, KeepAlive } from 'vue'
 
 import QSlideTransition from '../slide-transition/QSlideTransition.js'
 import StepHeader from './StepHeader.js'
@@ -12,10 +12,10 @@ const StepWrapper = defineComponent({
 
   render () {
     return h('div', {
-      staticClass: 'q-stepper__step-content'
+      class: 'q-stepper__step-content'
     }, [
       h('div', {
-        staticClass: 'q-stepper__step-inner'
+        class: 'q-stepper__step-inner'
       }, slot(this, 'default'))
     ])
   }
@@ -62,7 +62,7 @@ export default defineComponent({
 
   computed: {
     isActive () {
-      return this.stepper.value === this.name
+      return this.stepper.modelValue === this.name
     }
   },
 
@@ -85,30 +85,29 @@ export default defineComponent({
     const vertical = this.stepper.vertical
     const content = vertical === true && this.stepper.keepAlive === true
       ? h(
-        'keep-alive',
+        KeepAlive,
         this.isActive === true
           ? [ h(StepWrapper, { key: this.name }, slot(this, 'default')) ]
           : void 0
       )
       : (
         vertical !== true || this.isActive === true
-          ? StepWrapper.options.render.call(this)
+          ? StepWrapper.render.call(this)
           : void 0
       )
 
     return h(
       'div',
       {
-        staticClass: 'q-stepper__step',
-        on: { ...this.qListeners }
+        class: 'q-stepper__step'
+        // TODO: Vue 3, uses ListenersMixin
+        // on: { ...this.qListeners }
       },
       vertical === true
         ? [
           h(StepHeader, {
-            props: {
-              stepper: this.stepper,
-              step: this
-            }
+            stepper: this.stepper,
+            step: this
           }),
 
           this.stepper.animated === true

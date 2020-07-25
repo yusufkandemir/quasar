@@ -1,4 +1,4 @@
-import { defineComponent, h } from 'vue'
+import { defineComponent, h, withDirectives } from 'vue'
 
 import StepHeader from './StepHeader.js'
 
@@ -64,41 +64,44 @@ export default defineComponent({
 
         return (top === void 0 ? [] : top).concat(
           h('div', {
-            staticClass: 'q-stepper__content',
+            class: 'q-stepper__content',
             // stop propagation of content emitted @input
             // which would tamper with Panel's model
-            on: cache(this, 'stop', { input: stop })
+            ...cache(this, 'stop', { onInput: stop })
           }, slot(this, 'default'))
         )
       }
 
       return [
         h('div', { class: this.headerClasses }, this.__getAllPanels().map(panel => {
-          const step = panel.componentOptions.propsData
+          const step = panel.props
 
           return h(StepHeader, {
             key: step.name,
-            props: {
-              stepper: this,
-              step
-            }
+            stepper: this,
+            step
           })
         }))
       ].concat(
         top,
 
-        h('div', {
-          staticClass: 'q-stepper__content q-panel-parent',
-          directives: this.panelDirectives
-        }, this.__getPanelContent())
+        withDirectives(
+          h('div', {
+            class: 'q-stepper__content q-panel-parent'
+          }, this.__getPanelContent()),
+          this.panelDirectives
+        )
       )
     },
 
     __renderPanels () {
       return h('div', {
-        class: this.classes,
-        on: { ...this.qListeners }
+        class: this.classes
+        // TODO: Vue 3, uses ListenersMixin
+        // on: { ...this.qListeners }
       }, mergeSlot(this.__getContent(), this, 'navigation'))
     }
-  }
+  },
+
+  render: PanelParentMixin.render
 })

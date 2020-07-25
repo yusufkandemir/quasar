@@ -11,8 +11,9 @@ export default defineComponent({
 
   render () {
     return h('div', {
-      staticClass: 'q-stepper__nav',
-      on: { ...this.qListeners }
+      class: 'q-stepper__nav'
+      // TODO: Vue 3, uses ListenersMixin
+      // on: { ...this.qListeners }
     }, slot(this, 'default'))
   }
 })
