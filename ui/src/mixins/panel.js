@@ -5,9 +5,7 @@ import TouchSwipe from '../directives/TouchSwipe.js'
 // TODO: Vue 3, review, uses ListenersMixin
 import ListenersMixin from './listeners.js'
 
-import { stop } from '../utils/event.js'
 import { slot } from '../utils/slot.js'
-import cache from '../utils/cache.js'
 
 const PanelWrapper = defineComponent({
   name: 'QTabPanelWrapper',
@@ -15,15 +13,12 @@ const PanelWrapper = defineComponent({
   render () {
     return h('div', {
       class: 'q-panel scroll',
-      role: 'tabpanel',
-      // stop propagation of content emitted @input
-      // which would tamper with Panel's model
-      ...cache(this, 'stop', { 'onUpdate:modelValue': stop })
+      role: 'tabpanel'
     }, slot(this, 'default'))
   }
 })
 
-export const PanelParentMixin = {
+export const PanelParentMixin = defineComponent({
   mixins: [ ListenersMixin ],
 
   props: {
@@ -41,6 +36,8 @@ export const PanelParentMixin = {
 
     keepAlive: Boolean
   },
+
+  emits: ['update:modelValue', 'before-transition', 'transition'],
 
   data () {
     return {
@@ -115,7 +112,7 @@ export const PanelParentMixin = {
     },
 
     goTo (name) {
-      this.$emit('input', name)
+      this.$emit('update:modelValue', name)
     },
 
     __isValidPanelName (name) {
@@ -124,28 +121,29 @@ export const PanelParentMixin = {
 
     __getPanelIndex (name) {
       return this.panels.findIndex(panel => {
-        const opt = panel.componentOptions
-        return opt &&
-          opt.propsData.name === name &&
-          opt.propsData.disable !== '' &&
-          opt.propsData.disable !== true
+        return (
+          panel.props !== null &&
+          panel.props.name === name &&
+          panel.props.disable !== '' &&
+          panel.props.disable !== true
+        )
       })
     },
 
     __getAllPanels () {
       return this.panels.filter(
-        panel => panel.componentOptions !== void 0 &&
-          this.__isValidPanelName(panel.componentOptions.propsData.name)
+        panel => panel.props !== null && this.__isValidPanelName(panel.props.name)
       )
     },
 
     __getAvailablePanels () {
       return this.panels.filter(panel => {
-        const opt = panel.componentOptions
-        return opt &&
-          opt.propsData.name !== void 0 &&
-          opt.propsData.disable !== '' &&
-          opt.propsData.disable !== true
+        return (
+          panel.props !== null &&
+          panel.props.name !== void 0 &&
+          panel.props.disable !== '' &&
+          panel.props.disable !== true
+        )
       })
     },
 
@@ -164,16 +162,17 @@ export const PanelParentMixin = {
       const slots = this.panels
 
       while (index > -1 && index < slots.length) {
-        const opt = slots[index].componentOptions
+        const opt = slots[index]
 
         if (
           opt !== void 0 &&
-          opt.propsData.disable !== '' &&
-          opt.propsData.disable !== true
+          opt.props !== null &&
+          opt.props.disable !== '' &&
+          opt.props.disable !== true
         ) {
           this.__updatePanelTransition(direction)
           this.__forcedPanelTransition = true
-          this.$emit('input', slots[index].componentOptions.propsData.name)
+          this.$emit('update:modelValue', slots[index].props.name)
           setTimeout(() => {
             this.__forcedPanelTransition = false
           })
@@ -214,7 +213,10 @@ export const PanelParentMixin = {
 
       const content = this.keepAlive === true
         ? [
-          h(KeepAlive, () => [
+          // TODO: Vue 3, investigate this, when the child param is array, it emits a warning saying:
+          // `Non-function value encountered for default slot. Prefer function slots for better performance`
+          // And it breaks the whole page with `Uncaught (in promise) TypeError: Cannot read property '_' of null` error when a function is used instead
+          h(KeepAlive, /* () => */ [
             h(PanelWrapper, {
               key: this.contentKey
             }, () => [ panel ])
@@ -224,10 +226,7 @@ export const PanelParentMixin = {
           h('div', {
             class: 'q-panel scroll',
             key: this.contentKey,
-            role: 'tabpanel',
-            // stop propagation of content emitted @input
-            // which would tamper with Panel's model
-            ...cache(this, 'stop', { 'onUpdate:modelValue': stop })
+            role: 'tabpanel'
           }, [ panel ])
         ]
 
@@ -245,9 +244,9 @@ export const PanelParentMixin = {
     this.panels = slot(this, 'default', [])
     return this.__renderPanels()
   }
-}
+})
 
-export const PanelChildMixin = {
+export const PanelChildMixin = defineComponent({
   mixins: [ ListenersMixin ],
 
   props: {
@@ -256,4 +255,4 @@ export const PanelChildMixin = {
     },
     disable: Boolean
   }
-}
+})
