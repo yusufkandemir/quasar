@@ -10,8 +10,9 @@ export default defineComponent({
 
   render () {
     return h('div', {
-      staticClass: 'q-tab-panel',
-      on: { ...this.qListeners }
+      class: 'q-tab-panel'
+      // TODO: Vue 3, uses ListenersMixin
+      // on: { ...this.qListeners }
     }, slot(this, 'default'))
   }
 })
