@@ -1,4 +1,4 @@
-import { h, defineComponent } from 'vue'
+import { h, defineComponent, withDirectives } from 'vue'
 
 import TouchPan from '../../directives/TouchPan.js'
 
@@ -19,7 +19,7 @@ export default defineComponent({
   },
 
   props: {
-    value: {
+    modelValue: {
       type: Number,
       required: true
     },
@@ -51,8 +51,10 @@ export default defineComponent({
     separatorStyle: [Array, String, Object]
   },
 
+  emits: ['update:modelValue'],
+
   watch: {
-    value: {
+    modelValue: {
       immediate: true,
       handler (v) {
         this.__normalize(v, this.computedLimits)
@@ -63,7 +65,7 @@ export default defineComponent({
       deep: true,
       handler () {
         this.$nextTick(() => {
-          this.__normalize(this.value, this.computedLimits)
+          this.__normalize(this.modelValue, this.computedLimits)
         })
       }
     }
@@ -94,7 +96,7 @@ export default defineComponent({
     styles () {
       return {
         [this.side]: {
-          [this.prop]: this.__getCSSValue(this.value)
+          [this.prop]: this.__getCSSValue(this.modelValue)
         }
       }
     }
@@ -107,7 +109,7 @@ export default defineComponent({
 
         this.__dir = this.horizontal === true ? 'up' : 'left'
         this.__maxValue = this.unit === '%' ? 100 : size
-        this.__value = Math.min(this.__maxValue, this.computedLimits[1], Math.max(this.computedLimits[0], this.value))
+        this.__value = Math.min(this.__maxValue, this.computedLimits[1], Math.max(this.computedLimits[0], this.modelValue))
         this.__multiplier = (this.reverse !== true ? 1 : -1) *
           (this.horizontal === true ? 1 : (this.$q.lang.rtl === true ? -1 : 1)) *
           (this.unit === '%' ? (size === 0 ? 0 : 100 / size) : 1)
@@ -117,8 +119,8 @@ export default defineComponent({
       }
 
       if (evt.isFinal === true) {
-        if (this.__normalized !== this.value) {
-          this.$emit('input', this.__normalized)
+        if (this.__normalized !== this.modelValue) {
+          this.$emit('update:modelValue', this.__normalized)
         }
 
         this.$el.classList.remove('q-splitter--active')
@@ -134,17 +136,17 @@ export default defineComponent({
 
       this.$refs[this.side].style[this.prop] = this.__getCSSValue(this.__normalized)
 
-      if (this.emitImmediately === true && this.value !== this.__normalized) {
-        this.$emit('input', this.__normalized)
+      if (this.emitImmediately === true && this.modelValue !== this.__normalized) {
+        this.$emit('update:modelValue', this.__normalized)
       }
     },
 
     __normalize (val, limits) {
       if (val < limits[0]) {
-        this.$emit('input', limits[0])
+        this.$emit('update:modelValue', limits[0])
       }
       else if (val > limits[1]) {
-        this.$emit('input', limits[1])
+        this.$emit('update:modelValue', limits[1])
       }
     },
 
@@ -158,48 +160,52 @@ export default defineComponent({
     const child = [
       h('div', {
         ref: 'before',
-        staticClass: 'q-splitter__panel q-splitter__before' + (this.reverse === true ? ' col' : ''),
+        class: ['q-splitter__panel q-splitter__before', (this.reverse === true ? 'col' : ''), this.beforeClass],
         style: this.styles.before,
-        class: this.beforeClass,
-        on: cache(this, 'stop', { input: stop })
+        ...cache(this, 'stop', { onInput: stop })
       }, slot(this, 'before')),
 
       h('div', {
-        staticClass: 'q-splitter__separator',
+        class: ['q-splitter__separator', this.separatorClass],
         style: this.separatorStyle,
-        class: this.separatorClass,
-        attrs
+        ...attrs
       }, [
-        h('div', {
-          staticClass: 'absolute-full q-splitter__separator-area',
-          directives: this.disable === true ? void 0 : cache(this, 'dir#' + this.horizontal, [{
-            name: 'touch-pan',
-            value: this.__pan,
-            modifiers: {
-              horizontal: this.horizontal !== true,
-              vertical: this.horizontal,
-              prevent: true,
-              stop: true,
-              mouse: true,
-              mouseAllDir: true
-            }
-          }])
-        }, slot(this, 'separator'))
+        withDirectives(
+          h('div', {
+            class: 'absolute-full q-splitter__separator-area'
+          }, slot(this, 'separator')),
+          this.disable === true
+            ? []
+            : cache(this, 'dir#' + this.horizontal, [
+              [
+                TouchPan,
+                this.__pan,
+                '',
+                {
+                  horizontal: this.horizontal !== true,
+                  vertical: this.horizontal,
+                  prevent: true,
+                  stop: true,
+                  mouse: true,
+                  mouseAllDir: true
+                }
+              ]
+            ])
+        )
       ]),
 
       h('div', {
         ref: 'after',
-        staticClass: 'q-splitter__panel q-splitter__after' + (this.reverse === true ? '' : ' col'),
+        class: ['q-splitter__panel q-splitter__after' + (this.reverse === true ? '' : ' col'), this.afterClass],
         style: this.styles.after,
-        class: this.afterClass,
-        on: cache(this, 'stop', { input: stop })
+        ...cache(this, 'stop', { onInput: stop })
       }, slot(this, 'after'))
     ]
 
     return h('div', {
-      staticClass: 'q-splitter no-wrap',
-      class: this.classes,
-      on: { ...this.qListeners }
+      class: ['q-splitter no-wrap', this.classes]
+      // TODO: Vue 3, uses ListenersMixin
+      // on: { ...this.qListeners }
     }, mergeSlot(child, this, 'default'))
   }
 })
