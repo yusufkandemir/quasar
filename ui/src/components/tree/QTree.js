@@ -1,4 +1,4 @@
-import { h, defineComponent } from 'vue'
+import { h, defineComponent, vShow, withDirectives } from 'vue'
 
 import QIcon from '../icon/QIcon.js'
 import QCheckbox from '../checkbox/QCheckbox.js'
@@ -68,6 +68,8 @@ export default defineComponent({
     noNodesLabel: String,
     noResultsLabel: String
   },
+
+  emits: ['update:selected', 'update:expanded', 'after-show', 'after-hide', 'lazy-load'],
 
   computed: {
     classes () {
@@ -304,14 +306,18 @@ export default defineComponent({
           return
         }
 
-        this.$set(this.lazy, key, 'loading')
+        // TODO: Vue 3, $set is removed, wait for compat build if we still need IE11 support
+        // this.$set(this.lazy, key, 'loading')
+        this.lazy[key] = 'loading'
+
         this.$emit('lazy-load', {
           node,
           key,
           done: children => {
             this.lazy[key] = 'loaded'
             if (children) {
-              this.$set(node, this.childrenKey, children)
+              // this.$set(node, this.childrenKey, children)
+              node[this.childrenKey] = children
             }
             this.$nextTick(() => {
               const m = this.meta[key]
@@ -435,15 +441,16 @@ export default defineComponent({
     __getNodeMedia (node) {
       if (node.icon !== void 0) {
         return h(QIcon, {
-          staticClass: `q-tree__icon q-mr-sm`,
-          props: { name: node.icon, color: node.iconColor }
+          class: `q-tree__icon q-mr-sm`,
+          name: node.icon,
+          color: node.iconColor
         })
       }
       const src = node.img || node.avatar
       if (src) {
         return h('img', {
-          staticClass: `q-tree__${node.img ? 'img' : 'avatar'} q-mr-sm`,
-          attrs: { src }
+          class: `q-tree__${node.img ? 'img' : 'avatar'} q-mr-sm`,
+          src
         })
       }
     },
@@ -470,7 +477,7 @@ export default defineComponent({
         : null
 
       if (body !== void 0) {
-        body = h('div', { staticClass: 'q-tree__node-body relative-position' }, [
+        body = h('div', { class: 'q-tree__node-body relative-position' }, [
           h('div', { class: this.textColorClass }, [
             body(slotScope)
           ])
@@ -479,46 +486,43 @@ export default defineComponent({
 
       return h('div', {
         key,
-        staticClass: 'q-tree__node relative-position',
-        class: { 'q-tree__node--parent': isParent, 'q-tree__node--child': !isParent }
+        class: ['q-tree__node relative-position', isParent === true ? 'q-tree__node--parent' : 'q-tree__node--child']
       }, [
         h('div', {
-          staticClass: 'q-tree__node-header relative-position row no-wrap items-center',
           class: {
+            'q-tree__node-header relative-position row no-wrap items-center': true,
             'q-tree__node--link q-hoverable q-focusable': meta.link,
             'q-tree__node--selected': meta.selected,
             'q-tree__node--disabled': meta.disabled
           },
-          attrs: { tabindex: meta.link ? 0 : -1 },
-          on: {
-            click: (e) => {
-              this.__onClick(node, meta, e)
-            },
-            keypress: e => {
-              if (shouldIgnoreKey(e) !== true) {
-                if (e.keyCode === 13) { this.__onClick(node, meta, e, true) }
-                else if (e.keyCode === 32) { this.__onExpandClick(node, meta, e, true) }
-              }
+          tabindex: meta.link ? 0 : -1,
+          onClick: (e) => {
+            this.__onClick(node, meta, e)
+          },
+          onKeypress: e => {
+            if (shouldIgnoreKey(e) !== true) {
+              if (e.keyCode === 13) { this.__onClick(node, meta, e, true) }
+              else if (e.keyCode === 32) { this.__onExpandClick(node, meta, e, true) }
             }
           }
         }, [
-          h('div', { staticClass: 'q-focus-helper', attrs: { tabindex: -1 }, ref: `blurTarget_${meta.key}` }),
+          h('div', { class: 'q-focus-helper', tabindex: -1, ref: `blurTarget_${meta.key}` }),
 
           meta.lazy === 'loading'
             ? h(QSpinner, {
-              staticClass: 'q-tree__spinner q-mr-xs',
-              props: { color: this.computedControlColor }
+              class: 'q-tree__spinner q-mr-xs',
+              color: this.computedControlColor
             })
             : (
               isParent === true
                 ? h(QIcon, {
-                  staticClass: 'q-tree__arrow q-mr-xs',
-                  class: { 'q-tree__arrow--rotate': meta.expanded },
-                  props: { name: this.computedIcon },
-                  on: {
-                    click: e => {
-                      this.__onExpandClick(node, meta, e)
-                    }
+                  class: {
+                    'q-tree__arrow q-mr-xs': true,
+                    'q-tree__arrow--rotate': meta.expanded
+                  },
+                  name: this.computedIcon,
+                  onClick: e => {
+                    this.__onExpandClick(node, meta, e)
                   }
                 })
                 : null
@@ -526,27 +530,25 @@ export default defineComponent({
 
           meta.hasTicking === true && meta.noTick !== true
             ? h(QCheckbox, {
-              staticClass: 'q-mr-xs',
-              props: {
-                value: meta.indeterminate === true ? null : meta.ticked,
-                color: this.computedControlColor,
-                dark: this.isDark,
-                dense: true,
-                keepColor: true,
-                disable: meta.tickable !== true
-              },
-              on: {
-                keydown: stopAndPrevent,
-                input: v => {
-                  this.__onTickedClick(meta, v)
-                }
+              class: 'q-mr-xs',
+              modelValue: meta.indeterminate === true ? null : meta.ticked,
+              color: this.computedControlColor,
+              dark: this.isDark,
+              dense: true,
+              keepColor: true,
+              disable: meta.tickable !== true,
+              onKeydown: stopAndPrevent,
+              'onUpdate:modelValue': v => {
+                this.__onTickedClick(meta, v)
               }
             })
             : null,
 
           h('div', {
-            'staticClass': 'q-tree__node-header-content col row no-wrap items-center',
-            class: meta.selected ? this.selectedColorClass : this.textColorClass
+            class: [
+              'q-tree__node-header-content col row no-wrap items-center',
+              meta.selected ? this.selectedColorClass : this.textColorClass
+            ]
           }, [
             header
               ? header(slotScope)
@@ -559,24 +561,27 @@ export default defineComponent({
 
         isParent === true
           ? h(QSlideTransition, {
-            props: { duration: this.duration },
-            on: cache(this, 'slide', {
-              show: () => { this.$emit('after-show') },
-              hide: () => { this.$emit('after-hide') }
+            duration: this.duration,
+            ...cache(this, 'slide', {
+              onShow: () => { this.$emit('after-show') },
+              onHide: () => { this.$emit('after-hide') }
             })
           }, [
-            h('div', {
-              staticClass: 'q-tree__node-collapsible',
-              class: this.textColorClass,
-              directives: [{ name: 'show', value: meta.expanded }]
-            }, [
-              body,
-
+            withDirectives(
               h('div', {
-                staticClass: 'q-tree__children',
-                class: { 'q-tree__node--disabled': meta.disabled }
-              }, children)
-            ])
+                class: ['q-tree__node-collapsible', this.textColorClass]
+              }, [
+                body,
+
+                h('div', {
+                  class: {
+                    'q-tree__children': true,
+                    'q-tree__node--disabled': meta.disabled
+                  }
+                }, children)
+              ]),
+              [ [vShow, meta.expanded] ]
+            )
           ])
           : body
       ])
