@@ -145,7 +145,7 @@ export default defineComponent({
 
       if (this.navigation === true) {
         node.push(this.__getNavigationContainer('buttons', panel => {
-          const name = panel.componentOptions.propsData.name
+          const name = panel.props.name
 
           return h(QBtn, {
             key: name,
@@ -163,7 +163,7 @@ export default defineComponent({
           : ''
 
         node.push(this.__getNavigationContainer('thumbnails', panel => {
-          const slide = panel.componentOptions.propsData
+          const slide = panel.props
 
           return h('img', {
             key: 'tmb#' + slide.name,
