@@ -28,7 +28,8 @@ export function getPropCacheMixin (propName, proxyPropName) {
             // we first delete obsolete events
             for (const prop in oldObj) {
               if (newObj[prop] === void 0) {
-                this.$delete(target, prop)
+                // this.$delete(target, prop)
+                delete target[prop]
               }
             }
           }
@@ -36,7 +37,8 @@ export function getPropCacheMixin (propName, proxyPropName) {
           for (const prop in newObj) {
             // we then update changed events
             if (target[prop] !== newObj[prop]) {
-              this.$set(target, prop, newObj[prop])
+              // this.$set(target, prop, newObj[prop])
+              target[prop] = newObj[prop]
             }
           }
         }
