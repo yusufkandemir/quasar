@@ -20,6 +20,8 @@ export default defineComponent({
     }
   },
 
+  emits: ['hide'],
+
   data () {
     const breakpoint = parseInt(this.breakpoint, 10)
     return {
@@ -36,28 +38,9 @@ export default defineComponent({
 
     onEvents () {
       return {
-        ...this.qListeners,
-        hide: this.__onHide
-      }
-    }
-  },
-
-  watch: {
-    '$q.screen.width' (width) {
-      if (this.$refs.popup.showing !== true) {
-        this.__updateType(width, this.$q.screen.height, this.parsedBreakpoint)
-      }
-    },
-
-    '$q.screen.height' (height) {
-      if (this.$refs.popup.showing !== true) {
-        this.__updateType(this.$q.screen.width, height, this.parsedBreakpoint)
-      }
-    },
-
-    breakpoint (breakpoint) {
-      if (this.$refs.popup.showing !== true) {
-        this.__updateType(this.$q.screen.width, this.$q.screen.height, parseInt(breakpoint, 10))
+        // TODO: Vue 3, uses ListenersMixin
+        // ...this.qListeners,
+        onHide: this.__onHide
       }
     }
   },
@@ -91,25 +74,42 @@ export default defineComponent({
     }
   },
 
+  mounted () {
+    this.$watch(() => this.$q.screen.width, width => {
+      if (this.$refs.popup.showing !== true) {
+        this.__updateType(width, this.$q.screen.height, this.parsedBreakpoint)
+      }
+    })
+
+    this.$watch(() => this.$q.screen.height, height => {
+      if (this.$refs.popup.showing !== true) {
+        this.__updateType(this.$q.screen.width, height, this.parsedBreakpoint)
+      }
+    })
+
+    this.$watch(() => this.breakpoint, breakpoint => {
+      if (this.$refs.popup.showing !== true) {
+        this.__updateType(this.$q.screen.width, this.$q.screen.height, parseInt(breakpoint, 10))
+      }
+    })
+  },
+
   render () {
-    const def = slot(this, 'default')
+    const defaultSlot = slot(this, 'default')
 
     const props = (
       this.type === 'menu' &&
-      def !== void 0 &&
-      def[0] !== void 0 &&
-      def[0].componentOptions !== void 0 &&
-      def[0].componentOptions.Ctor !== void 0 &&
-      def[0].componentOptions.Ctor.sealedOptions !== void 0 &&
-      ['QDate', 'QTime', 'QCarousel', 'QColor'].includes(
-        def[0].componentOptions.Ctor.sealedOptions.name
-      )
+      defaultSlot !== void 0 &&
+      defaultSlot[0] !== void 0 &&
+      defaultSlot[0].type !== void 0 &&
+      ['QDate', 'QTime', 'QCarousel', 'QColor'].includes(defaultSlot[0].type.name)
     ) ? { cover: true, maxHeight: '99vh' } : {}
 
     const data = {
       ref: 'popup',
-      props: { ...props, ...this.qAttrs },
-      on: this.onEvents
+      ...props,
+      ...this.qAttrs,
+      ...this.onEvents
     }
 
     let component
@@ -119,12 +119,12 @@ export default defineComponent({
     }
     else {
       component = QMenu
-      data.props.target = this.target
-      data.props.contextMenu = this.contextMenu
-      data.props.noParentEvent = true
-      data.props.separateClosePopup = true
+      data.target = this.target
+      data.contextMenu = this.contextMenu
+      data.noParentEvent = true
+      data.separateClosePopup = true
     }
 
-    return h(component, data, def)
+    return h(component, data, defaultSlot)
   }
 })
