@@ -30,11 +30,6 @@ export default defineComponent({
     TransitionMixin
   ],
 
-  // TODO: This is probably useless now, because the directive is used directly, needs some investigation
-  directives: {
-    ClickOutside
-  },
-
   props: {
     persistent: Boolean,
     autoClose: Boolean,
@@ -112,7 +107,7 @@ export default defineComponent({
         // TODO: Vue 3, uses ListenersMixin
         // ...this.qListeners,
         // stop propagating these events from children
-        'onUpdate:modelValue': stop,
+        onInput: stop,
         'onPopup-show': stop,
         'onPopup-hide': stop
       }
