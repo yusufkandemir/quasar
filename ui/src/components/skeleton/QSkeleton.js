@@ -52,19 +52,22 @@ export default defineComponent({
     },
 
     classes () {
-      return `q-skeleton--${this.isDark === true ? 'dark' : 'light'} q-skeleton--type-${this.type}` +
-        (this.animation !== 'none' ? ` q-skeleton--anim q-skeleton--anim-${this.animation}` : '') +
-        (this.square === true ? ' q-skeleton--square' : '') +
-        (this.bordered === true ? ' q-skeleton--bordered' : '')
+      return [
+        this.isDark === true ? 'q-skeleton--dark' : 'q-skeleton--light',
+        `q-skeleton--type-${this.type}`,
+        this.animation !== 'none' ? `q-skeleton--anim q-skeleton--anim-${this.animation}` : '',
+        this.square === true ? 'q-skeleton--square' : '',
+        this.bordered === true ? 'q-skeleton--bordered' : ''
+      ]
     }
   },
 
   render () {
     return h(this.tag, {
-      staticClass: 'q-skeleton',
-      class: this.classes,
-      style: this.style,
-      on: { ...this.qListeners }
+      class: ['q-skeleton', this.classes],
+      style: this.style
+      // TODO: Vue 3, uses ListenersMixin
+      // on: { ...this.qListeners }
     }, slot(this, 'default'))
   }
 })
