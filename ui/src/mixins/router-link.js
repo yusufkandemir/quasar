@@ -1,7 +1,6 @@
 export const routerLinkProps = {
   to: [String, Object],
   exact: Boolean,
-  append: Boolean,
   replace: Boolean,
   activeClass: String,
   exactActiveClass: String,
@@ -20,7 +19,6 @@ export const RouterLinkMixin = {
       return {
         to: this.to,
         exact: this.exact,
-        append: this.append,
         replace: this.replace,
         activeClass: this.activeClass || 'q-router-link--active',
         exactActiveClass: this.exactActiveClass || 'q-router-link--exact-active',

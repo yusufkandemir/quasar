@@ -82,7 +82,7 @@ export default defineComponent({
 
     onEvents () {
       return {
-        'onUpdate:modelValue': stop,
+        onInput: stop,
         // TODO: Vue 3, uses ListenersMixin
         // ...this.qListeners,
         onClick: this.__activate,
@@ -111,7 +111,8 @@ export default defineComponent({
 
       if (this.disable !== true) {
         // TODO: Vue 3, uses ListenersMixin
-        this.qListeners.click !== void 0 && this.$emit('click', e)
+        // this.qListeners.click !== void 0 && this.$emit('click', e)
+        'onClick' in this && this.onClick !== void 0 && this.$emit('click', e)
         this.__activateTab(this.name)
       }
     },

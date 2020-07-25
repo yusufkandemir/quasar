@@ -58,7 +58,7 @@ export default defineComponent({
   },
 
   props: {
-    value: [Number, String],
+    modelValue: [Number, String],
 
     align: {
       type: String,
@@ -94,10 +94,12 @@ export default defineComponent({
     contentClass: String
   },
 
+  emits: ['update:modelValue'],
+
   data () {
     return {
       tabs: {
-        current: this.value,
+        current: this.modelValue,
         activeColor: this.activeColor,
         activeBgColor: this.activeBgColor,
         indicatorClass: getIndicatorClass(
@@ -117,7 +119,7 @@ export default defineComponent({
   },
 
   watch: {
-    value (name) {
+    modelValue (name) {
       this.__activateTab(name, true, true)
     },
 
@@ -197,8 +199,9 @@ export default defineComponent({
 
     onEvents () {
       return {
-        input: stop,
-        ...this.qListeners
+        onInput: stop
+        // TODO: Vue 3, uses ListenersMixin
+        // ...this.qListeners
       }
     }
   },
@@ -206,8 +209,10 @@ export default defineComponent({
   methods: {
     __activateTab (name, setCurrent, skipEmit) {
       if (this.tabs.current !== name) {
-        skipEmit !== true && this.$emit('input', name)
-        if (setCurrent === true || this.qListeners.input === void 0) {
+        skipEmit !== true && this.$emit('update:modelValue', name)
+        // TODO: Vue 3, uses ListenersMixin
+        // if (setCurrent === true || this.qListeners.input === void 0) {
+        if (setCurrent === true || ('onUpdate:modelValue' in this && this['onUpdate:modelValue'] === void 0)) {
           this.__animate(this.tabs.current, name)
           this.tabs.current = name
         }
@@ -412,49 +417,51 @@ export default defineComponent({
   render () {
     const child = [
       h(QResizeObserver, {
-        on: cache(this, 'resize', { resize: this.__updateContainer })
+        ...cache(this, 'resize', { onResize: this.__updateContainer })
       }),
 
       h('div', {
         ref: 'content',
-        staticClass: 'q-tabs__content row no-wrap items-center self-stretch hide-scrollbar',
-        class: this.innerClass
+        class: ['q-tabs__content row no-wrap items-center self-stretch hide-scrollbar', this.innerClass]
       }, slot(this, 'default'))
     ]
 
     this.arrowsEnabled === true && child.push(
       h(QIcon, {
-        staticClass: 'q-tabs__arrow q-tabs__arrow--left absolute q-tab__icon',
-        class: this.leftArrow === true ? '' : 'q-tabs__arrow--faded',
-        props: { name: this.leftIcon || (this.vertical === true ? this.$q.iconSet.tabs.up : this.$q.iconSet.tabs.left) },
-        on: cache(this, 'onL', {
-          mousedown: this.__scrollToStart,
-          touchstart: this.__scrollToStart,
-          mouseup: this.__stopAnimScroll,
-          mouseleave: this.__stopAnimScroll,
-          touchend: this.__stopAnimScroll
+        class: {
+          'q-tabs__arrow q-tabs__arrow--left absolute q-tab__icon': true,
+          'q-tabs__arrow--faded': this.leftArrow !== true
+        },
+        name: this.leftIcon || (this.vertical === true ? this.$q.iconSet.tabs.up : this.$q.iconSet.tabs.left),
+        ...cache(this, 'onL', {
+          onMousedown: this.__scrollToStart,
+          onTouchstart: this.__scrollToStart,
+          onMouseup: this.__stopAnimScroll,
+          onMouseleave: this.__stopAnimScroll,
+          onTouchend: this.__stopAnimScroll
         })
       }),
 
       h(QIcon, {
-        staticClass: 'q-tabs__arrow q-tabs__arrow--right absolute q-tab__icon',
-        class: this.rightArrow === true ? '' : 'q-tabs__arrow--faded',
-        props: { name: this.rightIcon || (this.vertical === true ? this.$q.iconSet.tabs.down : this.$q.iconSet.tabs.right) },
-        on: cache(this, 'onR', {
-          mousedown: this.__scrollToEnd,
-          touchstart: this.__scrollToEnd,
-          mouseup: this.__stopAnimScroll,
-          mouseleave: this.__stopAnimScroll,
-          touchend: this.__stopAnimScroll
+        class: {
+          'q-tabs__arrow q-tabs__arrow--right absolute q-tab__icon': true,
+          'q-tabs__arrow--faded': this.rightArrow !== true
+        },
+        name: this.rightIcon || (this.vertical === true ? this.$q.iconSet.tabs.down : this.$q.iconSet.tabs.right),
+        ...cache(this, 'onR', {
+          onMousedown: this.__scrollToEnd,
+          onTouchstart: this.__scrollToEnd,
+          onMouseup: this.__stopAnimScroll,
+          onMouseleave: this.__stopAnimScroll,
+          onTouchend: this.__stopAnimScroll
         })
       })
     )
 
     return h('div', {
-      staticClass: 'q-tabs row no-wrap items-center',
-      class: this.classes,
-      on: this.onEvents,
-      attrs: { role: 'tablist' }
+      class: ['q-tabs row no-wrap items-center', this.classes],
+      ...this.onEvents,
+      role: 'tablist'
     }, child)
   }
 })
