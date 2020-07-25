@@ -1,4 +1,4 @@
-import { h, defineComponent } from 'vue'
+import { h, defineComponent, withDirectives } from 'vue'
 
 import QIcon from '../icon/QIcon.js'
 import QSpinner from '../spinner/QSpinner.js'
@@ -11,18 +11,13 @@ import { between } from '../../utils/format.js'
 import { prevent } from '../../utils/event.js'
 import { slot } from '../../utils/slot.js'
 
-const
-  PULLER_HEIGHT = 40,
-  OFFSET_TOP = 20
+const PULLER_HEIGHT = 40
+const OFFSET_TOP = 20
 
 export default defineComponent({
   name: 'QPullToRefresh',
 
   mixins: [ ListenersMixin ],
-
-  directives: {
-    TouchPan
-  },
 
   props: {
     color: String,
@@ -35,6 +30,8 @@ export default defineComponent({
       default: void 0
     }
   },
+
+  emits: ['refresh'],
 
   data () {
     return {
@@ -62,17 +59,22 @@ export default defineComponent({
     },
 
     directives () {
+      const directives = []
+
       if (this.disable !== true) {
-        return [{
-          name: 'touch-pan',
-          modifiers: {
+        directives.push([
+          TouchPan,
+          this.__pull,
+          '',
+          {
             down: true,
             mightPrevent: true,
             mouse: this.noMouse !== true
-          },
-          value: this.__pull
-        }]
+          }
+        ])
       }
+
+      return directives
     },
 
     contentClass () {
@@ -180,39 +182,40 @@ export default defineComponent({
   },
 
   render () {
-    return h('div', {
-      staticClass: 'q-pull-to-refresh',
-      on: { ...this.qListeners },
-      directives: this.directives
-    }, [
+    // TODO: Vue 3, when `this.directives` is not empty(`this.disable === true`) on the initial render, the directives cannot be undone even though `this.directives` is updated later;
+    // If it is empty(`this.disable === true`) on the initial render, change in value of `this.disable` will result in different internal Vue errors
+    return withDirectives(
       h('div', {
-        class: this.contentClass
-      }, slot(this, 'default')),
-
-      h('div', {
-        staticClass: 'q-pull-to-refresh__puller-container fixed row flex-center no-pointer-events z-top',
-        style: this.positionCSS
+        class: 'q-pull-to-refresh'
+        // TODO: Vue 3, uses ListenersMixin
+        // on: { ...this.qListeners },
       }, [
         h('div', {
-          style: this.style,
-          class: this.classes
+          class: this.contentClass
+        }, slot(this, 'default')),
+
+        h('div', {
+          class: 'q-pull-to-refresh__puller-container fixed row flex-center no-pointer-events z-top',
+          style: this.positionCSS
         }, [
-          this.state !== 'refreshing'
-            ? h(QIcon, {
-              props: {
+          h('div', {
+            style: this.style,
+            class: this.classes
+          }, [
+            this.state !== 'refreshing'
+              ? h(QIcon, {
                 name: this.icon || this.$q.iconSet.pullToRefresh.icon,
                 color: this.color,
                 size: '32px'
-              }
-            })
-            : h(QSpinner, {
-              props: {
+              })
+              : h(QSpinner, {
                 size: '24px',
                 color: this.color
-              }
-            })
+              })
+          ])
         ])
-      ])
-    ])
+      ]),
+      this.directives
+    )
   }
 })
