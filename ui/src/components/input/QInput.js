@@ -113,7 +113,7 @@ export default defineComponent({
       const listeners = {
         // TODO: Vue 3, uses ListenersMixin
         // ...this.qListeners,
-        'onUpdate:modelValue': this.__onInput,
+        onInput: this.__onInput,
         onPaste: this.__onPaste,
         // Safari < 10.2 & UIWebView doesn't fire compositionend when
         // switching focus before confirming composition choice
@@ -313,7 +313,7 @@ export default defineComponent({
         ...this.onEvents,
         ...(
           this.type !== 'file'
-            ? { modelValue: this.__getCurValue() }
+            ? { value: this.__getCurValue() }
             : this.formDomProps
         )
       })
