@@ -306,7 +306,7 @@ export default defineComponent({
           return
         }
 
-        // TODO: Vue 3, $set is removed, wait for compat build if we still need IE11 support
+        // TODO: Vue 3, `$set` and `$delete` is removed, wait for compat build if we still need IE11 support
         // this.$set(this.lazy, key, 'loading')
         this.lazy[key] = 'loading'
 
@@ -327,7 +327,8 @@ export default defineComponent({
             })
           },
           fail: () => {
-            this.$delete(this.lazy, key)
+            // this.$delete(this.lazy, key)
+            delete this.lazy[key]
           }
         })
       }
