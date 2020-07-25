@@ -120,7 +120,7 @@ export default defineComponent({
           class: 'q-page-scroller',
           ...this.eventListeners
         }, [
-          QPageSticky.options.render.call(this)
+          QPageSticky.render.call(this)
         ])
       ]
       : null
