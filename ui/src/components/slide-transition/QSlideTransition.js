@@ -52,12 +52,10 @@ export default defineComponent({
 
   render () {
     return h(Transition, {
-      props: {
-        css: false,
-        appear: this.appear
-      },
-      on: cache(this, 'tr', {
-        enter: (el, done) => {
+      css: false,
+      appear: this.appear,
+      ...cache(this, 'tr', {
+        onEnter: (el, done) => {
           let pos = 0
           this.el = el
 
@@ -83,7 +81,7 @@ export default defineComponent({
           }, 100)
         },
 
-        leave: (el, done) => {
+        onLeave: (el, done) => {
           let pos
           this.el = el
 
