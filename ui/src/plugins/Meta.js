@@ -146,12 +146,16 @@ function parseMeta (component, meta) {
     extend(true, meta, component.__qMeta)
 
     if (component.$options.meta.stopPropagation === true) {
-      return
+      return // eslint-disable-line no-useless-return
     }
   }
 
-  // TODO: Vue 3, find an alternative way
-  console.log(component.$children)
+  /*
+    TODO: Vue 3, find an alternative way
+    Instance property `$children` is removed, the closest ones are probably `$.vnode.children` and `$.subTree.children` depending on the situation
+    Values of `root.$.vnode.children` and `root.$.subTree.children` are always null, not sure why
+  */
+
   /*
   component.$children.forEach(child => {
     parseMeta(child, meta)
@@ -304,7 +308,7 @@ export default {
         activated: triggerMeta,
         deactivated: triggerMeta,
         beforeMount: triggerMeta,
-        destroyed () {
+        unmounted () {
           if (hasMeta(this) === true) {
             this.__qMetaUnwatch()
             this.__qMetaUpdate()
