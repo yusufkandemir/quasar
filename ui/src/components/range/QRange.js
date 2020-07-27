@@ -61,18 +61,6 @@ export default defineComponent({
   },
 
   watch: {
-    'value.min' (val) {
-      this.model.min = val === null
-        ? this.min
-        : val
-    },
-
-    'value.max' (val) {
-      this.model.max = val === null
-        ? this.max
-        : val
-    },
-
     min (value) {
       if (this.model.min < value) {
         this.model.min = value
@@ -90,6 +78,20 @@ export default defineComponent({
         this.model.max = value
       }
     }
+  },
+
+  created () {
+    this.$watch(() => this.value.min, val => {
+      this.model.min = val === null
+        ? this.min
+        : val
+    })
+
+    this.$watch(() => this.value.max, val => {
+      this.model.max = val === null
+        ? this.max
+        : val
+    })
   },
 
   computed: {

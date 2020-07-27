@@ -69,20 +69,8 @@ export default defineComponent({
       this.$emit('reveal', val)
     },
 
-    'layout.scroll' () {
-      this.__updateRevealed()
-    },
-
-    'layout.height' () {
-      this.__updateRevealed()
-    },
-
     size () {
       this.__updateRevealed()
-    },
-
-    '$q.screen.height' (val) {
-      this.layout.container !== true && this.__updateLocal('windowHeight', val)
     }
   },
 
@@ -177,6 +165,18 @@ export default defineComponent({
     this.modelValue === true && this.__update('size', this.size)
     this.__update('space', this.modelValue)
     this.__update('offset', this.offset)
+
+    this.$watch(() => this.layout.scroll, () => {
+      this.__updateRevealed()
+    })
+
+    this.$watch(() => this.layout.height, () => {
+      this.__updateRevealed()
+    })
+
+    this.$watch(() => this.$q.screen.height, windowHeight => {
+      this.layout.container !== true && this.__updateLocal('windowHeight', windowHeight)
+    })
   },
 
   beforeUnmount () {

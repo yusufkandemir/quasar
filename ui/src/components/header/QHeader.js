@@ -68,14 +68,6 @@ export default defineComponent({
     revealed (val) {
       this.layout.__animate()
       this.$emit('reveal', val)
-    },
-
-    'layout.scroll' (scroll) {
-      this.reveal === true && this.__updateLocal('revealed',
-        scroll.direction === 'up' ||
-        scroll.position <= this.revealOffset ||
-        scroll.position - scroll.inflexionPosition < 100
-      )
     }
   },
 
@@ -165,6 +157,14 @@ export default defineComponent({
     this.modelValue === true && this.__update('size', this.size)
     this.__update('space', this.modelValue)
     this.__update('offset', this.offset)
+
+    this.$watch(() => this.layout.scroll, scroll => {
+      this.reveal === true && this.__updateLocal('revealed',
+        scroll.direction === 'up' ||
+        scroll.position <= this.revealOffset ||
+        scroll.position - scroll.inflexionPosition < 100
+      )
+    })
   },
 
   beforeUnmount () {
