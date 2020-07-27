@@ -103,7 +103,7 @@ export default defineComponent({
   },
 
   watch: {
-    value () {
+    modelValue () {
       if (this.autoplay) {
         clearInterval(this.timer)
         this.__startTimer()
@@ -149,7 +149,7 @@ export default defineComponent({
 
           return h(QBtn, {
             key: name,
-            class: `q-carousel__navigation-icon q-carousel__navigation-icon--${name === this.value ? '' : 'in'}active`,
+            class: `q-carousel__navigation-icon q-carousel__navigation-icon--${name === this.modelValue ? '' : 'in'}active`,
             icon: this.navIcon,
             size: 'sm',
             ...this.controlProps,
@@ -167,7 +167,7 @@ export default defineComponent({
 
           return h('img', {
             key: 'tmb#' + slide.name,
-            class: `q-carousel__thumbnail q-carousel__thumbnail--${slide.name === this.value ? '' : 'in'}active` + color,
+            class: `q-carousel__thumbnail q-carousel__thumbnail--${slide.name === this.modelValue ? '' : 'in'}active` + color,
             src: slide.imgSrc,
             ...cache(this, 'tmb#' + slide.name, { onClick: () => { this.goTo(slide.name) } })
           })

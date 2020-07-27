@@ -25,7 +25,7 @@ export default defineComponent({
   },
 
   watch: {
-    value (val) {
+    modelValue (val) {
       this.__processModelChange(val)
     },
 

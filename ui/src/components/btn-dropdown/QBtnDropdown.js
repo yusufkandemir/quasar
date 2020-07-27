@@ -52,7 +52,7 @@ export default defineComponent({
   },
 
   watch: {
-    value (val) {
+    modelValue (val) {
       this.$refs.menu !== void 0 && this.$refs.menu[val ? 'show' : 'hide']()
     }
   },

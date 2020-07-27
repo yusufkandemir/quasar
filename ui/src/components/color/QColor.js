@@ -84,7 +84,7 @@ export default defineComponent({
   },
 
   watch: {
-    value (v) {
+    modelValue (v) {
       const model = this.__parseModel(v || this.defaultValue)
       if (model.hex !== this.model.hex) {
         this.model = model

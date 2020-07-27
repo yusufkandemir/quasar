@@ -81,7 +81,7 @@ export const PanelParentMixin = defineComponent({
   },
 
   watch: {
-    value (newVal, oldVal) {
+    modelValue (newVal, oldVal) {
       const index = this.__isValidPanelName(newVal) === true
         ? this.__getPanelIndex(newVal)
         : -1
