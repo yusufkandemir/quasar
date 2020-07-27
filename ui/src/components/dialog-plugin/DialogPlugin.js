@@ -129,7 +129,7 @@ export default defineComponent({
       return [
         h(QInput, {
           // Begin props
-          value: this.prompt.model,
+          modelValue: this.prompt.model,
           type: this.prompt.type,
 
           label: this.prompt.label,
@@ -176,7 +176,7 @@ export default defineComponent({
       return [
         h(QOptionGroup, {
           // Props
-          value: this.options.model,
+          modelValue: this.options.model,
           type: this.options.type,
           color: this.vmColor,
           inline: this.options.inline,

@@ -270,14 +270,14 @@ export default defineComponent({
           }, [
             h('input', {
               class: 'fit',
-              modelValue: this.model[this.topView],
+              value: this.model[this.topView],
               ...(
                 this.editable !== true
                   ? { readonly: true }
                   : null
               ),
               ...cache(this, 'topIn', {
-                'onUpdate:modelValue': evt => {
+                onInput: evt => {
                   this.__updateErrorIcon(this.__onEditorChange(evt) === true)
                 },
                 onChange: stop,
@@ -452,11 +452,11 @@ export default defineComponent({
             })
           }),
           h('input', {
-            modelValue: this.model.r,
+            value: this.model.r,
             maxlength: 3,
             readonly: this.editable !== true,
             ...cache(this, 'rIn', {
-              'onUpdate:modelValue': evt => this.__onNumericChange(evt.target.value, 'r', 255, evt),
+              onInput: evt => this.__onNumericChange(evt.target.value, 'r', 255, evt),
               onChange: stop,
               onBlur: evt => this.__onNumericChange(evt.target.value, 'r', 255, evt, true)
             })
@@ -478,11 +478,11 @@ export default defineComponent({
             })
           }),
           h('input', {
-            modelValue: this.model.g,
+            value: this.model.g,
             maxlength: 3,
             readonly: this.editable !== true,
             ...cache(this, 'gIn', {
-              'onUpdate:modelValue': evt => this.__onNumericChange(evt.target.value, 'g', 255, evt),
+              onInput: evt => this.__onNumericChange(evt.target.value, 'g', 255, evt),
               onChange: stop,
               onBlur: evt => this.__onNumericChange(evt.target.value, 'g', 255, evt, true)
             })
@@ -504,11 +504,11 @@ export default defineComponent({
             })
           }),
           h('input', {
-            modelValue: this.model.b,
+            value: this.model.b,
             maxlength: 3,
             readonly: this.editable !== true,
             ...cache(this, 'bIn', {
-              'onUpdate:modelValue': evt => this.__onNumericChange(evt.target.value, 'b', 255, evt),
+              onInput: evt => this.__onNumericChange(evt.target.value, 'b', 255, evt),
               onChange: stop,
               onBlur: evt => this.__onNumericChange(evt.target.value, 'b', 255, evt, true)
             })
@@ -528,11 +528,11 @@ export default defineComponent({
             })
           }),
           h('input', {
-            modelValue: this.model.a,
+            value: this.model.a,
             maxlength: 3,
             readonly: this.editable !== true,
             ...cache(this, 'aIn', {
-              'onUpdate:modelValue': evt => this.__onNumericChange(evt.target.value, 'a', 100, evt),
+              onInput: evt => this.__onNumericChange(evt.target.value, 'a', 100, evt),
               onChange: stop,
               onBlur: evt => this.__onNumericChange(evt.target.value, 'a', 100, evt, true)
             })

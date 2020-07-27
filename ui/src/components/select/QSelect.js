@@ -347,7 +347,7 @@ export default defineComponent({
 
     inputControlEvents () {
       const listeners = {
-        'onUpdate:modelValue': this.__onInput,
+        onInput: this.__onInput,
         // Safari < 10.2 & UIWebView doesn't fire compositionend when
         // switching focus before confirming composition choice
         // this also fixes the issue where some browsers e.g. iOS Chrome
@@ -932,7 +932,7 @@ export default defineComponent({
         key: 'i_t',
         class: ['q-field__input q-placeholder col', this.computedInputClass],
         style: this.inputStyle,
-        modelValue: this.inputValue !== void 0 ? this.inputValue : '',
+        value: this.inputValue !== void 0 ? this.inputValue : '',
         // required for Android in order to show ENTER key when in form
         type: 'search',
         ...this.qAttrs,

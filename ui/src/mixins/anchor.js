@@ -12,6 +12,8 @@ export default {
     contextMenu: Boolean
   },
 
+  emits: ['update:modelValue'],
+
   watch: {
     contextMenu (val) {
       if (this.anchorEl !== void 0) {
@@ -200,8 +202,8 @@ export default {
     this.parentEl = this.$el.parentNode
     this.__pickAnchorEl()
 
-    if (this.value === true && this.anchorEl === void 0) {
-      this.$emit('input', false)
+    if (this.modelValue === true && this.anchorEl === void 0) {
+      this.$emit('update:modelValue', false)
     }
   },
 
