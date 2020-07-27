@@ -1,3 +1,5 @@
+import { defineComponent } from 'vue'
+
 export const sizes = {
   xs: 18,
   sm: 24,
@@ -7,7 +9,7 @@ export const sizes = {
 }
 
 export function getSizeMixin (sizes) {
-  return {
+  return defineComponent({
     props: {
       size: String
     },
@@ -19,7 +21,7 @@ export function getSizeMixin (sizes) {
         }
       }
     }
-  }
+  })
 }
 
 export default getSizeMixin(sizes)

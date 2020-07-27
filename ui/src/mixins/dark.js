@@ -1,4 +1,6 @@
-export default {
+import { defineComponent } from 'vue'
+
+export default defineComponent({
   props: {
     dark: {
       type: Boolean,
@@ -13,4 +15,4 @@ export default {
         : this.dark
     }
   }
-}
+})

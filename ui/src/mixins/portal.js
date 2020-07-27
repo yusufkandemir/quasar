@@ -1,4 +1,4 @@
-import { createApp } from 'vue'
+import { createApp, defineComponent } from 'vue'
 
 import { isSSR } from '../plugins/Platform.js'
 import { getBodyFullscreenElement } from '../utils/dom.js'
@@ -62,7 +62,7 @@ function isOnGlobalDialog (vm) {
 }
 
 // TODO: Vue 3 has portals (named as <teleport>), we can consider replacing
-const Portal = {
+const Portal = defineComponent({
   inheritAttrs: false,
 
   props: {
@@ -156,7 +156,7 @@ const Portal = {
   beforeUnmount () {
     this.__hidePortal()
   }
-}
+})
 
 if (isSSR === false) {
   Portal.created = function () {

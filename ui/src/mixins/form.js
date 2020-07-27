@@ -1,6 +1,6 @@
-import { h, mergeProps } from 'vue'
+import { h, defineComponent, mergeProps } from 'vue'
 
-export default {
+export default defineComponent({
   props: {
     name: String
   },
@@ -28,9 +28,9 @@ export default {
       )
     }
   }
-}
+})
 
-export const FormFieldMixin = {
+export const FormFieldMixin = defineComponent({
   props: {
     name: String
   },
@@ -40,4 +40,4 @@ export const FormFieldMixin = {
       return this.name || this.for
     }
   }
-}
+})

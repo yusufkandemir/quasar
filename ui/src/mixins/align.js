@@ -1,3 +1,5 @@
+import { defineComponent } from 'vue'
+
 const
   alignMap = {
     left: 'start',
@@ -10,7 +12,7 @@ const
   },
   alignValues = Object.keys(alignMap)
 
-export default {
+export default defineComponent({
   props: {
     align: {
       type: String,
@@ -27,4 +29,4 @@ export default {
       return `${this.vertical === true ? 'items' : 'justify'}-${alignMap[align]}`
     }
   }
-}
+})

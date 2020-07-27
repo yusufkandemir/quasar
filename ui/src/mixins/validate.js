@@ -1,8 +1,10 @@
+import { defineComponent } from 'vue'
+
 import { testPattern } from '../utils/patterns.js'
 
 const lazyRulesValues = [ true, false, 'ondemand' ]
 
-export default {
+export default defineComponent({
   props: {
     modelValue: {},
 
@@ -204,4 +206,4 @@ export default {
       }
     }
   }
-}
+})

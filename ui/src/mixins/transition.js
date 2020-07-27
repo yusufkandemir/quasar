@@ -1,4 +1,6 @@
-export default {
+import { defineComponent } from 'vue'
+
+export default defineComponent({
   props: {
     transitionShow: {
       type: String,
@@ -30,4 +32,4 @@ export default {
       return 'q-transition--' + (this.transitionState === true ? this.transitionHide : this.transitionShow)
     }
   }
-}
+})

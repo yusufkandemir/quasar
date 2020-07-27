@@ -1,6 +1,8 @@
+import { defineComponent } from 'vue'
+
 import History from '../history.js'
 
-export default {
+export default defineComponent({
   methods: {
     __addHistory () {
       this.__historyEntry = {
@@ -21,4 +23,4 @@ export default {
   beforeUnmount () {
     this.showing === true && this.__removeHistory()
   }
-}
+})

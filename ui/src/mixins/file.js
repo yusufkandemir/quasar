@@ -1,4 +1,4 @@
-import { h } from 'vue'
+import { h, defineComponent } from 'vue'
 
 import { stopAndPrevent } from '../utils/event.js'
 import cache from '../utils/cache.js'
@@ -18,7 +18,7 @@ function filterFiles (files, rejectedFiles, failedPropValidation, filterFn) {
   return acceptedFiles
 }
 
-export default {
+export default defineComponent({
   props: {
     multiple: Boolean,
     accept: String,
@@ -185,9 +185,9 @@ export default {
       }
     }
   }
-}
+})
 
-export const FileValueMixin = {
+export const FileValueMixin = defineComponent({
   computed: {
     formDomProps () {
       if (this.type !== 'file') {
@@ -222,4 +222,4 @@ export const FileValueMixin = {
       }
     }
   }
-}
+})

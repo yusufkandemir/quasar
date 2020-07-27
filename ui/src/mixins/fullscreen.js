@@ -1,10 +1,14 @@
+import { defineComponent } from 'vue'
+
 import History from '../history.js'
 
-export default {
+export default defineComponent({
   props: {
     fullscreen: Boolean,
     noRouteFullscreenExit: Boolean
   },
+
+  emits: ['update:fullscreen', 'fullscreen'],
 
   data () {
     return {
@@ -86,4 +90,4 @@ export default {
   beforeUnmount () {
     this.exitFullscreen()
   }
-}
+})

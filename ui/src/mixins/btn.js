@@ -1,3 +1,5 @@
+import { defineComponent } from 'vue'
+
 import AlignMixin from './align.js'
 import RippleMixin from './ripple.js'
 import ListenersMixin from './listeners.js'
@@ -12,7 +14,7 @@ const padding = {
   xl: 32
 }
 
-export default {
+export default defineComponent({
   mixins: [
     ListenersMixin,
     RippleMixin,
@@ -177,4 +179,4 @@ export default {
       }
     }
   }
-}
+})

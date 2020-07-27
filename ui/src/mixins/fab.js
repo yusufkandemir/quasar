@@ -1,6 +1,8 @@
+import { defineComponent } from 'vue'
+
 const labelPositions = [ 'top', 'right', 'bottom', 'left' ]
 
-export default {
+export default defineComponent({
   props: {
     type: {
       type: String,
@@ -82,4 +84,4 @@ export default {
       }
     }
   }
-}
+})

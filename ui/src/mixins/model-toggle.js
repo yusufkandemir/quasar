@@ -1,10 +1,12 @@
+import { defineComponent } from 'vue'
+
 import { isSSR } from '../plugins/Platform.js'
 
 import TimeoutMixin from './timeout.js'
 import ListenersMixin from './listeners.js'
 
 // TODO: Vue 3, review, uses ListenersMixin
-export default {
+export default defineComponent({
   mixins: [ TimeoutMixin, ListenersMixin ],
 
   props: {
@@ -127,4 +129,4 @@ export default {
       }
     }
   }
-}
+})

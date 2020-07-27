@@ -1,3 +1,5 @@
+import { defineComponent } from 'vue'
+
 export const routerLinkProps = {
   to: [String, Object],
   exact: Boolean,
@@ -7,7 +9,7 @@ export const routerLinkProps = {
   disable: Boolean
 }
 
-export const RouterLinkMixin = {
+export const RouterLinkMixin = defineComponent({
   props: routerLinkProps,
 
   computed: {
@@ -26,4 +28,4 @@ export const RouterLinkMixin = {
       }
     }
   }
-}
+})

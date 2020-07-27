@@ -1,3 +1,5 @@
+import { defineComponent } from 'vue'
+
 import { shouldIgnoreKey } from '../utils/key-composition.js'
 
 // leave NAMED_MASKS at top of file (code referenced from docs)
@@ -34,7 +36,7 @@ const
 
 const MARKER = String.fromCharCode(1)
 
-export default {
+export default defineComponent({
   props: {
     mask: String,
     reverseFillMask: Boolean,
@@ -525,4 +527,4 @@ export default {
         : val + this.maskReplaced.slice(val.length)
     }
   }
-}
+})

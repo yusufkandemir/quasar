@@ -1,9 +1,11 @@
+import { defineComponent } from 'vue'
+
 import { clearSelection } from '../utils/selection.js'
 import { addEvt, cleanEvt, prevent, listenOpts } from '../utils/event.js'
 import { getTouchTarget } from '../utils/touch.js'
 import { isKeyCode } from '../utils/key-composition.js'
 
-export default {
+export default defineComponent({
   props: {
     target: {
       default: true
@@ -213,4 +215,4 @@ export default {
     this.__anchorCleanup !== void 0 && this.__anchorCleanup()
     this.__unconfigureAnchorEl()
   }
-}
+})

@@ -1,4 +1,6 @@
-export default {
+import { defineComponent } from 'vue'
+
+export default defineComponent({
   props: {
     ratio: [ String, Number ]
   },
@@ -12,4 +14,4 @@ export default {
       }
     }
   }
-}
+})

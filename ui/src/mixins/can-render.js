@@ -1,7 +1,9 @@
+import { defineComponent } from 'vue'
+
 // using it to manage SSR rendering with best performance
 import { onSSR } from '../plugins/Platform.js'
 
-export default {
+export default defineComponent({
   data () {
     return {
       canRender: !onSSR
@@ -11,4 +13,4 @@ export default {
   mounted () {
     this.canRender === false && (this.canRender = true)
   }
-}
+})

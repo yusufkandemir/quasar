@@ -1,3 +1,5 @@
+import { defineComponent } from 'vue'
+
 import { getEventPath, listenOpts, stopAndPrevent } from '../utils/event.js'
 import { hasScrollbar, getScrollPosition, getHorizontalScrollPosition } from '../utils/scroll.js'
 import { client } from '../plugins/Platform.js'
@@ -188,7 +190,7 @@ export function preventScroll (state) {
   apply(action)
 }
 
-export default {
+export default defineComponent({
   methods: {
     __preventScroll (state) {
       if (
@@ -200,4 +202,4 @@ export default {
       }
     }
   }
-}
+})

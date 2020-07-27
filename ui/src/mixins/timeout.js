@@ -1,4 +1,6 @@
-export default {
+import { defineComponent } from 'vue'
+
+export default defineComponent({
   methods: {
     __nextTick (fn) {
       this.__tickFn = fn
@@ -34,4 +36,4 @@ export default {
     this.__tickFn = void 0
     clearTimeout(this.__timer)
   }
-}
+})

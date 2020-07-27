@@ -1,4 +1,4 @@
-import { h } from 'vue'
+import { h, defineComponent } from 'vue'
 
 import DarkMixin from './dark.js'
 import { stopAndPrevent } from '../utils/event.js'
@@ -10,7 +10,7 @@ import RefocusTargetMixin from './refocus-target.js'
 import { slot, mergeSlot } from '../utils/slot.js'
 import cache from '../utils/cache.js'
 
-export default {
+export default defineComponent({
   mixins: [ DarkMixin, OptionSizeMixin, FormMixin, RefocusTargetMixin ],
 
   props: {
@@ -228,4 +228,4 @@ export default {
       })
     }, child)
   }
-}
+})

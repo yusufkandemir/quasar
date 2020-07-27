@@ -1,4 +1,4 @@
-import { h } from 'vue'
+import { h, defineComponent } from 'vue'
 
 import debounce from '../utils/debounce.js'
 import frameDebounce from '../utils/frame-debounce.js'
@@ -150,11 +150,13 @@ const commonVirtScrollProps = {
 
 export const commonVirtPropsList = Object.keys(commonVirtScrollProps)
 
-export default {
+export default defineComponent({
   props: {
     virtualScrollHorizontal: Boolean,
     ...commonVirtScrollProps
   },
+
+  emits: ['virtual-scroll'],
 
   data () {
     return {
@@ -499,4 +501,4 @@ export default {
     this.__setScroll = frameDebounce(setScroll)
     this.__setVirtualScrollSize()
   }
-}
+})
