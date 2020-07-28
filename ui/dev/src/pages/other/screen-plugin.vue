@@ -14,10 +14,10 @@
 
 <script>
 export default {
-  watch: {
-    '$q.screen.gt.md' (state) {
+  created () {
+    this.$watch(() => this.$q.screen.gt.md, state => {
       console.log('watcher $q.screen.gt.md', state)
-    }
+    })
   } /* ,
   beforeCreate () {
     this.$q.screen.setSizes({

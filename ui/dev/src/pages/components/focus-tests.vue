@@ -25,7 +25,7 @@ export default {
     }
   },
   watch: {
-    '$route' () {
+    $route () {
       this.index += 1
     }
   },

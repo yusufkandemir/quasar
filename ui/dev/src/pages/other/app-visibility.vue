@@ -35,8 +35,8 @@ export default {
       eventList: []
     }
   },
-  watch: {
-    '$q.appVisible' (state) {
+  created () {
+    this.$watch(() => this.$q.appVisible, state => {
       const date = new Date()
 
       this.eventList.unshift({
@@ -45,7 +45,7 @@ export default {
             date.getMilliseconds(),
         label: ` App became ${state ? 'visible' : 'hidden'}`
       })
-    }
+    })
   }
 }
 </script>

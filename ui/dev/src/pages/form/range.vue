@@ -297,19 +297,22 @@ export default {
         : model => this.labelRightTemplate.split('{model}').join(model)
     }
   },
-  watch: {
-    'standalone.min' (val, old) {
+  created () {
+    this.$watch(() => this.standalone.min, (val, old) => {
       console.log(`Changed [min] from ${JSON.stringify(old)} to ${JSON.stringify(val)}`)
-    },
-    'standalone.max' (val, old) {
+    })
+
+    this.$watch(() => this.standalone.max, (val, old) => {
       console.log(`Changed [max] from ${JSON.stringify(old)} to ${JSON.stringify(val)}`)
-    },
-    'range.min' (val, old) {
+    })
+
+    this.$watch(() => this.range.min, (val, old) => {
       console.log(`Changed [min] from ${JSON.stringify(old)} to ${JSON.stringify(val)}`)
-    },
-    'range.max' (val, old) {
+    })
+
+    this.$watch(() => this.range.max, (val, old) => {
       console.log(`Changed [max] from ${JSON.stringify(old)} to ${JSON.stringify(val)}`)
-    }
+    })
   },
   methods: {
     onChange (val) {

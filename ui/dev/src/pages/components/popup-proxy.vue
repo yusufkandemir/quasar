@@ -244,8 +244,8 @@ export default {
     }
   },
 
-  watch: {
-    '$q.screen.width' (width) {
+  created () {
+    this.$watch(() => this.$q.screen.width, width => {
       const type = width < 450
         ? 'dialog'
         : 'menu'
@@ -253,7 +253,7 @@ export default {
       if (this.type !== type) {
         this.type = type
       }
-    }
+    })
   },
 
   methods: {

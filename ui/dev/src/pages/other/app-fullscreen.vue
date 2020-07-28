@@ -47,10 +47,10 @@
 import { AppFullscreen } from 'quasar'
 
 export default {
-  watch: {
-    '$q.fullscreen.activeEl' (val) {
+  created () {
+    this.$watch(() => this.$q.fullscreen.activeEl, val => {
       console.log(val)
-    }
+    })
   },
 
   methods: {

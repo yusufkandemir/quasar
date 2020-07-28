@@ -90,37 +90,11 @@ export default {
     }
   },
 
-  watch: {
-    'colors.primary' (val) {
-      this.update('primary', val)
-    },
-
-    'colors.secondary' (val) {
-      this.update('secondary', val)
-    },
-
-    'colors.accent' (val) {
-      this.update('accent', val)
-    },
-
-    'colors.dark' (val) {
-      this.update('dark', val)
-    },
-
-    'colors.positive' (val) {
-      this.update('positive', val)
-    },
-
-    'colors.negative' (val) {
-      this.update('negative', val)
-    },
-
-    'colors.info' (val) {
-      this.update('info', val)
-    },
-
-    'colors.warning' (val) {
-      this.update('warning', val)
+  created () {
+    for (const colorName of Object.keys(this.colors)) {
+      this.$watch(() => this.colors[colorName], val => {
+        this.update(colorName, val)
+      })
     }
   },
 
