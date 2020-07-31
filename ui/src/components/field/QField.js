@@ -97,7 +97,7 @@ export default defineComponent({
     },
 
     hasValue () {
-      const value = ('__getControl' in this && this.__getControl !== void 0) ? this.modelValue : this.innerValue
+      const value = ('__getControl' in this && this.__getControl === void 0) ? this.modelValue : this.innerValue
 
       return value !== void 0 &&
         value !== null &&
