@@ -37,7 +37,7 @@
         </q-expansion-item>
 
         <q-expansion-item
-          :value="open"
+          :modelValue="open"
           expand-separator
           icon="perm_identity"
           label="With a model and events - decoupled"

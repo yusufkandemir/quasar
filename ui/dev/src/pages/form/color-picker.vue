@@ -34,13 +34,13 @@
         <q-chip>{{ rgba }}</q-chip>
       </div>
       <p>
-        :value + @change
+        :modelValue + @change
       </p>
       <div class="row items-start q-gutter-md">
-        <q-color v-bind="props" :value="hex" @change="val => { hex = val; onChange(val) }" />
-        <q-color v-bind="props" :value="hexa" @change="val => { hexa = val; onChange(val) }" />
-        <q-color v-bind="props" :value="rgb" @change="val => { rgb = val; onChange(val) }" />
-        <q-color v-bind="props" :value="rgba" @change="val => { rgba = val; onChange(val) }" />
+        <q-color v-bind="props" :modelValue="hex" @change="val => { hex = val; onChange(val) }" />
+        <q-color v-bind="props" :modelValue="hexa" @change="val => { hexa = val; onChange(val) }" />
+        <q-color v-bind="props" :modelValue="rgb" @change="val => { rgb = val; onChange(val) }" />
+        <q-color v-bind="props" :modelValue="rgba" @change="val => { rgba = val; onChange(val) }" />
       </div>
 
       <div>
@@ -83,10 +83,10 @@
         <q-chip>{{ rgba }}</q-chip>
       </div>
       <div class="q-gutter-md">
-        <q-color v-bind="props" :value="hex" @change="val => hex = val" />
-        <q-color v-bind="props" :value="hexa" @change="val => hexa = val" />
-        <q-color v-bind="props" :value="rgb" @change="val => rgb = val" />
-        <q-color v-bind="props" :value="rgba" @change="val => rgba = val" />
+        <q-color v-bind="props" :modelValue="hex" @change="val => hex = val" />
+        <q-color v-bind="props" :modelValue="hexa" @change="val => hexa = val" />
+        <q-color v-bind="props" :modelValue="rgb" @change="val => rgb = val" />
+        <q-color v-bind="props" :modelValue="rgba" @change="val => rgba = val" />
       </div>
 
       <div class="text-h6">

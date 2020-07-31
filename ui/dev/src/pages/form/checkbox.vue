@@ -53,7 +53,7 @@
       <p class="caption">
         Tests
       </p>
-      <q-checkbox @change="onChange" @input="onInput" v-model="checked" :dark="dark" :dense="dense" :keep-color="keepColor" />
+      <q-checkbox @change="onChange" @update:modelValue="onModelUpdate" v-model="checked" :dark="dark" :dense="dense" :keep-color="keepColor" />
       <q-checkbox v-model="checked" label="Label" :dark="dark" :dense="dense" :keep-color="keepColor" />
 
       <q-checkbox v-model="checked" label="Checkbox Label" :dark="dark" :dense="dense" :keep-color="keepColor" />
@@ -135,7 +135,7 @@
         type="checkbox"
         color="secondary"
         v-model="group"
-        @input="onInput"
+        @update:modelValue="onModelUpdate"
         :dark="dark" :dense="dense"
         :keep-color="keepColor"
         :options="[
@@ -187,8 +187,8 @@
         <q-field v-model="checked" label="Checkbox field" stack-label :dark="dark" :dense="dense">
           <template v-slot:control="{ value, emitValue }">
             <q-checkbox
-              :value="value"
-              @input="emitValue"
+              :modelValue="value"
+              @update:modelValue="emitValue"
               color="orange"
               :dark="dark"
               :dense="dense"
@@ -273,8 +273,8 @@ export default {
     onChange (val) {
       console.log('@change', JSON.stringify(val))
     },
-    onInput (val) {
-      console.log('@input', JSON.stringify(val))
+    onModelUpdate (val) {
+      console.log('@update:modelValue', JSON.stringify(val))
     },
     onFocus () {
       console.log('focused')

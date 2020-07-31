@@ -8,11 +8,11 @@
       :min="0"
       :max="50"
       label
-      @input="onXInput"
+      @update:modelValue="onXModelUpdate"
       @change="onXChange"
     />
     <q-slider
-      :value="modelXSimple"
+      :modelValue="modelXSimple"
       :min="0"
       :max="50"
       label
@@ -33,11 +33,11 @@
       :min="0"
       :max="50"
       label
-      @input="onXInput"
+      @update:modelValue="onXModelUpdate"
       @change="onXChange"
     />
     <q-range
-      :value="modelX"
+      :modelValue="modelX"
       :min="0"
       :max="50"
       label
@@ -66,8 +66,8 @@ export default {
     }
   },
   methods: {
-    onXInput (val) {
-      console.log('@input', val)
+    onXModelUpdate (val) {
+      console.log('@update:modelValue', val)
     },
 
     onXChange (val) {

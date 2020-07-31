@@ -20,7 +20,7 @@
           v-model="date"
           v-bind="props"
           :style="style"
-          @input="inputLog"
+          @update:modelValue="inputLog"
           flat bordered
         >
           <div class="row items-center justify-end q-gutter-sm">
@@ -34,7 +34,7 @@
           v-bind="props"
           :style="style"
           emit-immediately
-          @input="inputLog"
+          @update:modelValue="inputLog"
           flat bordered
         />
 
@@ -43,7 +43,7 @@
           v-bind="props"
           :style="style"
           landscape
-          @input="inputLog"
+          @update:modelValue="inputLog"
           flat bordered
         />
 
@@ -52,7 +52,7 @@
           v-bind="props"
           :style="style"
           landscape
-          @input="inputLog"
+          @update:modelValue="inputLog"
           flat bordered
         >
           <div class="row items-center justify-end q-gutter-sm">
@@ -68,7 +68,7 @@
           v-bind="props"
           :style="style"
           emit-immediately
-          @input="inputLog"
+          @update:modelValue="inputLog"
         />
       </div>
 
@@ -254,7 +254,7 @@
                   mask="YYYY-MM-DD HH:mm"
                   today-btn
                   :style="style"
-                  @input="() => $refs.qDateProxy1.hide()"
+                  @update:modelValue="() => $refs.qDateProxy1.hide()"
                 />
               </q-popup-proxy>
             </q-icon>
@@ -263,7 +263,7 @@
                 <q-time
                   v-model="inputFull"
                   mask="YYYY-MM-DD HH:mm"
-                  @input="() => $refs.qDateProxy2.hide()"
+                  @update:modelValue="() => $refs.qDateProxy2.hide()"
                 />
               </q-popup-proxy>
             </q-icon>
@@ -280,7 +280,7 @@
                   mask="YYYY-MM-DD HH:mm"
                   today-btn
                   :style="style"
-                  @input="() => $refs.qDateProxy1.hide()"
+                  @update:modelValue="() => $refs.qDateProxy1.hide()"
                 />
               </q-popup-proxy>
             </q-icon>
@@ -291,7 +291,7 @@
                 <q-time
                   v-model="inputFull"
                   mask="YYYY-MM-DD HH:mm"
-                  @input="() => $refs.qDateProxy2.hide()"
+                  @update:modelValue="() => $refs.qDateProxy2.hide()"
                 />
               </q-popup-proxy>
             </q-icon>
@@ -309,7 +309,7 @@
                   today-btn
                   default-view="Years"
                   :style="style"
-                  @input="() => $refs.qDateProxy1.hide()"
+                  @update:modelValue="() => $refs.qDateProxy1.hide()"
                 />
               </q-popup-proxy>
             </q-icon>
@@ -320,7 +320,7 @@
                 <q-time
                   v-model="inputFull"
                   mask="YYYY-MM-DD HH:mm"
-                  @input="() => $refs.qDateProxy2.hide()"
+                  @update:modelValue="() => $refs.qDateProxy2.hide()"
                 />
               </q-popup-proxy>
             </q-icon>
@@ -445,7 +445,7 @@ export default {
     },
 
     inputLog (value, reason, date) {
-      console.log('@input', value, reason, date)
+      console.log('@update:modelValue', value, reason, date)
     }
   }
 }

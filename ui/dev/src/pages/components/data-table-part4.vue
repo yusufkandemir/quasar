@@ -85,12 +85,12 @@
     <div class="q-pa-md">
       <q-input
         type="number"
-        :value="listIndex"
+        :modelValue="listIndex"
         :min="0"
         :max="pagination.rowsPerPage === 0 ? listSize : pagination.rowsPerPage - 1"
         label="Scroll to index"
         input-class="text-right"
-        @input="onIndexChange"
+        @update:modelValue="onIndexChange"
       />
     </div>
 

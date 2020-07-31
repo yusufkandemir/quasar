@@ -10,7 +10,7 @@
     >
       <q-btn dense flat size="sm" icon="visibility" @click="showSelector = !showSelector" class="absolute-top-right z-top" />
       <template v-if="showSelector">
-        <q-toggle :value="$q.dark.isActive" @input="$q.dark.toggle" :label="`Dark Mode (${$q.dark.mode})`" />
+        <q-toggle :modelValue="$q.dark.isActive" @update:modelValue="$q.dark.toggle" :label="`Dark Mode (${$q.dark.mode})`" />
 
         <q-btn dense flat size="sm" :icon="lang === 'he' ? 'navigate_before' : 'navigate_next'" @click="lang = lang === 'en-us' ? 'he' : 'en-us'" class="absolute-bottom-right z-top" />
         <q-select
@@ -81,7 +81,7 @@ export default Vue.defineComponent({
     }
   },
   created () {
-    // this.$q.dark.set('auto')
+    this.$q.dark.set('auto')
     // this.$q.dark.set(false)
     this.langOptions = languages.map(lang => ({ label: lang.nativeName, value: lang.isoName }))
     this.iconOptions = [

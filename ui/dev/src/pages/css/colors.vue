@@ -28,7 +28,7 @@
       </div>
       <div v-if="currentColor" class="row justify-center items-end q-mt-md">
         <div class="q-px-md q-py-sm shadow-2">
-          <q-color :value="mainColorValues[currentColor]" @input="val => setColor(currentColor, val)" />
+          <q-color :modelValue="mainColorValues[currentColor]" @update:modelValue="val => setColor(currentColor, val)" />
         </div>
       </div>
 

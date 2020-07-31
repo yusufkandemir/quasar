@@ -11,7 +11,7 @@
       <p class="caption">
         Standalone
       </p>
-      <q-toggle @change="onChange" @input="onInput" v-model="checked" :dark="dark" :dense="dense" :keep-color="keepColor" />
+      <q-toggle @change="onChange" @update:modelUpdate="onInput" v-model="checked" :dark="dark" :dense="dense" :keep-color="keepColor" />
       <q-toggle v-model="checked" label="Toggle Label" :dark="dark" :dense="dense" :keep-color="keepColor" />
       <q-toggle v-model="checked" color="orange" label="Toggle Label" :dark="dark" :dense="dense" :keep-color="keepColor" />
       <q-toggle v-model="checked" color="teal" label="Toggle Label" :dark="dark" :dense="dense" :keep-color="keepColor" />
@@ -107,7 +107,7 @@
         type="toggle"
         v-model="group"
         @change="onChange"
-        @input="onInput"
+        @update:modelValue="onInput"
         :dark="dark" :dense="dense"
         :keep-color="keepColor"
         :options="[
@@ -158,8 +158,8 @@
         <q-field v-model="checked" label="Toggle field" stack-label :dark="dark" :dense="dense">
           <template v-slot:control="{ value, emitValue }">
             <q-toggle
-              :value="value"
-              @input="emitValue"
+              :modelValue="value"
+              @update:modelValue="emitValue"
               color="orange"
               :dark="dark"
               :dense="dense"

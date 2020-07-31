@@ -10,7 +10,7 @@
 
       <h1>Field wrapper tests</h1>
 
-      <q-field value="We count this" :dark="dark" :dense="dense" label="Field label" stack-label bottom-slots counter tabindex="0">
+      <q-field modelValue="We count this" :dark="dark" :dense="dense" label="Field label" stack-label bottom-slots counter tabindex="0">
         <q-icon slot="before" name="event" />
 
         <template v-slot:control>
@@ -179,7 +179,7 @@
       <p class="caption">
         Tree select
       </p>
-      <q-field filled :value="selected" label="Tree Select - Single" tabindex="0">
+      <q-field filled :modelValue="selected" label="Tree Select - Single" tabindex="0">
         <template v-slot:control>
           <div class="no-outline full-width">
             {{ selected }}
@@ -203,7 +203,7 @@
         </q-popup-proxy>
       </q-field>
 
-      <q-field filled :value="tickedValue" label="Tree Select - Multiple" tabindex="2">
+      <q-field filled :modelValue="tickedValue" label="Tree Select - Multiple" tabindex="2">
         <template v-slot:control>
           <div class="no-outline full-width">
             {{ tickedValue }}

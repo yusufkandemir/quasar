@@ -24,7 +24,7 @@
           @change="onChange"
         />
         <q-knob
-          :value="model"
+          :modelValue="model"
           :min="min"
           :max="max"
           :angle="90"
