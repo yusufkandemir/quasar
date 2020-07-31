@@ -334,21 +334,21 @@
       <q-toggle v-model="exact" label="Show exact match tabs" />
       <q-toggle v-model="loose" label="Show loose match tabs" />
       <q-tabs :dense="dense" class="test q-mt-sm">
-        <q-route-tab v-if="exact" key="01" :to="{ name: 'r' }" exact label="r" />
-        <q-route-tab v-if="loose" key="02" :to="{ name: 'r' }" label="r *" />
-        <q-route-tab v-if="exact" key="03" :to="{ name: 'r.1', query: { q: '1' } }" exact label="r.1 q=1" />
-        <q-route-tab v-if="loose" key="04" :to="{ name: 'r.1', query: { q: '1' } }" label="r.1 q=1 *" />
-        <q-route-tab v-if="loose" key="15" :to="{ name: 'r.1', query: { q: '1' } }" label="r.1 q=1 * disabled" disable />
-        <q-route-tab v-if="exact" key="05" :to="{ name: 'r.1.1' }" exact label="r.1.1" />
-        <q-route-tab v-if="loose" key="06" :to="{ name: 'r.1.1' }" label="r.1.1 *" />
-        <q-route-tab v-if="exact" key="07" :to="{ name: 'r.1.2' }" exact label="r.1.2" />
-        <q-route-tab v-if="loose" key="08" :to="{ name: 'r.1.2' }" label="r.1.2 *" />
-        <q-route-tab v-if="exact" key="09" :to="{ name: 'r.1.3' }" exact label="r.1.3" />
-        <q-route-tab v-if="loose" key="10" :to="{ name: 'r.1.3' }" label="r.1.3 *" />
-        <q-route-tab v-if="exact" key="11" :to="{ name: 'r.2' }" exact label="r.2" />
-        <q-route-tab v-if="loose" key="12" :to="{ name: 'r.2' }" label="r.2 *" />
-        <q-route-tab v-if="exact" key="13" :to="{ name: 'r.3' }" exact label="r.3" />
-        <q-route-tab v-if="loose" key="14" :to="{ name: 'r.3' }" label="r.3 *" />
+        <q-route-tab v-if="exact" :to="{ name: 'r' }" exact label="r" />
+        <q-route-tab v-if="loose" :to="{ name: 'r' }" label="r *" />
+        <q-route-tab v-if="exact" :to="{ name: 'r.1', query: { q: '1' } }" exact label="r.1 q=1" />
+        <q-route-tab v-if="loose" :to="{ name: 'r.1', query: { q: '1' } }" label="r.1 q=1 *" />
+        <q-route-tab v-if="loose" :to="{ name: 'r.1', query: { q: '1' } }" label="r.1 q=1 * disabled" disable />
+        <q-route-tab v-if="exact" :to="{ name: 'r.1.1' }" exact label="r.1.1" />
+        <q-route-tab v-if="loose" :to="{ name: 'r.1.1' }" label="r.1.1 *" />
+        <q-route-tab v-if="exact" :to="{ name: 'r.1.2' }" exact label="r.1.2" />
+        <q-route-tab v-if="loose" :to="{ name: 'r.1.2' }" label="r.1.2 *" />
+        <q-route-tab v-if="exact" :to="{ name: 'r.1.3' }" exact label="r.1.3" />
+        <q-route-tab v-if="loose" :to="{ name: 'r.1.3' }" label="r.1.3 *" />
+        <q-route-tab v-if="exact" :to="{ name: 'r.2' }" exact label="r.2" />
+        <q-route-tab v-if="loose" :to="{ name: 'r.2' }" label="r.2 *" />
+        <q-route-tab v-if="exact" :to="{ name: 'r.3' }" exact label="r.3" />
+        <q-route-tab v-if="loose" :to="{ name: 'r.3' }" label="r.3 *" />
       </q-tabs>
 
       <h4>Tabs model (respect model): {{ tabModel }}</h4>

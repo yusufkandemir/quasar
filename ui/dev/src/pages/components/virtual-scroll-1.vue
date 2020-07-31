@@ -22,10 +22,9 @@
             style="max-height: 300px;"
             :items="heavyList"
           >
-            <template v-slot="{ item, index }">
+            <template v-slot="{ item, index }" :key="index">
               <q-item
                 v-if="(index % 3) === 0"
-                :key="index"
                 dense
                 dark
                 clickable
@@ -36,7 +35,7 @@
                   </q-item-label>
                 </q-item-section>
               </q-item>
-              <q-banner v-else-if="(index % 5) === 0" class="bg-negative" :key="index">
+              <q-banner v-else-if="(index % 5) === 0" class="bg-negative">
                 <template v-slot:avatar>
                   <q-avatar square color="warning" text-color="negative">
                     {{ item.value }}
@@ -44,7 +43,7 @@
                 </template>
                 {{ item.label }} #{{ index }}
               </q-banner>
-              <div v-else class="bg-yellow q-py-lg text-center" :key="index">
+              <div v-else class="bg-yellow q-py-lg text-center">
                 {{ item.label }} #{{ index }}
               </div>
             </template>
@@ -66,7 +65,7 @@
             @change="$refs.vList.scrollTo(scrollTo)"
           />
         </div>
-        <q-virtual-scroll component="q-list" ref="vList" :items="heavyList" separator class="q-my-md" style="max-height: 300px;">
+        <q-virtual-scroll ref="vList" :items="heavyList" separator class="q-my-md" style="max-height: 300px;">
           <template v-slot="{ item, index }">
             <q-item :key="index">
               <q-item-section>

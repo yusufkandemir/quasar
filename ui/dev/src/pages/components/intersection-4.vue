@@ -24,7 +24,7 @@
       </q-list>
 
       <keep-alive>
-        <q-list v-if="hide !== true" class="col-6 full-height scroll" key="keepAlive">
+        <q-list v-if="hide !== true" class="col-6 full-height scroll">
           <transition-group name="conversation-item">
             <q-intersection
               v-for="item in sortedItems"
