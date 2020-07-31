@@ -11,7 +11,9 @@
       <h1>Field wrapper tests</h1>
 
       <q-field modelValue="We count this" :dark="dark" :dense="dense" label="Field label" stack-label bottom-slots counter tabindex="0">
-        <q-icon slot="before" name="event" />
+        <template v-slot:before>
+          <q-icon name="event" />
+        </template>
 
         <template v-slot:control>
           <div>
@@ -19,15 +21,21 @@
           </div>
         </template>
 
-        <div slot="hint">
-          Field message
-        </div>
+        <template v-slot:hint>
+          <div>
+            Field message
+          </div>
+        </template>
 
-        <q-icon slot="after" name="search" />
+        <template v-slot:after>
+          <q-icon name="search" />
+        </template>
       </q-field>
 
       <q-field :dark="dark" :dense="dense" label="Field label" stack-label bottom-slots tabindex="0">
-        <q-icon slot="before" name="event" />
+        <template v-slot:before>
+          <q-icon name="event" />
+        </template>
 
         <template v-slot:control>
           <div>
@@ -35,13 +43,17 @@
           </div>
         </template>
 
-        <div slot="hint">
-          Field message
-        </div>
+        <template v-slot:hint>
+          <div>
+            Field message
+          </div>
+        </template>
 
-        <div slot="counter">
-          3/12
-        </div>
+        <template v-slot:counter>
+          <div>
+            3/12
+          </div>
+        </template>
 
         <template v-slot:after>
           <q-icon name="search" />
@@ -50,7 +62,9 @@
       </q-field>
 
       <q-field :dark="dark" :dense="dense" label="Field label" stack-label tabindex="0">
-        <q-icon slot="before" name="event" color="orange" />
+        <template v-slot:before>
+          <q-icon name="event" color="orange" />
+        </template>
 
         <template v-slot:control>
           <div>
@@ -65,7 +79,9 @@
       </q-field>
 
       <q-field :dark="dark" :dense="dense" label="Field label" stack-label bottom-slots tabindex="0">
-        <q-icon slot="before" name="event" />
+        <template v-slot:before>
+          <q-icon name="event" />
+        </template>
 
         <template v-slot:control>
           <div>
@@ -73,15 +89,21 @@
           </div>
         </template>
 
-        <div slot="hint">
-          Field message
-        </div>
+        <template v-slot:hint>
+          <div>
+            Field message
+          </div>
+        </template>
 
-        <div slot="counter">
-          3/12
-        </div>
+        <template v-slot:counter>
+          <div>
+            3/12
+          </div>
+        </template>
 
-        <q-spinner slot="after" />
+        <template v-slot:after>
+          <q-spinner />
+        </template>
       </q-field>
 
       <q-field :dark="dark" :dense="dense" label="Field label" stack-label bottom-slots tabindex="0">
@@ -91,12 +113,17 @@
           </div>
         </template>
 
-        <div slot="hint">
-          Field message
-        </div>
-        <div slot="counter">
-          3/12
-        </div>
+        <template v-slot:hint>
+          <div>
+            Field message
+          </div>
+        </template>
+
+        <template v-slot:counter>
+          <div>
+            3/12
+          </div>
+        </template>
       </q-field>
 
       <q-field :dark="dark" :dense="dense" label="Field label" stack-label bottom-slots tabindex="0">
@@ -105,9 +132,12 @@
             Field content
           </div>
         </template>
-        <div slot="counter">
-          3/12
-        </div>
+
+        <template v-slot:counter>
+          <div>
+            3/12
+          </div>
+        </template>
       </q-field>
 
       <q-field :dark="dark" :dense="dense" label="Field label" stack-label tabindex="0">
@@ -119,7 +149,9 @@
       </q-field>
 
       <q-field :dark="dark" :dense="dense" label="Field label" stack-label bottom-slots tabindex="0">
-        <q-btn slot="before" flat round dense icon="event" />
+        <template v-slot:before>
+          <q-btn flat round dense icon="event" />
+        </template>
 
         <template v-slot:control>
           <div>
@@ -127,22 +159,30 @@
           </div>
         </template>
 
-        <div slot="hint">
-          Field message
-        </div>
+        <template v-slot:hint>
+          <div>
+            Field message
+          </div>
+        </template>
 
-        <div slot="counter">
-          3/12
-        </div>
+        <template v-slot:counter>
+          <div>
+            3/12
+          </div>
+        </template>
 
-        <q-btn slot="after" flat round dense icon="delete" />
+        <template v-slot:after>
+          <q-btn flat round dense icon="delete" />
+        </template>
       </q-field>
 
       <p class="caption">
         Item aligned test
       </p>
       <q-field :dark="dark" :dense="dense" item-aligned label="Field label" stack-label bottom-slots tabindex="0">
-        <q-icon slot="before" name="event" />
+        <template v-slot:before>
+          <q-icon name="event" />
+        </template>
 
         <template v-slot:control>
           <div>
@@ -150,15 +190,21 @@
           </div>
         </template>
 
-        <div slot="hint">
-          Field message
-        </div>
+        <template v-slot:hint>
+          <div>
+            Field message
+          </div>
+        </template>
 
-        <div slot="counter">
-          3/12
-        </div>
+        <template v-slot:counter>
+          <div>
+            3/12
+          </div>
+        </template>
 
-        <q-icon slot="after" name="search" />
+        <template v-slot:after>
+          <q-icon name="search" />
+        </template>
       </q-field>
       <q-item>
         <q-item-section avatar>
