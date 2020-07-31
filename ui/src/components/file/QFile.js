@@ -220,6 +220,5 @@ export default defineComponent({
     this.type = 'file'
   },
 
-  // TODO: uses QField as mixin, `render` function can't make it into here. see: https://github.com/vuejs/vue-next/issues/1630
   render: QField.render
 })

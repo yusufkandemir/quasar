@@ -57,7 +57,5 @@ export default defineComponent({
     this.type = 'toggle'
   },
 
-  // TODO: Vue 3, render function from the mixin somehow can't make it into here
-  // see: https://github.com/vuejs/vue-next/issues/1630
   render: CheckboxMixin.render
 })

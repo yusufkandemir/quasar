@@ -320,8 +320,6 @@ export default defineComponent({
     }
   },
 
-  // TODO: Vue 3, render function from the mixin somehow can't make it into here
-  // see: https://github.com/vuejs/vue-next/issues/1630
   render: QField.render,
 
   mounted () {
