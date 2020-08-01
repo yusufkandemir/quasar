@@ -168,7 +168,9 @@ export default defineComponent({
           return h('img', {
             key: 'tmb#' + slide.name,
             class: `q-carousel__thumbnail q-carousel__thumbnail--${slide.name === this.modelValue ? '' : 'in'}active` + color,
-            src: slide.imgSrc,
+            // TODO: Vue 3, prop keys are not normalized (it can be either 'imgSrc' or 'img-src')
+            // see: https://github.com/vuejs/vue-next/issues/1755
+            src: slide.imgSrc || slide['img-src'],
             ...cache(this, 'tmb#' + slide.name, { onClick: () => { this.goTo(slide.name) } })
           })
         }))
