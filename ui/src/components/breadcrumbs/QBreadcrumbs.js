@@ -50,30 +50,31 @@ export default defineComponent({
 
     let els = 1
 
-    const
-      child = [],
-      len = nodes.filter(c => c.tag !== void 0 && c.tag.endsWith('-QBreadcrumbsEl')).length,
-      separator = this.$slots.separator !== void 0
-        ? this.$slots.separator
-        : () => this.separator
+    const isBreadcrumbEl = component => component.type !== void 0 && component.type.name === 'QBreadcrumbsEl'
+
+    const children = []
+    const len = nodes.filter(component => isBreadcrumbEl(component)).length
+    const separator = this.$slots.separator !== void 0
+      ? this.$slots.separator
+      : () => this.separator
 
     nodes.forEach(comp => {
-      if (comp.tag !== void 0 && comp.tag.endsWith('-QBreadcrumbsEl')) {
+      if (isBreadcrumbEl(comp)) {
         const middle = els < len
         els++
 
-        child.push(h('div', {
+        children.push(h('div', {
           class: ['flex items-center', middle ? this.activeClass : 'q-breadcrumbs--last']
         }, [ comp ]))
 
         if (middle) {
-          child.push(h('div', {
+          children.push(h('div', {
             class: ['q-breadcrumbs__separator', this.sepClass]
           }, separator()))
         }
       }
       else {
-        child.push(comp)
+        children.push(comp)
       }
     })
 
@@ -84,7 +85,7 @@ export default defineComponent({
     }, [
       h('div', {
         class: ['flex items-center', this.classes]
-      }, child)
+      }, children)
     ])
   }
 })
