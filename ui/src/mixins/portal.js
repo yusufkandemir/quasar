@@ -91,7 +91,7 @@ const Portal = defineComponent({
           }
         }
 
-        this.unwatchFullscreen = this.$watch('$q.fullscreen.isActive', append)
+        this.unwatchFullscreen = this.$watch(() => this.$q.fullscreen.isActive, append)
 
         const isActive = this.$q.fullscreen.isActive
 

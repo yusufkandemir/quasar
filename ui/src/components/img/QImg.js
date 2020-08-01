@@ -132,7 +132,7 @@ export default defineComponent({
     __updateWatcher (srcset) {
       if (srcset) {
         if (this.unwatch === void 0) {
-          this.unwatch = this.$watch('$q.screen.width', this.__updateSrc)
+          this.unwatch = this.$watch(() => this.$q.screen.width, this.__updateSrc)
         }
       }
       else if (this.unwatch !== void 0) {

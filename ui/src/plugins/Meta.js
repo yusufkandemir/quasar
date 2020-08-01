@@ -302,7 +302,7 @@ export default {
         beforeCreate,
         created () {
           if (hasMeta(this) === true) {
-            this.__qMetaUnwatch = this.$watch('__qMeta', this.__qMetaUpdate)
+            this.__qMetaUnwatch = this.$watch(() => this.__qMeta, this.__qMetaUpdate)
           }
         },
         activated: triggerMeta,

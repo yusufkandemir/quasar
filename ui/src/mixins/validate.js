@@ -40,7 +40,7 @@ export default defineComponent({
       handler (val) {
         if (val === true) {
           if (this.unwatchRules === void 0) {
-            this.unwatchRules = this.$watch('rules', () => {
+            this.unwatchRules = this.$watch(() => this.rules, () => {
               this.__validateIfNeeded(true)
             })
           }

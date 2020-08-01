@@ -171,7 +171,7 @@ export default defineComponent({
         'onBefore-show': () => {
           this.validated = false
           this.initialValue = clone(this.modelValue)
-          this.watcher = this.$watch('value', this.__reposition)
+          this.watcher = this.$watch(() => this.modelValue, this.__reposition)
           this.$emit('before-show')
         },
         onShow: () => {

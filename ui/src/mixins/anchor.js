@@ -191,7 +191,7 @@ export default defineComponent({
       typeof this.__configureScrollTarget === 'function' &&
       typeof this.__unconfigureScrollTarget === 'function'
     ) {
-      this.noParentEventWatcher = this.$watch('noParentEvent', () => {
+      this.noParentEventWatcher = this.$watch(() => this.noParentEvent, () => {
         if (this.__scrollTarget !== void 0) {
           this.__unconfigureScrollTarget()
           this.__configureScrollTarget()

@@ -407,7 +407,7 @@ const Notifications = {
         }
       }
 
-      this.unwatchFullscreen = this.$watch('$q.fullscreen.isActive', append)
+      this.unwatchFullscreen = this.$watch(() => this.$q.fullscreen.isActive, append)
 
       if (this.$q.fullscreen.isActive === true) {
         append(true)

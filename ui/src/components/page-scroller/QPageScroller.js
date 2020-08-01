@@ -64,7 +64,7 @@ export default defineComponent({
       handler (val) {
         if (val === true) {
           if (this.heightWatcher === void 0) {
-            this.heightWatcher = this.$watch('height', this.__updateVisibility)
+            this.heightWatcher = this.$watch(() => this.height, this.__updateVisibility)
           }
         }
         else if (this.heightWatcher !== void 0) {
