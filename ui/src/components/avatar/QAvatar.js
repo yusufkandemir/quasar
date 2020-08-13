@@ -1,18 +1,19 @@
-import { defineComponent, h } from 'vue'
+import { defineComponent, h, computed, toRef } from 'vue'
 
 import QIcon from '../icon/QIcon.js'
 
-import SizeMixin from '../../mixins/size.js'
 import ListenersMixin from '../../mixins/listeners.js'
 
 import { mergeSlotSafely } from '../../utils/slot.js'
+import { useSizes, useSizesProps } from '../../composables/useSizes.js'
 
 export default defineComponent({
   name: 'QAvatar',
 
-  mixins: [ ListenersMixin, SizeMixin ],
+  mixins: [ ListenersMixin ],
 
   props: {
+    ...useSizesProps,
     fontSize: String,
 
     color: String,
@@ -23,38 +24,36 @@ export default defineComponent({
     rounded: Boolean
   },
 
-  computed: {
-    contentClass () {
-      return {
-        [`bg-${this.color}`]: this.color,
-        [`text-${this.textColor} q-chip--colored`]: this.textColor,
-        'q-avatar__content--square': this.square,
-        'rounded-borders': this.rounded
-      }
-    },
+  setup (props, context) {
+    const size = toRef(props, 'size')
 
-    contentStyle () {
-      if (this.fontSize) {
-        return { fontSize: this.fontSize }
-      }
-    }
-  },
+    const { sizeStyle } = useSizes(size)
 
-  render () {
-    const icon = this.icon !== void 0
-      ? [ h(QIcon, { name: this.icon }) ]
+    const contentClass = computed(() => ({
+      [`bg-${props.color}`]: props.color,
+      [`text-${props.textColor} q-chip--colored`]: props.textColor,
+      'q-avatar__content--square': props.square,
+      'rounded-borders': props.rounded
+    }))
+
+    const contentStyle = computed(() => props.fontSize ? {
+      fontSize: props.fontSize
+    } : void 0)
+
+    const icon = props.icon !== void 0
+      ? [ h(QIcon, { name: props.icon }) ]
       : void 0
 
-    return h('div', {
+    return () => h('div', {
       class: 'q-avatar',
-      style: this.sizeStyle
+      style: sizeStyle.value
       // TODO: Vue 3, uses ListenersMixin
       // on: { ...this.qListeners }
     }, [
       h('div', {
-        class: ['q-avatar__content row flex-center overflow-hidden', this.contentClass],
-        style: this.contentStyle
-      }, mergeSlotSafely(icon, this, 'default'))
+        class: ['q-avatar__content row flex-center overflow-hidden', contentClass.value],
+        style: contentStyle.value
+      }, mergeSlotSafely(icon, context, 'default'))
     ])
   }
 })

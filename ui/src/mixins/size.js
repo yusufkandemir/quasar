@@ -1,24 +1,17 @@
-import { defineComponent } from 'vue'
+import { defineComponent, toRef } from 'vue'
+import { defaultSizes, useSizes, useSizesProps } from '../composables/useSizes'
 
-export const sizes = {
-  xs: 18,
-  sm: 24,
-  md: 32,
-  lg: 38,
-  xl: 46
-}
+// COMPAT: keep the mixin but refactor it to be based on the composable
+
+export const sizes = defaultSizes
 
 export function getSizeMixin (sizes) {
   return defineComponent({
-    props: {
-      size: String
-    },
+    props: useSizesProps,
 
     computed: {
       sizeStyle () {
-        if (this.size !== void 0) {
-          return { fontSize: this.size in sizes ? `${sizes[this.size]}px` : this.size }
-        }
+        return useSizes(toRef(this, 'size'), sizes).sizeStyle.value
       }
     }
   })
