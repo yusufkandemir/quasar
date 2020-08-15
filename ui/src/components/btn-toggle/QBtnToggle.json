@@ -12,7 +12,7 @@
   "props": {
     "model-value": {
       "type": "Any",
-      "desc": "Model of the component; Either use this property (along with a listener for 'input' event) OR use v-model directive",
+      "desc": "Model of the component; Either use this property (along with a listener for 'update:modelValue' event) OR use v-model directive",
       "examples": [ "v-model=\"selected\"" ],
       "category": "model"
     },
@@ -166,7 +166,7 @@
 
   "events": {
     "update:modelValue": {
-      "extends": "input"
+      "extends": "update:modelValue"
     },
 
     "clear": {

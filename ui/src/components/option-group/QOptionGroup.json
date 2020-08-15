@@ -84,7 +84,7 @@
 
   "events": {
     "update:modelValue": {
-      "extends": "input"
+      "extends": "update:modelValue"
     }
   }
 }

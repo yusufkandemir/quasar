@@ -428,8 +428,8 @@
   },
 
   "events": {
-    "input": {
-      "extends": "input"
+    "update:modelValue": {
+      "extends": "update:modelValue"
     },
 
     "input-value": {
