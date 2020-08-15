@@ -27,11 +27,6 @@ export default defineComponent({
     })
   ],
 
-  // TODO: What's this?
-  model: {
-    event: 'remove'
-  },
-
   props: {
     dense: Boolean,
 
@@ -61,7 +56,7 @@ export default defineComponent({
     disable: Boolean
   },
 
-  emits: ['update:selected', 'click', 'remove'],
+  emits: ['update:modelValue', 'update:selected', 'click', 'remove'],
 
   computed: {
     classes () {
@@ -112,7 +107,10 @@ export default defineComponent({
     __onRemove (e) {
       if (e.keyCode === void 0 || e.keyCode === 13) {
         stopAndPrevent(e)
-        !this.disable && this.$emit('remove', false)
+        if (!this.disable) {
+          this.$emit('update:modelValue', false)
+          this.$emit('remove', false)
+        }
       }
     },
 
