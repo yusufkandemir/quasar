@@ -10,7 +10,7 @@ export default defineComponent({
       return {
         type: 'hidden',
         name: this.name,
-        value: this.value
+        value: this.modelValue
       }
     }
   },

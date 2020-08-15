@@ -55,7 +55,7 @@ export default defineComponent({
 
   data () {
     return {
-      showing: this.value === true
+      showing: this.modelValue === true
     }
   },
 

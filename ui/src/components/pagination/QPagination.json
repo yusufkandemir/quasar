@@ -8,7 +8,7 @@
   },
 
   "props": {
-    "modelValue": {
+    "model-value": {
       "type": "Number",
       "desc": "Current page (must be between min/max)",
       "required": true,

@@ -3,7 +3,7 @@
 
   "props": {
     "value": {
-      "extends": "value",
+      "extends": "model-value",
       "required": true,
       "type": [ "Any", "Array" ],
       "examples": [ "false", "['car', 'building']" ],

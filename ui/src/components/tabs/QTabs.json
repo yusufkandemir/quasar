@@ -8,7 +8,7 @@
   },
 
   "props": {
-    "value":{
+    "model-value": {
       "type": [ "Number", "String" ],
       "desc": "Model of the component defining current panel name; Either use this property (along with a listener for 'input' event) OR use v-model directive",
       "examples": [ "v-model=\"selectedTab\"" ],

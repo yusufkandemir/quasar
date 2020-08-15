@@ -222,6 +222,6 @@ export default defineComponent({
   },
 
   mounted () {
-    this.__processModelChange(this.value)
+    this.__processModelChange(this.modelValue)
   }
 })

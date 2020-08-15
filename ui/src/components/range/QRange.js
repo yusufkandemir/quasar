@@ -81,13 +81,13 @@ export default defineComponent({
   },
 
   created () {
-    this.$watch(() => this.value.min, val => {
+    this.$watch(() => this.modelValue.min, val => {
       this.model.min = val === null
         ? this.min
         : val
     })
 
-    this.$watch(() => this.value.max, val => {
+    this.$watch(() => this.modelValue.max, val => {
       this.model.max = val === null
         ? this.max
         : val

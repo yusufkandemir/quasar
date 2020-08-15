@@ -57,8 +57,8 @@ export default defineComponent({
 
   data () {
     return {
-      showing: this.value !== void 0
-        ? this.value
+      showing: this.modelValue !== void 0
+        ? this.modelValue
         : this.defaultOpened
     }
   },

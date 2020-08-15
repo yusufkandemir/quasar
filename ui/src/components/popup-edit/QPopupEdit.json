@@ -4,8 +4,8 @@
   },
 
   "props": {
-    "value": {
-      "extends": "value",
+    "model-value": {
+      "extends": "model-value",
       "type": "Any",
       "examples": [ "v-model=\"myValue\"" ],
       "category": "model"

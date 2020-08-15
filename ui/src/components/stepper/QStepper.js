@@ -60,7 +60,7 @@ export default defineComponent({
       const top = slot(this, 'message', [])
 
       if (this.vertical === true) {
-        this.__isValidPanelName(this.value) && this.__updatePanelIndex()
+        this.__isValidPanelName(this.modelValue) && this.__updatePanelIndex()
 
         return (top === void 0 ? [] : top).concat(
           h('div', {

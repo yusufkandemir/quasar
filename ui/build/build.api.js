@@ -217,7 +217,7 @@ function parseObject ({ banner, api, itemName, masterType, verifyCategory }) {
 
   const def = objectTypes[type]
 
-  for (let prop in obj) {
+  for (const prop in obj) {
     if ([ 'type', '__exemption' ].includes(prop)) {
       continue
     }
@@ -298,7 +298,7 @@ function parseObject ({ banner, api, itemName, masterType, verifyCategory }) {
   ;[ 'params', 'definition', 'scope', 'props' ].forEach(prop => {
     if (!obj[prop]) { return }
 
-    for (let item in obj[prop]) {
+    for (const item in obj[prop]) {
       parseObject({
         banner: `${banner}/"${prop}"/"${item}"`,
         api: api[itemName][prop],
@@ -375,7 +375,7 @@ function parseAPI (file, apiType) {
   }
 
   // "props", "slots", ...
-  for (let type in api) {
+  for (const type in api) {
     if (!topSections[apiType].includes(type)) {
       logError(`${banner} "${type}" is not recognized for a ${apiType}`)
       process.exit(1)
@@ -428,7 +428,7 @@ function parseAPI (file, apiType) {
 
     const isComponent = banner.indexOf('component') > -1
 
-    for (let itemName in api[type]) {
+    for (const itemName in api[type]) {
       parseObject({
         banner: `${banner} "${type}"/"${itemName}"`,
         api: api[type],
@@ -573,7 +573,7 @@ function fillAPI (apiType) {
               }
             }
 
-            if (key !== 'value' && definition.required && Boolean(definition.required) !== propApi.required) {
+            if (key !== 'model-value' && definition.required && Boolean(definition.required) !== propApi.required) {
               logError(`${name}: wrong definition for prop "${key}" on "required": expected "${definition.required}" but found "${propApi.required}"`)
               hasError = true // keep looping through to find as many as can be found before exiting
             }

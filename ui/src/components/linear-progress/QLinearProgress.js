@@ -70,7 +70,7 @@ export default defineComponent({
     },
 
     modelStyle () {
-      return width(this.motion === true ? 1 : this.value, this.reverse)
+      return width(this.motion === true ? 1 : this.modelValue, this.reverse)
     },
 
     modelClasses () {
@@ -79,7 +79,7 @@ export default defineComponent({
     },
 
     stripeStyle () {
-      return { width: (this.value * 100) + '%' }
+      return { width: (this.modelValue * 100) + '%' }
     },
 
     attrs () {
@@ -87,7 +87,7 @@ export default defineComponent({
         role: 'progressbar',
         'aria-valuemin': 0,
         'aria-valuemax': 1,
-        'aria-valuenow': this.indeterminate === true ? void 0 : this.value
+        'aria-valuenow': this.indeterminate === true ? void 0 : this.modelValue
       }
     }
   },

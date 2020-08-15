@@ -6,7 +6,7 @@
   },
 
   "props": {
-    "modelValue": {
+    "model-value": {
       "type": "Number",
       "desc": "Model of the component (must be between min/max); Either use this property (along with a listener for 'input' event) OR use v-model directive",
       "examples": [ "v-model=\"positionModel\"" ],

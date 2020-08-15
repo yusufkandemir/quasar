@@ -6,8 +6,8 @@
   },
 
   "props": {
-    "modelValue": {
-      "extends": "value",
+    "model-value": {
+      "extends": "model-value",
       "type": [ "Number", "String" ],
       "required": true,
       "examples": [ "v-model=\"option\"" ],

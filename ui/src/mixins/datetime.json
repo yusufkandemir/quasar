@@ -2,7 +2,7 @@
   "mixins": [ "mixins/form" ],
 
   "props": {
-    "value": {
+    "model-value": {
       "type": "String",
       "category": "model"
     },

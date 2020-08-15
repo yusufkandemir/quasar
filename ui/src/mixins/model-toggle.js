@@ -54,7 +54,7 @@ export default defineComponent({
         })
       }
 
-      if (this.value === void 0 || this.qListeners.input === void 0 || isSSR === true) {
+      if (this.modelValue === void 0 || this.qListeners.input === void 0 || isSSR === true) {
         this.__processShow(evt)
       }
     },
@@ -96,7 +96,8 @@ export default defineComponent({
           }
         })
       }
-      if (this.value === void 0 || this.qListeners.input === void 0 || isSSR === true) {
+
+      if (this.modelValue === void 0 || this.qListeners.input === void 0 || isSSR === true) {
         this.__processHide(evt)
       }
     },
