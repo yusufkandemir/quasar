@@ -51,6 +51,8 @@ module.exports = function (ctx) {
       ]
     },
 
+    supportTS: true,
+
     devServer: {
       https: false,
       port: 8080,

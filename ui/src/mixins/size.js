@@ -1,5 +1,5 @@
 import { defineComponent, toRef } from 'vue'
-import { defaultSizes, useSizes, useSizesProps } from '../composables/useSizes'
+import { defaultSizes, useSizes, useSizesProps } from '../composables/useSizes.ts'
 
 // COMPAT: keep the mixin but refactor it to be based on the composable
 

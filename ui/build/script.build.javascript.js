@@ -7,6 +7,7 @@ const uglify = require('uglify-es')
 const buble = require('@rollup/plugin-buble')
 const json = require('@rollup/plugin-json')
 const nodeResolve = require('@rollup/plugin-node-resolve')
+const typescript = require('@rollup/plugin-typescript')
 
 const buildConf = require('./build.conf')
 const buildUtils = require('./build.utils')
@@ -16,6 +17,7 @@ function resolve (_path) {
 }
 
 const rollupPluginsModern = [
+  typescript(),
   nodeResolve(),
   json()
 ]

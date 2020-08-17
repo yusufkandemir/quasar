@@ -1,6 +1,6 @@
 import { createApp, h, TransitionGroup } from 'vue'
 
-import QAvatar from '../components/avatar/QAvatar.js'
+import QAvatar from '../components/avatar/QAvatar'
 import QIcon from '../components/icon/QIcon.js'
 import QBtn from '../components/btn/QBtn.js'
 
