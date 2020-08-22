@@ -129,7 +129,7 @@ export default defineComponent({
       data.tabindex = this.tabindex || '0'
     }
     else if (this.isActionable === true) {
-      data['aria-disabled'] = ''
+      data['aria-disabled'] = 'true'
     }
 
     if (this.hasRouterLink === true) {

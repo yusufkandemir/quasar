@@ -62,14 +62,16 @@ export default defineComponent({
       if (this.vertical === true) {
         this.__isValidPanelName(this.modelValue) && this.__updatePanelIndex()
 
-        return (top === void 0 ? [] : top).concat(
-          h('div', {
-            class: 'q-stepper__content',
-            // stop propagation of content emitted @input
-            // which would tamper with Panel's model
-            ...cache(this, 'stop', { onInput: stop })
-          }, slot(this, 'default'))
-        )
+        const content = h('div', {
+          class: 'q-stepper__content',
+          // stop propagation of content emitted @input
+          // which would tamper with Panel's model
+          ...cache(this, 'stop', { onInput: stop })
+        }, slot(this, 'default'))
+
+        return top === void 0
+          ? [ content ]
+          : top.concat(content)
       }
 
       return [

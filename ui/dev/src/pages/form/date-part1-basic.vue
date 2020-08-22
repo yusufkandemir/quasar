@@ -22,6 +22,8 @@
           :style="style"
           @update:modelValue="inputLog"
           flat bordered
+          navigation-min-year-month="2018/05"
+          navigation-max-year-month="2019/03"
         >
           <div class="row items-center justify-end q-gutter-sm">
             <q-btn label="Cancel" color="primary" flat />
@@ -33,9 +35,9 @@
           v-model="date"
           v-bind="props"
           :style="style"
-          emit-immediately
           @update:modelValue="inputLog"
           flat bordered
+          emit-immediately
         />
 
         <q-date
@@ -67,7 +69,6 @@
           v-model="date"
           v-bind="props"
           :style="style"
-          emit-immediately
           @update:modelValue="inputLog"
         />
       </div>
@@ -215,6 +216,7 @@
           :mask="mask"
           :locale="localeComputed"
           v-bind="props"
+          calendar="gregorian"
           :style="style"
         />
 
@@ -233,7 +235,11 @@
                   v-model="input"
                   v-bind="props"
                   :style="style"
-                />
+                >
+                  <div class="row items-center justify-end">
+                    <q-btn v-close-popup label="Close" color="primary" flat />
+                  </div>
+                </q-date>
               </q-popup-proxy>
             </q-icon>
           </template>
@@ -254,7 +260,7 @@
                   mask="YYYY-MM-DD HH:mm"
                   today-btn
                   :style="style"
-                  @update:modelValue="() => $refs.qDateProxy1.hide()"
+                  @update:modelValue="() => { $refs.qDateProxy1.hide() }"
                 />
               </q-popup-proxy>
             </q-icon>
@@ -263,7 +269,7 @@
                 <q-time
                   v-model="inputFull"
                   mask="YYYY-MM-DD HH:mm"
-                  @update:modelValue="() => $refs.qDateProxy2.hide()"
+                  @update:modelValue="() => { $refs.qDateProxy2.hide() }"
                 />
               </q-popup-proxy>
             </q-icon>
@@ -273,25 +279,25 @@
         <q-input :dark="dark" filled v-model="inputFull">
           <template v-slot:append>
             <q-icon name="event" class="cursor-pointer" @click.prevent>
-              <q-popup-proxy ref="qDateProxy1">
+              <q-popup-proxy ref="qDateProxy3">
                 <q-date
                   v-model="inputFull"
                   v-bind="props"
                   mask="YYYY-MM-DD HH:mm"
                   today-btn
                   :style="style"
-                  @update:modelValue="() => $refs.qDateProxy1.hide()"
+                  @update:modelValue="() => { $refs.qDateProxy3.hide() }"
                 />
               </q-popup-proxy>
             </q-icon>
           </template>
           <template v-slot:after>
             <q-icon name="access_time" class="cursor-pointer" @click.prevent>
-              <q-popup-proxy ref="qDateProxy2">
+              <q-popup-proxy ref="qDateProxy4">
                 <q-time
                   v-model="inputFull"
                   mask="YYYY-MM-DD HH:mm"
-                  @update:modelValue="() => $refs.qDateProxy2.hide()"
+                  @update:modelValue="() => { $refs.qDateProxy4.hide() }"
                 />
               </q-popup-proxy>
             </q-icon>
@@ -301,7 +307,7 @@
         <q-input :dark="dark" filled v-model="inputFull" label="Default view - Years">
           <template v-slot:append>
             <q-icon name="event" class="cursor-pointer" @click.prevent>
-              <q-popup-proxy ref="qDateProxy1">
+              <q-popup-proxy ref="qDateProxy5">
                 <q-date
                   v-model="inputFull"
                   v-bind="props"
@@ -309,18 +315,18 @@
                   today-btn
                   default-view="Years"
                   :style="style"
-                  @update:modelValue="() => $refs.qDateProxy1.hide()"
+                  @update:modelValue="() => { $refs.qDateProxy5.hide() }"
                 />
               </q-popup-proxy>
             </q-icon>
           </template>
           <template v-slot:after>
             <q-icon name="access_time" class="cursor-pointer" @click.prevent>
-              <q-popup-proxy ref="qDateProxy2">
+              <q-popup-proxy ref="qDateProxy6">
                 <q-time
                   v-model="inputFull"
                   mask="YYYY-MM-DD HH:mm"
-                  @update:modelValue="() => $refs.qDateProxy2.hide()"
+                  @update:modelValue="() => { $refs.qDateProxy6.hide() }"
                 />
               </q-popup-proxy>
             </q-icon>
@@ -356,6 +362,8 @@ export default {
       date: '2018/11/03',
       dateParse: 'Month: Aug, Day: 28th, Year: 2018',
       dateNeg: '-13/11/03',
+      dateFrom: '2012/06/18',
+      dateTo: '2015/04/10',
       nullDate: null,
       nullDate2: null,
       defaultYearMonth: '1986/02',

@@ -15,7 +15,7 @@ export default defineComponent({
           h('tr', { class: 'q-table__progress' }, [
             h('th', {
               class: 'relative-position',
-              colspan: '100%'
+              colspan: this.computedColspan
             }, this.__getProgress())
           ])
         )

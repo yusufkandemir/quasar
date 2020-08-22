@@ -61,7 +61,7 @@ export default defineComponent({
     const label = slot(this, 'label', [])
     const attrs = {
       'aria-expanded': this.showing === true ? 'true' : 'false',
-      'aria-haspopup': true
+      'aria-haspopup': 'true'
     }
 
     if (
@@ -71,7 +71,7 @@ export default defineComponent({
         this.disableDropdown === true
       )
     ) {
-      attrs['aria-disabled'] = ''
+      attrs['aria-disabled'] = 'true'
     }
 
     const Arrow = [

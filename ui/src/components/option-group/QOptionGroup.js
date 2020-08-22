@@ -76,7 +76,7 @@ export default defineComponent({
         }
 
         if (this.disable === true) {
-          attrs['aria-disabled'] = ''
+          attrs['aria-disabled'] = 'true'
         }
 
         return attrs

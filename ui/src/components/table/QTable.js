@@ -297,6 +297,7 @@ export default defineComponent({
           ...this.virtProps,
           items: this.computedRows,
           type: '__qtable',
+          tableColspan: this.computedColspan,
           ...cache(this, 'vs', {
             'onVirtual-scroll': this.__onVScroll
           }),

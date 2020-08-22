@@ -30,8 +30,10 @@ export default defineComponent({
 
   props: {
     type: String,
+
     to: [ Object, String ],
     replace: Boolean,
+    append: Boolean,
 
     label: [ Number, String ],
     icon: String,
@@ -103,6 +105,17 @@ export default defineComponent({
       return 'standard'
     },
 
+    currentLocation () {
+      if (this.hasRouterLink === true) {
+        // we protect from accessing this.$route without
+        // actually needing it so that we won't trigger
+        // unnecessary updates
+        return this.append === true
+          ? this.$router.resolve(this.to, this.$route, true)
+          : this.$router.resolve(this.to)
+      }
+    },
+
     attrs () {
       const attrs = { tabindex: this.computedTabIndex }
 
@@ -111,7 +124,7 @@ export default defineComponent({
       }
 
       if (this.hasRouterLink === true) {
-        attrs.href = this.$router.resolve(this.to).href
+        attrs.href = this.currentLocation.href
         attrs.role = 'link'
       }
       else {
@@ -127,7 +140,7 @@ export default defineComponent({
 
       if (this.disable === true) {
         attrs.disabled = ''
-        attrs['aria-disabled'] = ''
+        attrs['aria-disabled'] = 'true'
       }
 
       return attrs

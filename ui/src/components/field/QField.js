@@ -231,10 +231,10 @@ export default defineComponent({
       }
 
       if (this.disable === true) {
-        attrs['aria-disabled'] = ''
+        attrs['aria-disabled'] = 'true'
       }
       else if (this.readonly === true) {
-        attrs['aria-readonly'] = ''
+        attrs['aria-readonly'] = 'true'
       }
 
       return attrs
@@ -369,7 +369,7 @@ export default defineComponent({
         )
       }
 
-      this.hasLabel && node.push(
+      this.hasLabel === true && node.push(
         h('div', {
           class: ['q-field__label no-pointer-events absolute ellipsis', this.labelClass]
         }, [ slot(this, 'label', this.label) ])

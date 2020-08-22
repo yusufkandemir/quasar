@@ -55,6 +55,12 @@ export default defineComponent({
         names[col.name] = col
       })
       return names
+    },
+
+    computedColspan () {
+      return this.tableColspan !== void 0
+        ? this.tableColspan
+        : this.computedCols.length + (this.hasSelectionMode === true ? 1 : 0)
     }
   }
 })

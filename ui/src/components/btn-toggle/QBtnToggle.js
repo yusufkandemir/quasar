@@ -44,6 +44,7 @@ export default defineComponent({
     glossy: Boolean,
 
     size: String,
+    padding: String,
 
     noCaps: Boolean,
     noWrap: Boolean,
@@ -72,6 +73,49 @@ export default defineComponent({
         name: this.name,
         value: this.modelValue
       }
+    },
+
+    btnOptions () {
+      const mergeOption = (opt, key) => opt[key] === void 0 ? this[key] : opt[key]
+
+      return this.options.map((opt, i) => ({
+        slot: opt.slot,
+
+        options: {
+          key: i,
+          class: opt.class,
+          style: opt.style,
+          // TODO: Vue 3, uses ListenersMixin
+          // ...this.qListeners,
+          onClick: e => this.__set(opt.value, opt, e),
+          ...opt.attrs,
+          ...opt,
+          slot: void 0,
+          modelValue: void 0,
+          attrs: void 0,
+
+          outline: this.outline,
+          flat: this.flat,
+          rounded: this.rounded,
+          push: this.push,
+          unelevated: this.unelevated,
+          dense: this.dense,
+
+          disable: this.disable === true || opt.disable === true,
+
+          // Options that come from the button specific options first, then from general props
+          color: opt.modelValue === this.modelValue ? mergeOption(opt, 'toggleColor') : mergeOption(opt, 'color'),
+          textColor: opt.value === this.modelValue ? mergeOption(opt, 'toggleTextColor') : mergeOption(opt, 'textColor'),
+          noCaps: mergeOption(opt, 'noCaps') === true,
+          noWrap: mergeOption(opt, 'noWrap') === true,
+
+          size: mergeOption(opt, 'size'),
+          padding: mergeOption(opt, 'padding'),
+          ripple: mergeOption(opt, 'ripple'),
+          stack: mergeOption(opt, 'stack') === true,
+          stretch: mergeOption(opt, 'stretch') === true
+        }
+      }))
     }
   },
 
@@ -94,36 +138,8 @@ export default defineComponent({
   },
 
   render () {
-    const child = this.options.map((opt, i) => {
-      return h(QBtn, {
-        key: i,
-        class: opt.class,
-        style: opt.style,
-        // TODO: Vue 3, uses ListenersMixin
-        // ...this.qListeners,
-        onClick: e => this.__set(opt.value, opt, e),
-
-        disable: this.disable || opt.disable,
-        label: opt.label,
-        // Colors come from the button specific options first, then from general props
-        color: opt.value === this.modelValue ? opt.toggleColor || this.toggleColor : opt.color || this.color,
-        textColor: opt.value === this.modelValue ? opt.toggleTextColor || this.toggleTextColor : opt.textColor || this.textColor,
-        icon: opt.icon,
-        iconRight: opt.iconRight,
-        noCaps: opt.noCaps === void 0 ? this.noCaps : opt.noCaps === true,
-        noWrap: opt.noWrap === void 0 ? this.noWrap : opt.noWrap === true,
-        outline: this.outline,
-        flat: this.flat,
-        rounded: this.rounded,
-        push: this.push,
-        unelevated: this.unelevated,
-        size: this.size,
-        dense: this.dense,
-        ripple: opt.ripple === void 0 ? this.ripple : opt.ripple,
-        stack: opt.stack === void 0 ? this.stack : opt.stack === true,
-        tabindex: opt.tabindex,
-        stretch: opt.stretch === void 0 ? this.stretch : opt.stretch === true
-      }, opt.slot !== void 0 ? slot(this, opt.slot) : void 0)
+    const child = this.btnOptions.map((opt, i) => {
+      return h(QBtn, opt.options, opt.slot !== void 0 ? slot(this, opt.slot) : void 0)
     })
 
     if (this.name !== void 0 && this.disable !== true && this.hasActiveValue === true) {

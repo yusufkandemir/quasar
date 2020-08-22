@@ -160,14 +160,17 @@ export default defineComponent({
     },
 
     arrowsEnabled (v) {
-      this.__updateArrows = v === true ? this.__updateArrowsFn : noop
+      this.__updateArrows = v === true
+        ? this.__updateArrowsFn
+        : noop
+
       this.$nextTick(this.__recalculateScroll())
     }
   },
 
   computed: {
     arrowsEnabled () {
-      return this.mobileArrows === true || this.$q.platform.is.desktop === true
+      return this.$q.platform.is.desktop === true || this.mobileArrows === true
     },
 
     alignClass () {
@@ -312,12 +315,12 @@ export default defineComponent({
           ? `translate3d(0,${oldPos.top - newPos.top}px,0) scale3d(1,${newPos.height ? oldPos.height / newPos.height : 1},1)`
           : `translate3d(${oldPos.left - newPos.left}px,0,0) scale3d(${newPos.width ? oldPos.width / newPos.width : 1},1,1)`
 
-        // allow scope updates to kick in
+        // allow scope updates to kick in (QRouteTab needs more time)
         this.$nextTick(() => {
           this.animateTimer = setTimeout(() => {
             newEl.style.transition = 'transform .25s cubic-bezier(.4, 0, .2, 1)'
             newEl.style.transform = 'none'
-          }, 30)
+          }, 70)
         })
       }
 
@@ -405,8 +408,9 @@ export default defineComponent({
 
   created () {
     this.buffer = []
-
-    this.__updateArrows = this.arrowsEnabled === true ? this.__updateArrowsFn : noop
+    this.__updateArrows = this.arrowsEnabled === true
+      ? this.__updateArrowsFn
+      : noop
   },
 
   beforeUnmount () {

@@ -87,7 +87,7 @@ export default defineComponent({
 
     attrs () {
       return this.disable === true
-        ? { tabindex: -1, 'aria-disabled': '' }
+        ? { tabindex: -1, 'aria-disabled': 'true' }
         : { tabindex: this.tabindex || 0 }
     }
   },

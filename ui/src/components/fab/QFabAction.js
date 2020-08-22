@@ -4,7 +4,6 @@ import QBtn from '../btn/QBtn.js'
 import QIcon from '../icon/QIcon.js'
 
 import FabMixin from '../../mixins/fab.js'
-import ListenersMixin from '../../mixins/listeners.js'
 
 import { mergeSlot } from '../../utils/slot.js'
 
@@ -19,7 +18,7 @@ const anchorValues = Object.keys(anchorMap)
 export default defineComponent({
   name: 'QFabAction',
 
-  mixins: [ ListenersMixin, FabMixin ],
+  mixins: [ FabMixin ],
 
   props: {
     icon: {
@@ -32,13 +31,13 @@ export default defineComponent({
       validator: v => anchorValues.includes(v)
     },
 
-    to: [String, Object],
+    to: [ String, Object ],
     replace: Boolean
   },
 
   inject: {
-    __qFabClose: {
-      from: '__qFabClose',
+    __qFab: {
+      from: '__qFab',
       default () {
         console.error('QFabAction needs to be child of QFab')
       }
@@ -59,12 +58,16 @@ export default defineComponent({
         // ...this.qListeners,
         onClick: this.click
       }
+    },
+
+    isDisabled () {
+      return this.__qFab.showing !== true || this.disable === true
     }
   },
 
   methods: {
     click (e) {
-      this.__qFabClose()
+      this.__qFab.__onChildClick(e)
       this.$emit('click', e)
     }
   },
@@ -91,6 +94,7 @@ export default defineComponent({
       label: void 0,
       noCaps: true,
       fabMini: true,
+      disable: this.isDisabled,
       ...this.eventListeners
     }, mergeSlot(child, this, 'default'))
   }

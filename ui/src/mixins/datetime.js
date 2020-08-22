@@ -6,6 +6,8 @@ import DarkMixin from './dark.js'
 import FormMixin from './form.js'
 import ListenersMixin from './listeners.js'
 
+const calendars = [ 'gregorian', 'persian' ]
+
 // TODO: Vue 3, review, has ListenersMixin
 export default defineComponent({
   mixins: [ DarkMixin, FormMixin, ListenersMixin ],
@@ -22,7 +24,7 @@ export default defineComponent({
 
     calendar: {
       type: String,
-      validator: v => ['gregorian', 'persian'].includes(v),
+      validator: v => calendars.includes(v),
       default: 'gregorian'
     },
 
@@ -39,21 +41,15 @@ export default defineComponent({
     disable: Boolean
   },
 
-  watch: {
-    mask () {
-      this.$nextTick(() => {
-        this.__updateValue({}, /* reason for QDate only */ 'mask')
-      })
+  computed: {
+    computedMask () {
+      return this.__getMask()
     },
 
     computedLocale () {
-      this.$nextTick(() => {
-        this.__updateValue({}, /* reason for QDate only */ 'locale')
-      })
-    }
-  },
+      return this.__getLocale()
+    },
 
-  computed: {
     editable () {
       return this.disable !== true && this.readonly !== true
     },
@@ -75,15 +71,11 @@ export default defineComponent({
       this.color !== void 0 && cls.push(`bg-${this.color}`)
       this.textColor !== void 0 && cls.push(`text-${this.textColor}`)
       return cls.join(' ')
-    },
-
-    computedLocale () {
-      return this.__getComputedLocale()
     }
   },
 
   methods: {
-    __getComputedLocale () {
+    __getLocale () {
       return this.locale || this.$q.lang.date
     },
 
@@ -102,7 +94,11 @@ export default defineComponent({
       return {
         year: d.getFullYear(),
         month: d.getMonth() + 1,
-        day: d.getDate()
+        day: d.getDate(),
+        hour: 0,
+        minute: 0,
+        second: 0,
+        millisecond: 0
       }
     },
 

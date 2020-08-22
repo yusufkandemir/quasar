@@ -89,7 +89,7 @@ export default defineComponent({
       }
 
       if (this.disable === true) {
-        attrs['aria-disabled'] = ''
+        attrs['aria-disabled'] = 'true'
       }
 
       return attrs
@@ -114,7 +114,8 @@ export default defineComponent({
       h('svg', {
         class: 'q-radio__bg absolute',
         focusable: 'false' /* needed for IE11 */,
-        viewBox: '0 0 24 24'
+        viewBox: '0 0 24 24',
+        'aria-hidden': 'true'
       }, [
         h('path', {
           d: 'M12,22a10,10 0 0 1 -10,-10a10,10 0 0 1 10,-10a10,10 0 0 1 10,10a10,10 0 0 1 -10,10m0,-22a12,12 0 0 0 -12,12a12,12 0 0 0 12,12a12,12 0 0 0 12,-12a12,12 0 0 0 -12,-12'

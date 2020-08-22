@@ -4,7 +4,18 @@ import Platform from '../plugins/Platform.js'
 
 import { noop } from '../utils/event.js'
 
-function openWindow (url, reject) {
+function parseFeatures (winFeatures) {
+  const cfg = Object.assign({ noopener: true }, winFeatures)
+  const feat = []
+  Object.keys(cfg).forEach(key => {
+    if (cfg[key] === true) {
+      feat.push(key)
+    }
+  })
+  return feat.join(',')
+}
+
+function openWindow (url, reject, windowFeatures) {
   let open = window.open
 
   if (Platform.is.cordova === true) {
@@ -24,7 +35,7 @@ function openWindow (url, reject) {
   }
   */
 
-  const win = open(url, '_blank')
+  const win = open(url, '_blank', parseFeatures(windowFeatures))
 
   if (win) {
     Platform.is.desktop && win.focus()
@@ -35,7 +46,7 @@ function openWindow (url, reject) {
   }
 }
 
-export default (url, reject) => {
+export default (url, reject, windowFeatures) => {
   if (
     Platform.is.ios === true &&
     window.SafariViewController !== void 0
@@ -49,11 +60,11 @@ export default (url, reject) => {
         )
       }
       else {
-        openWindow(url, reject)
+        openWindow(url, reject, windowFeatures)
       }
     })
     return
   }
 
-  return openWindow(url, reject)
+  return openWindow(url, reject, windowFeatures)
 }

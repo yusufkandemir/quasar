@@ -156,7 +156,7 @@ export default defineComponent({
   },
 
   render () {
-    const attrs = this.disable === true ? { 'aria-disabled': '' } : void 0
+    const attrs = this.disable === true ? { 'aria-disabled': 'true' } : void 0
     const child = [
       h('div', {
         ref: 'before',

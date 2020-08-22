@@ -4,6 +4,7 @@ import QBtn from '../btn/QBtn.js'
 import QIcon from '../icon/QIcon.js'
 
 import FabMixin from '../../mixins/fab.js'
+import AttrsMixin from '../../mixins/attrs.js'
 import ModelToggleMixin from '../../mixins/model-toggle.js'
 
 import { slot, mergeSlot } from '../../utils/slot.js'
@@ -15,17 +16,13 @@ const alignValues = [ 'left', 'center', 'right' ]
 export default defineComponent({
   name: 'QFab',
 
-  mixins: [ FabMixin, ModelToggleMixin ],
+  inheritAttrs: false,
+
+  mixins: [ FabMixin, AttrsMixin, ModelToggleMixin ],
 
   provide () {
     return {
-      __qFabClose: evt => {
-        this.hide(evt)
-
-        if (this.$refs.trigger && this.$refs.trigger.$el) {
-          this.$refs.trigger.$el.focus()
-        }
-      }
+      __qFab: this
     }
   },
 
@@ -67,6 +64,24 @@ export default defineComponent({
     classes () {
       return `q-fab--align-${this.verticalActionsAlign} ${this.formClass}` +
         (this.showing === true ? ' q-fab--opened' : '')
+    },
+
+    attrs () {
+      return {
+        'aria-expanded': this.showing === true ? 'true' : 'false',
+        'aria-haspopup': 'true',
+        ...this.qAttrs
+      }
+    }
+  },
+
+  methods: {
+    __onChildClick (evt) {
+      this.hide(evt)
+
+      if (this.$refs.trigger && this.$refs.trigger.$el) {
+        this.$refs.trigger.$el.focus()
+      }
     }
   },
 
@@ -95,10 +110,6 @@ export default defineComponent({
       // TODO: Vue 3, uses ListenersMixin
       // on: { ...this.qListeners }
     }, [
-      h('div', {
-        class: ['q-fab__actions flex no-wrap inline', `q-fab__actions--${this.direction}`]
-      }, slot(this, 'default')),
-
       h(QBtn, {
         ref: 'trigger',
         class: this.formClass,
@@ -110,10 +121,15 @@ export default defineComponent({
         label: void 0,
         noCaps: true,
         fab: true,
+        ...this.attrs,
         ...cache(this, 'tog', {
           onClick: this.toggle
         })
-      }, mergeSlot(child, this, 'tooltip'))
+      }, mergeSlot(child, this, 'tooltip')),
+
+      h('div', {
+        class: ['q-fab__actions flex no-wrap inline', `q-fab__actions--${this.direction}`]
+      }, slot(this, 'default'))
     ])
   }
 })

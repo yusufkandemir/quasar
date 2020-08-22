@@ -128,7 +128,7 @@ export default defineComponent({
       }),
       ...(
         this.isDisable === true
-          ? { tabindex: -1, 'aria-disabled': '' }
+          ? { tabindex: -1, 'aria-disabled': 'true' }
           : { tabindex: this.qAttrs.tabindex || 0 }
       )
     })

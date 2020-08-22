@@ -16,7 +16,8 @@ export default defineComponent({
           h('svg', {
             class: 'q-checkbox__svg fit absolute-full',
             focusable: 'false' /* needed for IE11 */,
-            viewBox: '0 0 24 24'
+            viewBox: '0 0 24 24',
+            'aria-hidden': 'true'
           }, [
             h('path', {
               class: 'q-checkbox__truthy',

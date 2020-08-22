@@ -198,10 +198,10 @@ export default defineComponent({
 
     attrs () {
       if (this.disable === true) {
-        return { 'aria-disabled': '' }
+        return { 'aria-disabled': 'true' }
       }
       if (this.readonly === true) {
-        return { 'aria-readonly': '' }
+        return { 'aria-readonly': 'true' }
       }
     }
   },
