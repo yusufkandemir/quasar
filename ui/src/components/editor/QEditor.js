@@ -64,7 +64,7 @@ export default defineComponent({
     dense: Boolean
   },
 
-  emits: ['update:modelValue', 'click', 'mouseup', 'keyup', 'keydown', 'touchend', 'blur'],
+  emits: ['update:modelValue', 'click', 'mouseup', 'keyup', 'keydown', 'touchend', 'blur', 'focus'],
 
   computed: {
     editable () {

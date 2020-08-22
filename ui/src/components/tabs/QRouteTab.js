@@ -23,6 +23,8 @@ export default defineComponent({
     }
   },
 
+  emits: ['click'],
+
   watch: {
     $route () {
       this.__checkActivation()

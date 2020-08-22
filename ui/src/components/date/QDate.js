@@ -68,7 +68,7 @@ export default defineComponent({
     }
   },
 
-  emits: ['update:modelValue'],
+  emits: ['update:modelValue', 'range-start', 'range-end', 'navigation'],
 
   data () {
     const innerMask = this.__getMask()
@@ -1270,7 +1270,7 @@ export default defineComponent({
       this.lastEmitValue = value
 
       const { reason, details } = this.__getEmitParams(action, date)
-      this.$emit('input', value, reason, details)
+      this.$emit('update:modelValue', value, reason, details)
     },
 
     // DEPRECATED - TODO: remove in v2
@@ -1292,7 +1292,7 @@ export default defineComponent({
         this.lastEmitValue = value
 
         const { details } = this.__getEmitParams('', date)
-        this.$emit('input', value, reason, details)
+        this.$emit('update:modelValue', value, reason, details)
       })
     },
 
@@ -1388,7 +1388,7 @@ export default defineComponent({
             : entry.dateHash !== null
         })
 
-      this.$emit('input', (this.multiple === true ? model : model[0]) || null, reason)
+      this.$emit('update:modelValue', (this.multiple === true ? model : model[0]) || null, reason)
     }
   },
 
