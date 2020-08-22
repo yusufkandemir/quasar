@@ -104,14 +104,6 @@ export default defineComponent({
       this.$refs.blurTarget !== void 0 && this.$refs.blurTarget.focus()
     },
 
-    'viewModel.year' (year) {
-      this.$emit('navigation', { year, month: this.viewModel.month })
-    },
-
-    'viewModel.month' (month) {
-      this.$emit('navigation', { year: this.viewModel.year, month })
-    },
-
     computedMask (val) {
       this.__updateValue(val, this.innerLocale, 'mask')
       this.innerMask = val
@@ -121,6 +113,16 @@ export default defineComponent({
       this.__updateValue(this.innerMask, val, 'locale')
       this.innerLocale = val
     }
+  },
+
+  created () {
+    this.$watch(() => this.viewModel.year, (year) => {
+      this.$emit('navigation', { year, month: this.viewModel.month })
+    })
+
+    this.$watch(() => this.viewModel.month, (month) => {
+      this.$emit('navigation', { year: this.viewModel.year, month })
+    })
   },
 
   computed: {
