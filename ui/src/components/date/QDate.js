@@ -1356,18 +1356,18 @@ export default defineComponent({
     __removeFromModel (date) {
       let model = null
 
-      if (this.multiple === true && Array.isArray(this.value) === true) {
+      if (this.multiple === true && Array.isArray(this.modelValue) === true) {
         const val = this.__encodeEntry(date)
 
         if (date.from !== void 0) {
-          model = this.value.filter(
+          model = this.modelValue.filter(
             date => date.from !== void 0
               ? (date.from !== val.from && date.to !== val.to)
               : true
           )
         }
         else {
-          model = this.value.filter(date => date !== val)
+          model = this.modelValue.filter(date => date !== val)
         }
 
         if (model.length === 0) {
