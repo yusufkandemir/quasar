@@ -326,7 +326,7 @@
 
     <q-dialog v-model="positioned" position="bottom">
       <q-card style="width: 500px;">
-        <q-linear-progress :value="0.6" color="pink" />
+        <q-linear-progress :model-value="0.6" color="pink" />
 
         <q-card-section class="row items-center no-wrap">
           <div>
@@ -371,7 +371,7 @@
 
     <q-dialog v-model="seamless" seamless position="bottom">
       <q-card style="width: 350px">
-        <q-linear-progress :value="0.6" color="pink" />
+        <q-linear-progress :model-value="0.6" color="pink" />
 
         <q-card-section class="row items-center no-wrap">
           <div>

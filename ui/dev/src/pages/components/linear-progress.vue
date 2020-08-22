@@ -18,45 +18,45 @@
         <q-btn size="sm" color="primary" @click="randomize">
           Change Model
         </q-btn>
-        <q-linear-progress instant-feedback :dark="dark" class="q-my-sm" rounded :value="progress" />
-        <q-linear-progress :dark="dark" size="10px" class="q-my-sm" :value="progress" color="positive" fill-color="yellow" />
-        <q-linear-progress :dark="dark" size="20px" rounded class="q-my-sm" :value="progress" color="info" />
-        <q-linear-progress :dark="dark" class="q-my-sm" :value="progress" color="warning" />
-        <q-linear-progress :dark="dark" class="q-my-sm" :value="progress" color="secondary" />
-        <q-linear-progress :dark="dark" class="q-my-sm" :value="progress" color="accent" />
-        <q-linear-progress :dark="dark" track-color="orange" class="q-my-sm" :value="progress" color="purple" />
-        <q-linear-progress :dark="dark" class="q-my-sm" :value="progress" color="negative" />
+        <q-linear-progress instant-feedback :dark="dark" class="q-my-sm" rounded :model-value="progress" />
+        <q-linear-progress :dark="dark" size="10px" class="q-my-sm" :model-value="progress" color="positive" fill-color="yellow" />
+        <q-linear-progress :dark="dark" size="20px" rounded class="q-my-sm" :model-value="progress" color="info" />
+        <q-linear-progress :dark="dark" class="q-my-sm" :model-value="progress" color="warning" />
+        <q-linear-progress :dark="dark" class="q-my-sm" :model-value="progress" color="secondary" />
+        <q-linear-progress :dark="dark" class="q-my-sm" :model-value="progress" color="accent" />
+        <q-linear-progress :dark="dark" track-color="orange" class="q-my-sm" :model-value="progress" color="purple" />
+        <q-linear-progress :dark="dark" class="q-my-sm" :model-value="progress" color="negative" />
       </div>
 
       <h5>Determinate State - Reverse</h5>
       <div class="group">
-        <q-linear-progress :dark="dark" reverse class="q-my-sm" :value="progress" />
-        <q-linear-progress :dark="dark" reverse size="10px" class="q-my-sm" :value="progress" color="positive" fill-color="yellow" />
+        <q-linear-progress :dark="dark" reverse class="q-my-sm" :model-value="progress" />
+        <q-linear-progress :dark="dark" reverse size="10px" class="q-my-sm" :model-value="progress" color="positive" fill-color="yellow" />
       </div>
 
       <h5>Stripe</h5>
       <div class="group">
-        <q-linear-progress :dark="dark" class="q-my-sm" :value="progress" stripe />
-        <q-linear-progress :dark="dark" class="q-my-sm" :value="progress" stripe color="positive" />
-        <q-linear-progress :dark="dark" class="q-my-sm" :value="progress" stripe color="info" />
-        <q-linear-progress :dark="dark" class="q-my-sm" :value="progress" stripe color="warning" />
+        <q-linear-progress :dark="dark" class="q-my-sm" :model-value="progress" stripe />
+        <q-linear-progress :dark="dark" class="q-my-sm" :model-value="progress" stripe color="positive" />
+        <q-linear-progress :dark="dark" class="q-my-sm" :model-value="progress" stripe color="info" />
+        <q-linear-progress :dark="dark" class="q-my-sm" :model-value="progress" stripe color="warning" />
       </div>
 
       <h5>Stripe and Animate</h5>
-      <q-linear-progress :dark="dark" class="q-my-sm" :value="progress" stripe animate color="secondary" />
+      <q-linear-progress :dark="dark" class="q-my-sm" :model-value="progress" stripe animate color="secondary" />
 
       <h5>Buffering</h5>
       <div class="group">
         <q-btn size="sm" color="primary" @click="randomizeBuffer">
           Change Buffer Model
         </q-btn>
-        <q-linear-progress :dark="dark" class="q-my-sm" :value="progressBuffer" :buffer="buffer" />
-        <q-linear-progress :dark="dark" class="q-my-sm" :value="progressBuffer" stripe :buffer="buffer" />
-        <q-linear-progress :dark="dark" class="q-my-sm" :value="progressBuffer" stripe animate color="secondary" :buffer="buffer" />
+        <q-linear-progress :dark="dark" class="q-my-sm" :model-value="progressBuffer" :buffer="buffer" />
+        <q-linear-progress :dark="dark" class="q-my-sm" :model-value="progressBuffer" stripe :buffer="buffer" />
+        <q-linear-progress :dark="dark" class="q-my-sm" :model-value="progressBuffer" stripe animate color="secondary" :buffer="buffer" />
 
-        <q-linear-progress :dark="dark" class="q-my-sm" :value="progressBuffer" :buffer="buffer" fill-color="yellow" />
-        <q-linear-progress :dark="dark" class="q-my-sm" :value="progressBuffer" stripe :buffer="buffer" fill-color="yellow" />
-        <q-linear-progress :dark="dark" class="q-my-sm" :value="progressBuffer" stripe animate color="secondary" :buffer="buffer" fill-color="yellow" buffer-color="primary" />
+        <q-linear-progress :dark="dark" class="q-my-sm" :model-value="progressBuffer" :buffer="buffer" fill-color="yellow" />
+        <q-linear-progress :dark="dark" class="q-my-sm" :model-value="progressBuffer" stripe :buffer="buffer" fill-color="yellow" />
+        <q-linear-progress :dark="dark" class="q-my-sm" :model-value="progressBuffer" stripe animate color="secondary" :buffer="buffer" fill-color="yellow" buffer-color="primary" />
       </div>
 
       <h5>Indeterminate State</h5>
@@ -79,17 +79,17 @@
 
       <h5>Specific Height</h5>
       <div>
-        <q-linear-progress :dark="dark" class="q-my-sm" :value="progress" stripe animate size="45px" />
+        <q-linear-progress :dark="dark" class="q-my-sm" :model-value="progress" stripe animate size="45px" />
       </div>
 
       <h5>With label</h5>
-      <q-linear-progress size="25px" :value="progress" color="accent">
+      <q-linear-progress size="25px" :model-value="progress" color="accent">
         <div class="absolute-full flex flex-center">
           <q-badge color="white" text-color="accent" label="Progress" />
         </div>
       </q-linear-progress>
 
-      <q-linear-progress size="50px" :value="progress" color="accent" class="q-mt-sm">
+      <q-linear-progress size="50px" :model-value="progress" color="accent" class="q-mt-sm">
         <div class="absolute-full flex flex-center">
           <q-badge color="white" text-color="accent" label="Progress" />
         </div>

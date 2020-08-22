@@ -335,7 +335,7 @@
 
       <template v-slot:control>
         <q-carousel-control position="bottom" :offset="[0, 0]">
-          <q-linear-progress :value="(slide2 - 1) / 11" height="6px" stripe color="amber" />
+          <q-linear-progress :model-value="(slide2 - 1) / 11" height="6px" stripe color="amber" />
         </q-carousel-control>
       </template>
     </q-carousel>

@@ -25,7 +25,7 @@
 
       <q-circular-progress
         class="q-ma-sm"
-        :value="value"
+        :model-value="value"
         size="100px"
         :show-value="showValue"
         :indeterminate="indeterminate"
@@ -33,7 +33,7 @@
 
       <q-circular-progress
         class="q-ma-sm text-grey"
-        :value="value"
+        :model-value="value"
         :size="size + 'px'"
         :thickness="thickness"
         :angle="angle"
@@ -49,7 +49,7 @@
 
       <q-circular-progress
         class="q-ma-sm text-white"
-        :value="value"
+        :model-value="value"
         :size="size / 2 + 'px'"
         :thickness="1"
         :angle="angle"
@@ -65,7 +65,7 @@
 
       <q-circular-progress
         class="q-ma-sm"
-        :value="value"
+        :model-value="value"
         :size="size + 'px'"
         :thickness="thickness"
         :angle="angle"
@@ -79,7 +79,7 @@
 
       <q-circular-progress
         class="q-ma-sm text-orange"
-        :value="value"
+        :model-value="value"
         :size="size / 1.5 + 'px'"
         :thickness="thickness"
         :angle="angle"
