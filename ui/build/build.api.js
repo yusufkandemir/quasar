@@ -502,9 +502,9 @@ function fillAPI (apiType) {
     if (apiType === 'component') {
       let hasError = false
 
-      const definition = fs.readFileSync(file.replace('.json', '.js'), {
-        encoding: 'utf-8'
-      })
+      const filePath = file.replace('.json', fs.existsSync(file.replace('.json', '.js')) ? '.js' : '.ts')
+
+      const definition = fs.readFileSync(filePath, { encoding: 'utf-8' })
 
       const slotRegex = /(this\.\$scopedSlots\[['`](\S+)['`]\]|slot\(this, '(\S+)'|this\.\$scopedSlots\.([A-Za-z]+)\()/g
       let slotMatch

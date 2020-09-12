@@ -29,11 +29,16 @@ export function mergeSlot (source, vm, slotName) {
  * even if source might not exist
  */
 export function mergeSlotSafely (source, vm, slotName) {
-  if (vm.$slots[slotName] === void 0) {
+  // COMPAT:
+  // vm could be either the `this` reference in Options API or `context` parameter for Composition API
+  // We select the right one based on the property we find on the object
+  const $slots = vm.$slots !== void 0 ? vm.$slots : vm.slots
+
+  if ($slots[slotName] === void 0) {
     return source
   }
 
-  const slot = vm.$slots[slotName]()
+  const slot = $slots[slotName]()
   return source !== void 0
     ? source.concat(slot)
     : slot
