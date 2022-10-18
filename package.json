@@ -1,0 +1,10 @@
+{
+  "name": "quasar-monorepo",
+  "version": "0.0.0",
+  "private": true,
+  "repository": "https://github.com/quasarframework/quasar.git",
+  "scripts": {
+    "dev:docs": "yarn --cwd ./docs dev",
+    "build:docs": "yarn --cwd ./docs build"
+  }
+}
